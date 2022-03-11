@@ -1,14 +1,8 @@
 header:
-  - titles:
-      # @start locale config
-      en      : &EN       Home
-      en-GB   : *EN
-      en-US   : *EN
-      en-CA   : *EN
-      en-AU   : *EN
-      zh-Hans : &ZH_HANS  主页
-      # @end locale config
-    url: /index.html
+
+
+  - titles：       主页 
+    url:           /index.html
 
   # - title:
   #     # @start locale config
