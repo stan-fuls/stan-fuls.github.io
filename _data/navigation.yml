@@ -1,6 +1,5 @@
 header:
 
-  - title:
       # @start locale config
       en      : &EN       Home
       en-GB   : *EN
@@ -9,7 +8,7 @@ header:
       en-AU   : *EN
       zh-Hans : &ZH_HANS  主页
       # @end locale config
-    url:        /index.html
+    url: /index.html
 
   # - title:
   #     # @start locale config
