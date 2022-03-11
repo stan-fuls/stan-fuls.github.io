@@ -22,7 +22,8 @@ url     : # the base hostname & protocol for your site e.g. https://www.someone.
 baseurl : # does not include hostname
 title   : Workspace of He Jie
 description: > # this means to ignore newlines until "Language & timezone"
-  Share Of Dayly
+  Share Of Dayly!
+  Life、Work and Other
 
 ## => Language and Timezone
 ##############################
