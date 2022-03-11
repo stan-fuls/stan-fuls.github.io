@@ -9,12 +9,17 @@ header:
       en-AU   : *EN
       zh-Hans : &ZH_HANS  主页
       # @end locale config
-    url: /index.html
+    url:        /index.html
 
   - title:      Docs
-    url:        /docs/en/quick-start
-
-  - title:      文档
+      # @start locale config
+      en      : &EN       Docs
+      en-GB   : *EN
+      en-US   : *EN
+      en-CA   : *EN
+      en-AU   : *EN
+      zh-Hans : &ZH_HANS  文档
+      # @end locale config
     url:        /docs/zh/quick-start
 
   - titles:
@@ -23,7 +28,7 @@ header:
       zh-Hans:  归档
       zh-Hant:  歸檔
     url:        /archive.html
-    
+
   - titles:
       en:       About
       zh:       关于
@@ -32,7 +37,7 @@ header:
     url:        /about.html
 
   - title:      GitHub
-    url:        https://github.com/kitian616/jekyll
+    url:        https://github.com/stan-fuls/stan-fuls.github.io
 
   # - titles:
   #     # @start locale config
