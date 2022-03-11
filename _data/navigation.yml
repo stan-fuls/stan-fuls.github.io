@@ -1,7 +1,8 @@
 header:
 
 
-  - title：       
+  - titles：       
+        en      : &EN       Home
         zh-Hans : &ZH_HANS  主页
     url: /index.html
 
