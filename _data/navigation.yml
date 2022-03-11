@@ -1,8 +1,9 @@
 header:
 
 
-  - titles：       主页 
-    url:           /index.html
+  - title：       
+        zh-Hans : &ZH_HANS  主页
+    url: /index.html
 
   # - title:
   #     # @start locale config
