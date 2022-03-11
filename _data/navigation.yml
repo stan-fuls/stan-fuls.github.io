@@ -2,7 +2,7 @@ header:
   - title:      Home
     url:        /
   - title:      Docs
-    url:        /docs/zh/quick-start
+    url:        /docs/en/quick-start
     key:        docs
   # - title:      Samples
   #   url:        /samples.html
@@ -39,7 +39,7 @@ header:
   - title:      开始
     children:
       - title:  快速开始
-        url:    /docs/_docs/zh/quick-start
+        url:    /docs/_docs/en/quick-start
 
   - titles:
       # @start locale config
