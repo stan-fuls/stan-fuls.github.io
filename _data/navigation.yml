@@ -1,4 +1,16 @@
 header:
+
+  - titles:
+      # @start locale config
+      en      : &EN       Home
+      en-GB   : *EN
+      en-US   : *EN
+      en-CA   : *EN
+      en-AU   : *EN
+      zh-Hans : &ZH_HANS  主页
+      # @end locale config
+    url: /home.html
+
   - titles:
       # @start locale config
       en      : &EN       Archive
@@ -24,6 +36,17 @@ header:
       tr      : &TR       Arşivdekiler
       # @end locale config
     url: /archive.html
+
+  - titles:
+      # @start locale config
+      en      : &EN       Docs
+      en-GB   : *EN
+      en-US   : *EN
+      en-CA   : *EN
+      en-AU   : *EN
+      zh-Hans : &ZH_HANS  文档
+      # @end locale config
+    url: /Docs.html
 
   - titles:
       # @start locale config
