@@ -9,7 +9,7 @@ header:
       en-AU   : *EN
       zh-Hans : &ZH_HANS  主页
       # @end locale config
-    url: /home.html
+    url: /index.html
 
   - titles:
       # @start locale config
@@ -46,7 +46,7 @@ header:
       en-AU   : *EN
       zh-Hans : &ZH_HANS  文档
       # @end locale config
-    url: /Docs.html
+    url: /docs/_docs/zh/Docs.html
 
   - titles:
       # @start locale config
