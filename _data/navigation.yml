@@ -1,6 +1,19 @@
 header:
+  - title:      Home
+    url:        /
+  - title:      Docs
+    url:        /docs/en/quick-start
+    key:        docs
+  # - title:      Samples
+  #   url:        /samples.html
+  #   key:        samples
+  # - title:      Archive
+    url:        /archive.html
+  - title:      About
+    url:        /about.html
+  - title:      GitHub
+    url:        https://github.com/kitian616/jekyll-TeXt-theme
 
-  - titles:
       # @start locale config
       en      : &EN       Home
       en-GB   : *EN
@@ -10,6 +23,23 @@ header:
       zh-Hans : &ZH_HANS  主页
       # @end locale config
     url: /index.html
+
+  # - titles:
+  #     # @start locale config
+  #     en      : &EN       Docs
+  #     en-GB   : *EN
+  #     en-US   : *EN
+  #     en-CA   : *EN
+  #     en-AU   : *EN
+  #     zh-Hans : &ZH_HANS  文档
+  #     # @end locale config
+  #   url: /docs/en/quick-start
+
+    docs-zh:
+  - title:      开始
+    children:
+      - title:  快速开始
+        url:    /docs/zh/quick-start
 
   - titles:
       # @start locale config
@@ -36,17 +66,6 @@ header:
       tr      : &TR       Arşivdekiler
       # @end locale config
     url: /archive.html
-
-  - titles:
-      # @start locale config
-      en      : &EN       Docs
-      en-GB   : *EN
-      en-US   : *EN
-      en-CA   : *EN
-      en-AU   : *EN
-      zh-Hans : &ZH_HANS  文档
-      # @end locale config
-    url: /docs/en/quick-start
 
   - titles:
       # @start locale config
