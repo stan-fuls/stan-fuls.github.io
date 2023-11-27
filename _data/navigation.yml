@@ -33,17 +33,18 @@ header:
 
   # - title:      GitHub
   #   url:        https://github.com/stan-fuls/stan-fuls.github.io
-  
-  - titles：
-      # @start locale config
-      en      : &EN       Docs
-      en-GB   : *EN
-      en-US   : *EN
-      en-CA   : *EN
-      en-AU   : *EN
-      zh-Hans : &ZH_HANS  文档
-      # @end locale config
-    url: /docs/en/quick-start
+
+  #    注释掉文档，如果需要可以开启
+  # - titles：
+  #     # @start locale config
+  #     en      : &EN       Docs
+  #     en-GB   : *EN
+  #     en-US   : *EN
+  #     en-CA   : *EN
+  #     en-AU   : *EN
+  #     zh-Hans : &ZH_HANS  文档
+  #     # @end locale config
+  #   url: /docs/en/quick-start
 
   - titles：
       # @start locale config
