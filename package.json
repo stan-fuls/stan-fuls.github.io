@@ -1,7 +1,7 @@
 {
-  "name": "workspace-of-hejie",
+  "name": "share-of-stam",
   "version": "1.0.0",
-  "description": "Workspace of He Jie — Knowledge sharing platform built with Jekyll",
+  "description": "Share of Stam — Knowledge sharing platform built with Jekyll",
   "private": true,
   "scripts": {
     "dev": "bundle exec jekyll serve --livereload",
@@ -13,7 +13,7 @@
     "type": "git",
     "url": "git+https://github.com/stan-fuls/stan-fuls.github.io.git"
   },
-  "author": "hejie",
+  "author": "Stam",
   "license": "MIT",
   "homepage": "https://stan-fuls.github.io"
 }

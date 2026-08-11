@@ -56,7 +56,7 @@ date: 2026-01-01
 category: "后端开发"
 tags: ["Go", "并发", "goroutine"]
 description: "文档简述，用于列表展示"
-author: "hejie"
+author: "Stam"
 ---
 
 ## 正文内容

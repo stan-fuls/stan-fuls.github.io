@@ -1,9 +1,9 @@
 # ===========================================
-# Workspace of He Jie - Knowledge Sharing Hub
+# Share of Stam - Knowledge Sharing Hub
 # ===========================================
 
 # --- Site Settings ---
-title: Workspace of He Jie
+title: Share of Stam
 description: Share Of Daily! Life, Work and Other
 text_skin: default
 highlight_theme: default
@@ -16,11 +16,10 @@ branch: master
 # --- Author Info ---
 author:
   type: person
-  name: hejie
-  bio: I am an amazing person.
+  name: Stam
+  bio: 技术分享与知识沉淀，记录生活、工作与学习中的点滴。
   email: HJworkspace@163.com
   github: stan-fuls
-  avatar: /assets/images/avatar.png
 
 # --- Content ---
 paginate: 8
@@ -75,7 +74,7 @@ defaults:
       type: posts
     values:
       layout: post
-      author: hejie
+      author: Stam
   - scope:
       path: ""
       type: pages

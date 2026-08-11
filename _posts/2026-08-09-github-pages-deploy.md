@@ -1,42 +1,118 @@
 ---
-layout: post
-title: "GitHub Pages 部署与自定义域名配置"
+title: "GitHub Pages + Jekyll 部署指南"
 date: 2026-08-09
-categories: [技术, DevOps]
-tags: [github pages, jekyll, 部署, 自定义域名]
+categories: 技术
+tags:
+  - GitHub Pages
+  - Jekyll
+  - 部署
+  - 教程
 toc: true
 ---
 
-GitHub Pages 是一个免费的静态网站托管服务，非常适合个人博客、项目文档和知识库的搭建。
+## 概述
 
-## 基本原理
+GitHub Pages 是 GitHub 提供的免费静态站点托管服务，配合 Jekyll 可以快速搭建个人博客。本文记录从零搭建的全过程。
 
-GitHub Pages 直接从 GitHub 仓库托管静态网站。推送 HTML、CSS 和 JavaScript 文件后，网站会自动构建和部署。
+## 环境准备
 
-### 仓库命名规则
+### 1. 安装 Ruby 和 Jekyll
 
-- **用户/组织站点**：`<username>.github.io`
-- **项目站点**：任意仓库名，通过 `gh-pages` 分支或 `/docs` 目录部署
+macOS 默认已预装 Ruby，可以直接安装 Jekyll：
 
-本站使用的就是用户站点方式：`stan-fuls.github.io`
+```bash
+gem install bundler jekyll
+```
 
-## 部署步骤
+### 2. 创建站点
 
-1. 创建名为 `<username>.github.io` 的仓库
-2. 推送 Jekyll 项目到 `master` 或 `main` 分支
-3. GitHub 自动运行 Jekyll 构建
-4. 几分钟后，站点在 `https://<username>.github.io` 上线
+```bash
+jekyll new my-blog
+cd my-blog
+bundle install
+bundle exec jekyll serve
+```
 
-## 自定义域名
+访问 `http://localhost:4000` 即可看到初始页面。
 
-如果需要绑定自己的域名：
+## 目录结构
 
-1. 在仓库根目录创建 `CNAME` 文件，写入域名
-2. 在域名 DNS 中添加 CNAME 记录，指向 `<username>.github.io`
-3. 在仓库 Settings → Pages 中确认自定义域名
+```
+├── _config.yml      # 站点配置
+├── _posts/          # 文章（Markdown）
+├── _layouts/        # 布局模板
+├── _includes/       # 可复用组件
+├── _data/           # 数据文件
+├── assets/          # 静态资源（CSS/JS/图片）
+├── _site/           # 构建输出（自动生成）
+└── Gemfile          # Ruby 依赖
+```
 
-## 注意事项
+## 部署到 GitHub Pages
 
-- GitHub Pages 支持的 Jekyll 插件有限，需要确认插件兼容性
-- 构建过程有资源限制
-- 站点内容是公开的（除非使用付费方案）
+### 仓库命名
+
+GitHub Pages 对于个人/组织站点，要求仓库名为 `<username>.github.io`。
+
+例如本项目：`stan-fuls.github.io`。
+
+### 发布流程
+
+1. `git push` 到仓库的 `master` 分支（或配置的部署分支）
+2. GitHub 自动触发 Jekyll 构建
+3. 构建完成后，站点即发布到 `https://stan-fuls.github.io`
+
+### GitHub Actions（可选）
+
+如果需要自定义构建流程，可以创建 `.github/workflows/jekyll.yml`：
+
+```yaml
+name: Deploy Jekyll Site
+
+on:
+  push:
+    branches: [master]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.2'
+      - run: bundle install
+      - run: bundle exec jekyll build
+      - uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: {% raw %}${{ secrets.GITHUB_TOKEN }}{% endraw %}
+          publish_dir: ./_site
+```
+
+## 常见问题
+
+### 样式不加载
+
+检查 `_config.yml` 中 `baseurl` 和 `url` 是否正确：
+
+```yaml
+url: "https://stan-fuls.github.io"
+baseurl: ""
+```
+
+### 页面 404
+
+确认页面文件包含正确的 `permalink`：
+
+```yaml
+---
+layout: page
+permalink: /about/
+---
+```
+
+## 总结
+
+GitHub Pages + Jekyll 的组合让个人博客搭建变得非常简单。核心流程：写 Markdown → git push → 自动构建部署。无需服务器、无需域名、零成本运维。
+
+下一篇将介绍如何接入外部文档仓库，实现文档与博客的分离管理。
