@@ -18,11 +18,27 @@
 
 ## 文档管理系统
 
-通过 GitHub API 从独立仓库 `stan-fuls/obsidian-knowledge-docs` 读取 Markdown 文档（支持私有库，需配置 Token）。
+通过 GitHub API 从独立仓库 `stan-fuls/obsidian-knowledge-docs` 读取 Markdown 文档。
 
-- **递归遍历**：使用 Git Trees API 拉取仓库所有子文件夹中的 `.md` 文件
+### 数据源策略（按优先级）
+
+| 顺序 | 数据源 | 适用场景 |
+|------|--------|----------|
+| 1️⃣ | `/assets/data/docs-index.json`（静态索引） | 私有库，无需 Token；推荐方案 |
+| 2️⃣ | GitHub Trees API + Contents API | 公开库或已配置 Token |
+
+> 由于 `obsidian-knowledge-docs` 是**私有仓库**，GitHub API 拒绝匿名访问，且前端公开页面无法安全存放 Token。推荐使用 **静态索引**：
+>
+> 1. 维护一个 `docs-index.json` 文件存放在本站 `assets/data/` 下
+> 2. 列表项包含：`title`、`path`、`date`、`description`、`tags`、`category`、`url`
+> 3. 在 `obsidian-knowledge-docs` 仓库用 GitHub Action 自动生成该文件并推回本仓库
+> 4. 或直接手动编辑 [`assets/data/docs-index.json`](assets/data/docs-index.json)
+
+### 列表特性
+
+- **递归遍历**：Git Trees API 拉取所有子文件夹的 `.md` 文件
 - **搜索**：按标题、描述、标签实时过滤
-- **排序**：按创建时间倒序排列（最新在前）
+- **排序**：按 `date` 倒序（最新在前）
 
 配置见 `_config.yml` 的 `docs_repo` 段。
 
@@ -32,15 +48,16 @@
 
 | 功能 | 实现方式 | 说明 |
 |------|----------|------|
-| **点赞** | localStorage | 同一篇文章同一浏览器仅可点赞一次 |
-| **评论** | Giscus (GitHub Discussions) | 免费开源，需先在仓库启用 Discussions |
-| **分享** | Web Share API + 复制链接 | 移动端原生分享，桌面端弹出面板 |
+| **点赞** | localStorage + URL 种子基数 | 显示总计数（基础数 + 本机增量），可再次点击取消 |
+| **评论** | Giscus (GitHub Discussions) | 未启用时显示配置占位，需补全 `repo_id`/`category_id` |
+| **分享** | 固定弹窗（微信 / 微博 / QQ / Twitter / LinkedIn / 复制） | 不调用系统原生 Web Share API |
 
 ### Giscus 评论配置
 
 1. 在仓库 Settings → Features 中勾选 **Discussions**
-2. 访问 [https://giscus.app/zh-CN](https://giscus.app/zh-CN) 填写仓库名获取配置
-3. 将 `repo_id` / `category_id` 填入 `_config.yml` 的 `comments.giscus` 段
+2. 访问 [https://github.com/apps/giscus](https://github.com/apps/giscus) 安装 Giscus App
+3. 访问 [https://giscus.app/zh-CN](https://giscus.app/zh-CN) 填写仓库名获取配置
+4. 将 `repo_id` / `category_id` 填入 `_config.yml` 的 `comments.giscus` 段
 
 ## 部署
 

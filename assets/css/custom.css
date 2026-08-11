@@ -469,6 +469,19 @@
   stroke: #e11d48;
 }
 
+.like-content { display: inline-flex; align-items: center; gap: 4px; }
+.like-count {
+  display: inline-block;
+  min-width: 18px;
+  padding: 0 6px;
+  background: var(--color-bg-alt);
+  border-radius: 10px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  text-align: center;
+}
+#btn-like.is-liked .like-count { background: #fecdd3; color: #e11d48; }
+
 /* 点赞按钮脉动动画 */
 .like-pulse {
   animation: likePulse 0.5s ease;
@@ -519,53 +532,112 @@
 }
 .comments-fallback a { color: #78350f; text-decoration: underline; }
 
-/* ---- 分享面板 (桌面端) ---- */
+/* 评论占位提示(Giscus 未配置) */
+.comments-placeholder {
+  padding: 20px 22px;
+  background: var(--color-bg-alt);
+  border: 1px dashed var(--color-border);
+  border-radius: 8px;
+  color: var(--color-text-light);
+  font-size: 0.9rem;
+  line-height: 1.7;
+}
+.comments-placeholder p:first-child {
+  font-weight: 700;
+  color: var(--color-text);
+  margin-bottom: 8px;
+}
+.comments-placeholder ol { padding-left: 20px; margin: 8px 0; }
+.comments-placeholder code {
+  background: var(--color-code-bg, #f1f5f9);
+  padding: 1px 6px;
+  border-radius: 3px;
+  font-size: 0.85em;
+}
+.comments-placeholder a { color: var(--color-primary); }
+
+/* ---- 分享面板 (固定弹窗) ---- */
 .share-panel { position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: 500; }
 .share-overlay {
   position: absolute;
   top: 0; left: 0; right: 0; bottom: 0;
   background: rgba(0,0,0,0.35);
+  animation: fadeIn 0.2s ease;
 }
 .share-panel-inner {
   position: absolute;
   bottom: 0; left: 0; right: 0;
   background: var(--color-bg-card);
   border-radius: 16px 16px 0 0;
-  padding: 20px 24px 32px;
+  padding: 20px 24px 28px;
   display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  justify-content: center;
-  animation: slideUp 0.2s ease;
+  flex-direction: column;
+  gap: 14px;
+  animation: slideUp 0.25s ease;
 }
-
+.share-panel-title {
+  margin: 0;
+  font-size: 0.95rem;
+  font-weight: 600;
+  text-align: center;
+  color: var(--color-text-light);
+}
+.share-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
 .share-option {
   display: inline-flex;
   flex-direction: column;
   align-items: center;
   gap: 6px;
-  padding: 14px 18px;
+  padding: 14px 8px;
   border: 1px solid var(--color-border);
   border-radius: 12px;
   background: transparent;
   color: var(--color-text);
-  font-size: 0.82rem;
+  font-size: 0.78rem;
   cursor: pointer;
   text-decoration: none;
-  min-width: 72px;
   transition: all 0.15s;
 }
 .share-option:hover {
   border-color: var(--color-primary);
   background: rgba(37,99,235,0.05);
 }
-.share-option .share-icon { font-size: 1.3rem; }
+.share-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  font-size: 1.15rem;
+  background: var(--color-bg-alt);
+}
+.share-icon.wechat   { background: #07c160; color: #fff; }
+.share-icon.weibo    { background: #e6162d; color: #fff; }
+.share-icon.qq       { background: #12b7f5; color: #fff; }
+.share-icon.twitter  { background: #000; color: #fff; font-weight: 700; }
+.share-icon.linkedin { background: #0a66c2; color: #fff; font-weight: 700; font-family: serif; }
+.share-icon.copy     { background: var(--color-bg-alt); color: var(--color-text); }
+
 .share-cancel {
   width: 100%;
-  margin-top: 6px;
+  padding: 10px;
   border: none;
   background: var(--color-bg-alt);
   color: var(--color-text-light);
+  border-radius: 8px;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes slideUp {
+  from { transform: translateY(20px); opacity: 0; }
+  to   { transform: translateY(0); opacity: 1; }
 }
 
 /* Toast */

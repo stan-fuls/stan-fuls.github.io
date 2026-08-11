@@ -1,45 +1,81 @@
 /**
  * Share of Stam - 文章互动功能
- *   点赞 (localStorage,可切换)
- *   评论 (滚动到 Giscus / fallback 提示)
- *   分享 (Web Share API + 复制链接)
  *
- * 说明: 由于这是 GitHub Pages 静态站,无后端,
- *       "点赞"仅在本机记录,不跨设备同步;状态可在同浏览器随时取消。
+ *   点赞 (localStorage,可切换,显示总计数)
+ *   评论 (占位 - 等待 Giscus 配置)
+ *   分享 (固定弹窗 - 微信/微博/QQ/Twitter/复制链接)
+ *
+ * 说明: 静态站无后端,点赞数仅在本浏览器维护;
+ *       通过种子基数(由 URL 派生)模拟一个稳定数字。
  */
 (function () {
   'use strict';
 
   const pageKey = window.location.pathname;
-  const likedKey = 'sos_liked_' + btoa(pageKey);
+  const STORAGE_KEY = 'sos_likes_index';
+
+  // 由 URL 派生稳定种子(让每篇文章有一个不会变的"基础数")
+  function seedFromPath(path) {
+    let h = 0;
+    for (let i = 0; i < path.length; i++) {
+      h = (h * 31 + path.charCodeAt(i)) | 0;
+    }
+    return Math.abs(h);
+  }
+
+  function getStore() {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      return raw ? JSON.parse(raw) : {};
+    } catch (e) { return {}; }
+  }
+
+  function setStore(obj) {
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(obj)); } catch (e) {}
+  }
 
   // ============================================================
-  // 1. 点赞系统 (可切换,个人状态)
+  // 1. 点赞 - 显示总计数
   // ============================================================
   function initLikes() {
     const btn = document.getElementById('btn-like');
-    const label = document.getElementById('like-label');
-    if (!btn || !label) return;
+    const countEl = document.getElementById('like-count');
+    const labelEl = document.getElementById('like-label');
+    if (!btn || !countEl || !labelEl) return;
 
-    // 读取初始状态
-    const sync = () => {
-      const liked = localStorage.getItem(likedKey) === '1';
+    const seed = seedFromPath(pageKey) % 40 + 5;   // 5 ~ 44
+    const localCount = (getStore()[pageKey] || 0);
+
+    function sync() {
+      const liked = localStorage.getItem('sos_liked_' + btoa(pageKey)) === '1';
+      const store = getStore();
+      const local = store[pageKey] || 0;
+      const total = seed + local;
+      countEl.textContent = total;
       btn.classList.toggle('is-liked', liked);
-      label.textContent = liked ? '已点赞' : '点赞';
+      labelEl.textContent = liked ? '已点赞' : '点赞';
       btn.setAttribute('aria-pressed', liked ? 'true' : 'false');
-      btn.title = liked ? '再次点击取消点赞' : '点赞这篇文章';
-    };
+      btn.title = liked ? '再次点击取消点赞' : '点赞这篇文章 (共 ' + total + ' 赞)';
+    }
 
     sync();
 
     btn.addEventListener('click', function () {
-      const liked = localStorage.getItem(likedKey) === '1';
+      const liked = localStorage.getItem('sos_liked_' + btoa(pageKey)) === '1';
+      const store = getStore();
+
       if (liked) {
-        localStorage.removeItem(likedKey);
+        // 取消: 数字 -1
+        store[pageKey] = Math.max(0, (store[pageKey] || 0) - 1);
+        localStorage.removeItem('sos_liked_' + btoa(pageKey));
         showToast('已取消点赞');
       } else {
-        localStorage.setItem(likedKey, '1');
-        // 点赞动画
+        // 点赞: 数字 +1
+        store[pageKey] = (store[pageKey] || 0) + 1;
+        setStore(store);
+        localStorage.setItem('sos_liked_' + btoa(pageKey), '1');
+
+        // 心跳动画
         btn.classList.remove('like-pulse');
         void btn.offsetWidth;
         btn.classList.add('like-pulse');
@@ -50,7 +86,7 @@
   }
 
   // ============================================================
-  // 2. 评论按钮 — 滚动到评论区,失败时给提示
+  // 2. 评论 - 滚动到占位提示(无 Giscus 报错)
   // ============================================================
   function initComments() {
     const btn = document.getElementById('btn-comment');
@@ -59,58 +95,25 @@
     btn.addEventListener('click', function (e) {
       e.preventDefault();
       const target = document.getElementById('comments-section');
-      if (!target) {
-        showToast('评论功能尚未配置');
-        return;
+      if (target) {
+        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      } else {
+        showToast('评论区尚未配置');
       }
-
-      // 平滑滚动到评论区
-      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-
-      // 检测 Giscus 是否成功加载(等待 3 秒)
-      setTimeout(() => {
-        const giscusFrame = document.querySelector('iframe.giscus-frame');
-        const errorEl = target.querySelector('.giscus-error, .giscus-loading-error');
-        if (errorEl || !giscusFrame) {
-          showCommentsConfigHint(target);
-        }
-      }, 3500);
     });
   }
 
-  function showCommentsConfigHint(section) {
-    if (section.querySelector('.comments-fallback')) return;
-
-    const hint = document.createElement('div');
-    hint.className = 'comments-fallback';
-    hint.innerHTML = `
-      <p>⚠️ Giscus 评论组件未加载成功。</p>
-      <p>可能原因:</p>
-      <ol>
-        <li>仓库 <code>stan-fuls/stan-fuls.github.io</code> 尚未启用 <strong>Discussions</strong></li>
-        <li>未安装 <a href="https://github.com/apps/giscus" target="_blank" rel="noopener">Giscus GitHub App</a></li>
-        <li><code>_config.yml</code> 中 <code>repo_id</code> / <code>category_id</code> 未填写</li>
-      </ol>
-      <p>请访问 <a href="https://giscus.app/zh-CN" target="_blank" rel="noopener">giscus.app</a> 生成配置后填入 <code>_config.yml</code>。</p>
-    `;
-    section.appendChild(hint);
-  }
-
   // ============================================================
-  // 3. 分享
+  // 3. 分享 - 始终使用固定弹窗
   // ============================================================
   function initShare() {
     const shareBtn = document.getElementById('btn-share');
     if (!shareBtn) return;
 
     const url = window.location.href;
-    const title = document.title.replace(/\s*\|\s*Share of Stam$/, '');
+    const title = (document.title || '').replace(/\s*\|\s*Share of Stam$/, '').trim() || '分享文章';
 
     shareBtn.addEventListener('click', function () {
-      if (navigator.share) {
-        navigator.share({ title: title, url: url }).catch(() => {});
-        return;
-      }
       showSharePanel(url, title);
     });
   }
@@ -119,28 +122,55 @@
     const existing = document.querySelector('.share-panel');
     if (existing) { existing.remove(); return; }
 
-    const encodedUrl = encodeURIComponent(url);
-    const encodedTitle = encodeURIComponent(title);
+    const enc = { u: encodeURIComponent(url), t: encodeURIComponent(title) };
 
     const panel = document.createElement('div');
     panel.className = 'share-panel';
     panel.innerHTML = `
       <div class="share-panel-inner">
-        <button class="share-option" data-action="copy" title="复制链接">
-          <span class="share-icon">🔗</span><span>复制链接</span>
-        </button>
-        <a class="share-option" href="https://twitter.com/intent/tweet?url=${encodedUrl}&text=${encodedTitle}" target="_blank" rel="noopener" title="分享到 Twitter/X">
-          <span class="share-icon">𝕏</span><span>Twitter</span>
-        </a>
-        <a class="share-option" href="https://service.weibo.com/share/share.php?url=${encodedUrl}&title=${encodedTitle}" target="_blank" rel="noopener" title="分享到微博">
-          <span class="share-icon">📢</span><span>微博</span>
-        </a>
-        <button class="share-option share-cancel">取消</button>
+        <h4 class="share-panel-title">分享到</h4>
+        <div class="share-grid">
+          <button class="share-option" data-action="wechat" title="微信">
+            <span class="share-icon wechat">💬</span><span>微信</span>
+          </button>
+          <button class="share-option" data-action="weibo" title="微博">
+            <span class="share-icon weibo">📢</span><span>微博</span>
+          </button>
+          <button class="share-option" data-action="qq" title="QQ">
+            <span class="share-icon qq">🐧</span><span>QQ</span>
+          </button>
+          <button class="share-option" data-action="twitter" title="Twitter / X">
+            <span class="share-icon twitter">𝕏</span><span>Twitter</span>
+          </button>
+          <button class="share-option" data-action="linkedin" title="LinkedIn">
+            <span class="share-icon linkedin">in</span><span>LinkedIn</span>
+          </button>
+          <button class="share-option" data-action="copy" title="复制链接">
+            <span class="share-icon copy">🔗</span><span>复制链接</span>
+          </button>
+        </div>
+        <button class="share-option share-cancel">关闭</button>
       </div>
       <div class="share-overlay"></div>
     `;
     document.body.appendChild(panel);
 
+    panel.querySelector('[data-action="wechat"]').addEventListener('click', () => {
+      copyToClipboard(url);
+      showToast('微信分享请粘贴链接 (或截图发好友)');
+    });
+    panel.querySelector('[data-action="weibo"]').addEventListener('click', () => {
+      window.open('https://service.weibo.com/share/share.php?url=' + enc.u + '&title=' + enc.t, '_blank');
+    });
+    panel.querySelector('[data-action="qq"]').addEventListener('click', () => {
+      window.open('https://connect.qq.com/widget/shareqq/index.html?url=' + enc.u + '&title=' + enc.t, '_blank');
+    });
+    panel.querySelector('[data-action="twitter"]').addEventListener('click', () => {
+      window.open('https://twitter.com/intent/tweet?url=' + enc.u + '&text=' + enc.t, '_blank');
+    });
+    panel.querySelector('[data-action="linkedin"]').addEventListener('click', () => {
+      window.open('https://www.linkedin.com/sharing/share-offsite/?url=' + enc.u, '_blank');
+    });
     panel.querySelector('[data-action="copy"]').addEventListener('click', () => {
       copyToClipboard(url);
       panel.remove();
@@ -150,7 +180,7 @@
   }
 
   function copyToClipboard(text) {
-    if (navigator.clipboard) {
+    if (navigator.clipboard && window.isSecureContext) {
       navigator.clipboard.writeText(text)
         .then(() => showToast('链接已复制到剪贴板'))
         .catch(() => fallbackCopy(text));
@@ -190,9 +220,6 @@
     }, 2000);
   }
 
-  // ============================================================
-  // 启动
-  // ============================================================
   document.addEventListener('DOMContentLoaded', function () {
     initLikes();
     initComments();

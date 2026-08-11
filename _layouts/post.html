@@ -39,7 +39,10 @@ layout: default
   <div class="post-interactions">
     <button id="btn-like" class="interaction-btn" aria-pressed="false" title="点赞这篇文章">
       <svg class="icon-heart" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
-      <span id="like-label">点赞</span>
+      <span class="like-content">
+        <span id="like-label">点赞</span>
+        <span id="like-count" class="like-count">0</span>
+      </span>
     </button>
 
     <button id="btn-comment" class="interaction-btn" title="查看评论">
@@ -60,7 +63,7 @@ layout: default
   </footer>
 </article>
 
-{% if site.comments.provider == 'giscus' %}
+{% if site.comments.provider == 'giscus' and site.comments.giscus.repo_id != '' and site.comments.giscus.category_id != '' %}
 <!-- Giscus 评论区 -->
 <section id="comments-section" class="comments-area">
   <h3 class="comments-title">💬 评论</h3>
@@ -80,5 +83,20 @@ layout: default
     crossorigin="anonymous"
     async>
   </script>
+</section>
+{% else %}
+<!-- 评论占位(等待 Giscus 配置完成) -->
+<section id="comments-section" class="comments-area">
+  <h3 class="comments-title">💬 评论</h3>
+  <div class="comments-placeholder">
+    <p>📭 评论功能尚未启用</p>
+    <p>本站使用 <a href="https://giscus.app/zh-CN" target="_blank" rel="noopener">Giscus</a> 作为评论系统,基于 GitHub Discussions 存储。需完成以下步骤:</p>
+    <ol>
+      <li>在 <code>stan-fuls/stan-fuls.github.io</code> 仓库启用 <strong>Discussions</strong></li>
+      <li>安装 <a href="https://github.com/apps/giscus" target="_blank" rel="noopener">Giscus GitHub App</a></li>
+      <li>访问 <a href="https://giscus.app/zh-CN" target="_blank" rel="noopener">giscus.app</a> 生成 <code>repo_id</code> 与 <code>category_id</code></li>
+      <li>填入 <code>_config.yml</code> 的 <code>comments.giscus</code> 段</li>
+    </ol>
+  </div>
 </section>
 {% endif %}
