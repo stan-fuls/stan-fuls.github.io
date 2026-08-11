@@ -11,14 +11,6 @@ layout: default
 
 {% assign unique_tags = all_tags | uniq | sort %}
 
-{% if unique_tags.size > 0 %}
-{% assign count = 0 %}
-{% for tag in unique_tags %}
-  {% assign tag_posts = site.posts | where_exp: "post", "post.tags contains tag" | sort: "date" | reverse %}
-  {% assign count = count | plus: tag_posts.size %}
-{% endfor %}
-{% endif %}
-
 <div class="archive-page">
   <header class="archive-header">
     <h1 class="archive-title">{{ page.title | default: "文章归档" }}</h1>
@@ -31,19 +23,22 @@ layout: default
   </div>
   {% else %}
 
-  <!-- 快速标签导航 -->
-  <nav class="tag-nav" aria-label="标签跳转">
-    <span class="tag-nav-label">跳转：</span>
+  <!-- 标签筛选导航 -->
+  <nav class="tag-nav" aria-label="标签筛选">
+    <span class="tag-nav-label">筛选标签：</span>
+    <button class="tag-reset" id="tag-reset" type="button">全部</button>
     {% for tag in unique_tags %}
-    <a href="#tag-{{ tag | slugify }}" class="tag-pill">{{ tag }} ({{ site.posts | where_exp: "post", "post.tags contains tag" | size }})</a>
+    <button class="tag-pill" type="button" data-tag="{{ tag | slugify }}" data-tag-name="{{ tag }}">
+      {{ tag }} ({{ site.posts | where_exp: "post", "post.tags contains tag" | size }})
+    </button>
     {% endfor %}
   </nav>
 
   <!-- 按标签分组 -->
-  <div class="tag-groups">
+  <div class="tag-groups" id="tag-groups">
     {% for tag in unique_tags %}
     {% assign tag_posts = site.posts | where_exp: "post", "post.tags contains tag" | sort: "date" | reverse %}
-    <section class="tag-group" id="tag-{{ tag | slugify }}">
+    <section class="tag-group" id="tag-{{ tag | slugify }}" data-tag="{{ tag | slugify }}">
       <h2 class="tag-group-name">
         <span class="tag-icon">🏷️</span>
         {{ tag }}
@@ -65,3 +60,5 @@ layout: default
   </div>
   {% endif %}
 </div>
+
+<script src="{{ '/assets/js/archive.js' | relative_url }}"></script>

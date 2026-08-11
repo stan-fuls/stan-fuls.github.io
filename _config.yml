@@ -96,7 +96,6 @@ exclude:
   - README-zh.md
   - node_modules
   - vendor
-  - /docs
   - /test
   - /tools
   - /screenshots

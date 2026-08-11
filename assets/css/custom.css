@@ -337,10 +337,10 @@
  * Archive Page - Tag-based grouping
  * ============================================ */
 
-.archive-page { max-width: var(--max-width); margin: 40px auto; padding: 0 20px; }
+.archive-page { max-width: var(--max-width); margin: 24px auto; padding: 0 20px; }
 
-.archive-header { text-align: center; margin-bottom: 32px; }
-.archive-title { font-size: 2rem; font-weight: 800; margin-bottom: 8px; }
+.archive-header { text-align: center; margin-bottom: 20px; }
+.archive-title { font-size: 1.7rem; font-weight: 800; margin-bottom: 6px; }
 .archive-desc { color: var(--color-text-light); font-size: 0.95rem; }
 .archive-desc strong { color: var(--color-primary); }
 
@@ -375,35 +375,57 @@
   text-decoration: none;
   transition: all 0.15s;
   white-space: nowrap;
+  cursor: pointer;
 }
 .tag-pill:hover {
   background: var(--color-primary);
   color: white;
   border-color: var(--color-primary);
 }
+.tag-pill.is-active {
+  background: var(--color-primary);
+  color: white;
+  border-color: var(--color-primary);
+}
+
+.tag-reset {
+  display: inline-block;
+  padding: 5px 14px;
+  background: transparent;
+  border: 1px dashed var(--color-border);
+  border-radius: 20px;
+  font-size: 0.82rem;
+  color: var(--color-text-light);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.tag-reset:hover { color: var(--color-text); border-color: var(--color-text-light); }
+.tag-reset.is-hidden { display: none; }
 
 /* Tag groups */
-.tag-groups { display: flex; flex-direction: column; gap: 28px; }
+.tag-groups { display: flex; flex-direction: column; gap: 14px; }
 
 .tag-group {
   background: var(--color-bg-card);
   border: 1px solid var(--color-border);
   border-radius: var(--radius);
-  padding: 24px 28px;
+  padding: 16px 22px;
   scroll-margin-top: 80px;
+  transition: opacity 0.2s;
 }
+.tag-group.is-hidden { display: none; }
 
 .tag-group-name {
-  font-size: 1.2rem;
+  font-size: 1.05rem;
   font-weight: 700;
-  margin-bottom: 16px;
+  margin-bottom: 10px;
   display: flex;
   align-items: center;
   gap: 6px;
 }
 .tag-icon { font-size: 1.1rem; }
 .tag-count {
-  font-size: 0.78rem;
+  font-size: 0.75rem;
   font-weight: 400;
   color: var(--color-text-light);
   background: var(--color-bg-alt);
@@ -412,14 +434,14 @@
   margin-left: 6px;
 }
 
-.tag-post-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 10px; }
+.tag-post-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 6px; }
 
 .tag-post-item {
   display: flex;
   align-items: center;
   flex-wrap: wrap;
   gap: 10px;
-  padding: 8px 0;
+  padding: 4px 0;
   border-bottom: 1px dashed var(--color-border);
 }
 .tag-post-item:last-child { border-bottom: none; }
