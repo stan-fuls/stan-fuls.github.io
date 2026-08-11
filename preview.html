@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>知识分享库 | hejie</title>
+<meta name="description" content="Workspace of He Jie - Share Of Daily! Life, Work and Other">
+
+<!-- Inline favicon -->
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%232563eb'/><text x='50' y='72' font-size='62' font-weight='bold' text-anchor='middle' fill='white' font-family='sans-serif'>W</text></svg>">
+
+<link rel="stylesheet" href="assets/css/main.css">
+<link rel="stylesheet" href="assets/css/custom.css">
+</head>
+<body>
+
+<div class="page-wrapper">
+
+<header class="site-header">
+  <div class="header-inner">
+    <a class="site-logo" href="preview.html">
+      <span class="site-logo-mark">W</span>
+      <span class="site-logo-text">hejie</span>
+    </a>
+    <nav class="site-nav">
+      <input type="checkbox" id="nav-toggle" class="nav-toggle-input">
+      <label for="nav-toggle" class="nav-toggle-label"><span></span><span></span><span></span></label>
+      <div class="nav-menu">
+        <a class="nav-link active" href="preview.html">首页</a>
+        <a class="nav-link" href="#archive">归档</a>
+        <a class="nav-link" href="#docs">文档</a>
+        <a class="nav-link" href="#about">关于</a>
+      </div>
+    </nav>
+  </div>
+</header>
+
+<main class="page-content">
+
+<div class="home-container">
+
+  <!-- Hero Section -->
+  <section class="hero-section">
+    <div class="hero-content">
+      <p class="hero-greeting">👋 你好，欢迎来到</p>
+      <h1 class="hero-title">知识分享库</h1>
+      <p class="hero-subtitle">Share Of Daily! Life, Work and Other</p>
+      <div class="hero-tags">
+        <span class="hero-tag">📝 博客</span>
+        <span class="hero-tag">📚 文档中心</span>
+        <span class="hero-tag">💡 知识管理</span>
+      </div>
+      <div class="hero-links">
+        <a href="#docs" class="hero-link hero-link-primary">浏览文档 →</a>
+        <a href="#archive" class="hero-link">所有文章</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Posts Section -->
+  <section class="posts-section" id="archive">
+    <h2 class="section-title">最新文章</h2>
+    <div class="post-list">
+
+      <article class="post-card">
+        <h3 class="post-card-title"><a href="#">欢迎来到我的知识分享库</a></h3>
+        <div class="post-card-meta">
+          <span class="post-date">📅 2026-08-10</span>
+          <span class="post-categories">
+            <span class="post-category">随笔</span>
+            <span class="post-category">技术</span>
+          </span>
+        </div>
+        <p class="post-card-excerpt">这是我的第一篇博客文章，欢迎来到我的知识分享平台！这个平台基于 Jekyll 和 GitHub Pages 构建，用于分享技术知识、学习笔记和日常工作心得…</p>
+        <a href="#" class="read-more">阅读更多 →</a>
+      </article>
+
+      <article class="post-card">
+        <h3 class="post-card-title"><a href="#">GitHub Pages 部署与自定义域名配置</a></h3>
+        <div class="post-card-meta">
+          <span class="post-date">📅 2026-08-09</span>
+          <span class="post-categories">
+            <span class="post-category">技术</span>
+            <span class="post-category">DevOps</span>
+          </span>
+        </div>
+        <p class="post-card-excerpt">GitHub Pages 是一个免费的静态网站托管服务，非常适合个人博客、项目文档和知识库的搭建。基本原理：GitHub Pages 直接从 GitHub 仓库托管静态网站…</p>
+        <a href="#" class="read-more">阅读更多 →</a>
+      </article>
+
+    </div>
+  </section>
+
+  <!-- Docs Preview Section -->
+  <section class="docs-page" id="docs">
+    <div class="docs-header">
+      <h1 class="docs-title">📚 文档中心</h1>
+      <div class="docs-controls">
+        <input type="text" id="docs-search" class="docs-search" placeholder="搜索文档..." autocomplete="off">
+        <select id="docs-category-filter" class="docs-filter">
+          <option value="">所有分类</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="docs-stats">
+      共 <span>0</span> 个文档
+    </div>
+
+    <div id="docs-container">
+      <div class="docs-empty">
+        <div class="docs-empty-icon">📖</div>
+        <h3>预览模式</h3>
+        <p>这是静态预览页面。在部署后的页面中，文档管理系统会通过 GitHub API 从独立仓库加载文档。</p>
+        <p>访问 <a href="#docs/api/">API 文档</a> 了解详情。</p>
+      </div>
+    </div>
+
+    <div id="docs-pagination" class="docs-pagination"></div>
+  </section>
+
+</div>
+
+</main>
+
+<footer class="site-footer">
+  <div class="footer-inner">
+    <div class="footer-info">
+      <p>&copy; 2026 hejie. All rights reserved.</p>
+      <p class="footer-powered">Powered by <a href="https://jekyllrb.com/">Jekyll</a> &amp; <a href="https://pages.github.com/">GitHub Pages</a></p>
+    </div>
+    <div class="footer-links">
+      <a href="https://github.com/stan-fuls" target="_blank" rel="noopener noreferrer">GitHub</a>
+      <a href="mailto:HJworkspace@163.com">Email</a>
+      <a href="#docs/api/">API 文档</a>
+    </div>
+  </div>
+</footer>
+
+</div>
+
+<button id="back-to-top" class="back-to-top">↑</button>
+
+<script src="assets/js/main.js"></script>
+</body>
+</html>

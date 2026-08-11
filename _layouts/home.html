@@ -5,12 +5,17 @@ layout: default
 <div class="home-container">
   <section class="hero-section">
     <div class="hero-content">
-      <h1 class="hero-title">{{ site.title }}</h1>
+      <p class="hero-greeting">👋 你好，欢迎来到</p>
+      <h1 class="hero-title">知识分享库</h1>
       <p class="hero-subtitle">{{ site.description }}</p>
+      <div class="hero-tags">
+        <span class="hero-tag">📝 博客</span>
+        <span class="hero-tag">📚 文档中心</span>
+        <span class="hero-tag">💡 知识管理</span>
+      </div>
       <div class="hero-links">
-        <a href="/about/" class="hero-link">关于我</a>
-        <a href="/archive/" class="hero-link">文章归档</a>
-        <a href="/docs/" class="hero-link hero-link-primary">文档中心</a>
+        <a href="/docs/" class="hero-link hero-link-primary">浏览文档 →</a>
+        <a href="/archive/" class="hero-link">所有文章</a>
       </div>
     </div>
   </section>
@@ -24,7 +29,7 @@ layout: default
           <a href="{{ post.url | relative_url }}">{{ post.title }}</a>
         </h3>
         <div class="post-card-meta">
-          <span class="post-date">{{ post.date | date: "%Y-%m-%d" }}</span>
+          <span class="post-date">📅 {{ post.date | date: "%Y-%m-%d" }}</span>
           {% if post.categories.size > 0 %}
           <span class="post-categories">
             {% for cat in post.categories %}
@@ -37,6 +42,10 @@ layout: default
         <a href="{{ post.url | relative_url }}" class="read-more">阅读更多 →</a>
       </article>
       {% endfor %}
+
+      {% if site.posts.size == 0 %}
+      <div class="post-empty">暂无文章，快去 _posts/ 目录添加第一篇吧 ✨</div>
+      {% endif %}
     </div>
   </section>
 </div>
