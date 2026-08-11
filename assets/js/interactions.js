@@ -67,7 +67,6 @@
       if (liked) {
         // 取消: 数字 -1
         store[pageKey] = Math.max(0, (store[pageKey] || 0) - 1);
-        setStore(store);   // ★ 写入 localStorage,否则刷新后计数回到旧值
         localStorage.removeItem('sos_liked_' + btoa(pageKey));
         showToast('已取消点赞');
       } else {
@@ -128,7 +127,6 @@
     const panel = document.createElement('div');
     panel.className = 'share-panel';
     panel.innerHTML = `
-      <div class="share-overlay"></div>
       <div class="share-panel-inner">
         <h4 class="share-panel-title">分享到</h4>
         <div class="share-grid">
@@ -153,6 +151,7 @@
         </div>
         <button class="share-option share-cancel">关闭</button>
       </div>
+      <div class="share-overlay"></div>
     `;
     document.body.appendChild(panel);
 
