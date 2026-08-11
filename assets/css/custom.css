@@ -13,6 +13,19 @@
 .docs-title { font-size: 1.8rem; font-weight: 800; margin-bottom: 8px; }
 .docs-subtitle { font-size: 0.95rem; color: var(--color-text-light); }
 .docs-subtitle code { background: var(--color-code-bg); padding: 2px 6px; border-radius: 4px; font-size: 0.88em; }
+.docs-template-hint {
+  margin-top: 10px;
+  font-size: 0.85rem;
+  color: var(--color-text-light);
+}
+.docs-template-hint a {
+  color: var(--color-primary);
+  font-weight: 600;
+  text-decoration: none;
+  border-bottom: 1px dashed transparent;
+  transition: border-color 0.2s;
+}
+.docs-template-hint a:hover { border-bottom-color: var(--color-primary); }
 
 /* Toolbar: search + time filter */
 .docs-toolbar {
@@ -47,6 +60,34 @@
   outline: none;
   color: var(--color-text);
 }
+
+/* View toggle buttons */
+.docs-view-toggle {
+  display: inline-flex;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  overflow: hidden;
+}
+.docs-view-btn {
+  padding: 8px 16px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  border: none;
+  background: transparent;
+  color: var(--color-text-light);
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+.docs-view-btn:hover { color: var(--color-text); background: var(--color-bg-card); }
+.docs-view-btn.is-active {
+  background: var(--color-primary);
+  color: #fff;
+}
+
+/* Tag group */
+.doc-tag-group { margin-bottom: 28px; }
+.doc-tag-heading { color: var(--color-primary); }
+.doc-tag-untagged .doc-group-heading { color: var(--color-text-light); }
 
 /* Loading */
 .docs-loading {

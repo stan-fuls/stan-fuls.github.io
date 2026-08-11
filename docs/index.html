@@ -9,14 +9,23 @@ permalink: /docs/
   <header class="docs-header">
     <h1 class="docs-title">📚 文档中心</h1>
     <p class="docs-subtitle">技术文档阅览，数据来源于独立知识仓库 <code>stan-fuls/knowledge-docs</code></p>
+    <p class="docs-template-hint">
+      📥 <a href="https://raw.githubusercontent.com/stan-fuls/stan-fuls.github.io/master/docs/_templates/document.md" target="_blank" rel="noopener">下载 Obsidian 文档模板</a>
+      &nbsp;·&nbsp;
+      <a href="https://github.com/stan-fuls/knowledge-docs" target="_blank" rel="noopener">前往文档仓库</a>
+    </p>
   </header>
 
-  <!-- 搜索栏 + 按时间过滤 -->
-  <div class="docs-toolbar">
+  <!-- 工具栏:搜索 + 视图切换 + 时间过滤 -->
+  <div class="docs-toolbar" id="docs-toolbar">
     <div class="docs-search">
       <input type="text" id="docs-search-input" placeholder="🔍 搜索文档..." autocomplete="off">
     </div>
-    <div class="docs-time-filter">
+    <div class="docs-view-toggle">
+      <button id="docs-view-time" class="docs-view-btn is-active" title="按时间段分组">📅 时间段</button>
+      <button id="docs-view-tag"  class="docs-view-btn"             title="按标签归档">🏷️ 标签归档</button>
+    </div>
+    <div class="docs-time-filter" id="docs-time-filter">
       <select id="docs-time-range">
         <option value="all">全部时间</option>
         <option value="6months">最近半年</option>
@@ -42,9 +51,8 @@ permalink: /docs/
     </ol>
   </div>
 
-  <!-- 按时间段分组的文档列表 -->
+  <!-- 文档列表 (docs.js 动态渲染) -->
   <div id="docs-container" class="docs-container" style="display:none;">
-    <!-- 由 docs.js 动态渲染 -->
   </div>
 </div>
 

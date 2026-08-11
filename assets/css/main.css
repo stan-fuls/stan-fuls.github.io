@@ -62,11 +62,39 @@ img { max-width: 100%; height: auto; }
 }
 
 .site-logo {
-  font-size: 1.2rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 1.05rem;
   font-weight: 700;
   color: var(--color-text);
+  text-decoration: none;
+  white-space: nowrap;
 }
 .site-logo:hover { text-decoration: none; color: var(--color-primary); }
+
+.site-logo-mark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  background: linear-gradient(135deg, var(--color-primary), #7c3aed);
+  color: #fff;
+  font-weight: 800;
+  font-size: 1rem;
+  letter-spacing: -0.5px;
+  box-shadow: 0 2px 6px rgba(37, 99, 235, 0.25);
+}
+
+.site-logo-text {
+  background: linear-gradient(135deg, var(--color-primary), #7c3aed);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-weight: 700;
+}
 
 .site-nav { display: flex; align-items: center; }
 
