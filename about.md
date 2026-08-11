@@ -1,6 +1,7 @@
 ---
 layout: article
 title: "关于我"
+permalink: /about/
 key: about
 show_title: true
 toc: false
