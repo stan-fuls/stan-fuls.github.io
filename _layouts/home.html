@@ -1,43 +1,42 @@
 ---
-layout: articles
-titles:
-  # @start locale config
-  en      : &EN       Home
-  en-GB   : *EN
-  en-US   : *EN
-  en-CA   : *EN
-  en-AU   : *EN
-  zh-Hans : &ZH_HANS  主页
-  zh      : *ZH_HANS
-  zh-CN   : *ZH_HANS
-  zh-SG   : *ZH_HANS
-  zh-Hant : &ZH_HANT  主頁
-  zh-TW   : *ZH_HANT
-  zh-HK   : *ZH_HANT
-  ko      : &KO       홈
-  ko-KR   : *KO
-  fr      : &FR       Accueil
-  fr-BE   : *FR
-  fr-CA   : *FR
-  fr-CH   : *FR
-  fr-FR   : *FR
-  fr-LU   : *FR
-  tr      : &TR       Ana Sayfa
-  # @end locale config
-show_title: false
-articles:
-  data_source: paginator.posts
-  article_type: BlogPosting
-  show_cover: false
-  show_excerpt: true
-  show_readmore: true
-  show_info: true
+layout: default
 ---
-<div class="layout--home">
-  {%- include paginator.html -%}
-</div>
-<script>
-  {%- include scripts/home.js -%}
-</script>
 
-{{ content }}
+<div class="home-container">
+  <section class="hero-section">
+    <div class="hero-content">
+      <h1 class="hero-title">{{ site.title }}</h1>
+      <p class="hero-subtitle">{{ site.description }}</p>
+      <div class="hero-links">
+        <a href="/about/" class="hero-link">关于我</a>
+        <a href="/archive/" class="hero-link">文章归档</a>
+        <a href="/docs/" class="hero-link hero-link-primary">文档中心</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="posts-section">
+    <h2 class="section-title">最新文章</h2>
+    <div class="post-list">
+      {% for post in site.posts limit:8 %}
+      <article class="post-card">
+        <h3 class="post-card-title">
+          <a href="{{ post.url | relative_url }}">{{ post.title }}</a>
+        </h3>
+        <div class="post-card-meta">
+          <span class="post-date">{{ post.date | date: "%Y-%m-%d" }}</span>
+          {% if post.categories.size > 0 %}
+          <span class="post-categories">
+            {% for cat in post.categories %}
+            <span class="post-category">{{ cat }}</span>
+            {% endfor %}
+          </span>
+          {% endif %}
+        </div>
+        <p class="post-card-excerpt">{{ post.excerpt | strip_html | truncate: 160 }}</p>
+        <a href="{{ post.url | relative_url }}" class="read-more">阅读更多 →</a>
+      </article>
+      {% endfor %}
+    </div>
+  </section>
+</div>

@@ -1,0 +1,14 @@
+{% assign nav_header = include.html | split: '<h' %}
+{% for header_str in nav_header offset:1 %}
+  {% assign level = header_str | slice: 0, 1 | plus: 0 %}
+  {% if level >= 1 and level <= 3 %}
+    {% assign title_part = header_str | split: '</h' | first %}
+    {% assign title_text = title_part | split: '>' | last | strip_html | strip %}
+    {% assign id_text = title_text | slugify: 'ascii' %}
+    {% if title_text != '' %}
+      <li class="toc-{{ level }}">
+        <a href="#{{ id_text }}">{{ title_text }}</a>
+      </li>
+    {% endif %}
+  {% endif %}
+{% endfor %}

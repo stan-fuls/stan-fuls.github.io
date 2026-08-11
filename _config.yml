@@ -1,228 +1,136 @@
-# Welcome to Jekyll!
-#
-# This config file is meant for settings that affect your whole blog, values
-# which you are expected to set up once and rarely need to edit after that.
-# For technical reasons, this file is *NOT* reloaded automatically when you use
-# 'jekyll serve'. If you change this file, please restart the server process.
-#
-# ,--------.      ,--.   ,--. ,--.
-# '--.  .--',---.  \  `.'  /,-'  '-.
-#    |  |  | .-. :  .'    \ '-.  .-'
-#    |  |  \   --. /  .'.  \  |  |
-#    `--'   `----''--'   '--' `--'
+# ===========================================
+# Workspace of He Jie - Knowledge Sharing Hub
+# ===========================================
 
-
-
-
-## => Site Settings
-##############################
-text_skin: default # "default" (default), "dark", "forest", "ocean", "chocolate", "orange"
-highlight_theme: default # "default" (default), "tomorrow", "tomorrow-night", "tomorrow-night-eighties", "tomorrow-night-blue", "tomorrow-night-bright"
-url     : # the base hostname & protocol for your site e.g. https://www.someone.com
-baseurl : # does not include hostname
-title   : Workspace of He Jie
-description: > # this means to ignore newlines until "Language & timezone"
-  Share Of Dayly!   Life、Work and Other
-
-## => Language and Timezone
-##############################
-lang: # zh-Hans # the language of your site, default as "en"
-timezone: Asia/Shanghai # see https://en.wikipedia.org/wiki/List_of_tz_database_time_zones for the available values
-
-
-## => Author and Social
-##############################
-author:
-  type      : person # "person" (default), "organization"
-  name      : hejie
-  url       :
-  avatar    : # path or url of avatar image (square)
-  bio       : I am an amazing person.
-  email     : HJworkspace@163.com
-  facebook  : # "user_name" the last part of your profile url, e.g. https://www.facebook.com/user_name
-  twitter   : # "user_name" the last part of your profile url, e.g. https://twitter.com/user_name
-  weibo     : # "user_id"   the last part of your profile url, e.g. https://www.weibo.com/user_id/profile?...
-  googleplus: # "user_id"   the last part of your profile url, e.g. https://plus.google.com/u/0/user_id
-  telegram  : # "user_name" the last part of your profile url, e.g. https://t.me/user_name
-  medium    : # "user_name" the last part of your profile url, e.g. https://medium.com/user_name
-  zhihu     : # "user_name" the last part of your profile url, e.g. https://www.zhihu.com/people/user_name
-  douban    : # "user_name" the last part of your profile url, e.g. https://www.douban.com/people/user_name
-  linkedin  : # "user_name" the last part of your profile url, e.g. https://www.linkedin.com/in/user_name
-  github    : # "user_name" the last part of your profile url, e.g. https://github.com/user_name
-  npm       : # "user_name" the last part of your profile url, e.g. https://www.npmjs.com/~user_name
-
-
-## => GitHub Repository (if the site is hosted by GitHub)
-##############################
+# --- Site Settings ---
+title: Workspace of He Jie
+description: Share Of Daily! Life, Work and Other
+text_skin: default
+highlight_theme: default
+url: ""
+baseurl: ""
+timezone: Asia/Shanghai
 repository: stan-fuls/stan-fuls.github.io
-repository_tree: master
+branch: master
 
+# --- Author Info ---
+author:
+  type: person
+  name: hejie
+  bio: I am an amazing person.
+  email: HJworkspace@163.com
+  github: stan-fuls
+  avatar: /assets/images/avatar.png
 
-## => Paths
-##############################
-paths:
-  root    : # title link url, "/" (default)
-  home    : # home layout url, "/" (default)
-  archive : # "/archive.html" (default)
-  rss     : # "/feed.xml" (default)
-
-
-## => Post
-##############################
-## excerpt
-excerpt_separator: <!--more-->
-excerpt_type:  # text (default), html
-
-## license
-license: CC-BY-NC-4.0 # "CC-BY-4.0", "CC-BY-SA-4.0", "CC-BY-NC-4.0", "CC-BY-ND-4.0"
-
-## TOC
+# --- Content ---
+paginate: 8
+paginate_path: /page:num
+excerpt_separator: "<!--more-->"
+license: CC-BY-NC-4.0
 toc:
-  selectors: # "h1,h2,h3" (default)
+  selectors: "h1,h2,h3"
 
+# --- Features ---
+mathjax: true
+mathjax_autoNumber: true
+mermaid: true
+chart: true
 
-## => Markdown Enhancements
-##############################
-## Mathjax
-mathjax: true # false (default), true
-mathjax_autoNumber: true # false (default), true
-
-## Mermaid
-mermaid: true # false (default), true
-
-## Chart
-chart: true # false (default), true
-
-
-## => Paginate
-##############################
-paginate: 8 # 每页显示文章的最大个数
-paginate_path: /page:num # don't change this unless for special need 指定分页页面的地址
-
-
-## => Sources
-##############################
-sources: # bootcdn (default), unpkg CDN源地址
-
-
-# => Sharing
-#############################
-# 分享暂时做屏蔽，addthis账号未做处理
+# Share (disabled)
 sharing:
-  provider: # addtoany # false (default), "addtoany", "addthis", "custom"
+  provider: false
 
-  ## AddThis
-  #comments:
-  #  provider: addthis
-    addthis:
-      id: # "your-addthis-pubid" # AddThis pubid, e.g. ra-5xxxxxxxxxxx
-
-
-## => Comments
-##############################
+# Comments (disabled)
 comments:
-  provider: false # false (default), "disqus", "gitalk", "valine", "custom"
+  provider: false
 
-  ## Disqus
-  disqus:
-    shortname: # the Disqus shortname for the site
-
-  ## Gitalk
-  # please refer to https://github.com/gitalk/gitalk for more info.
-  gitalk:
-    clientID    : # GitHub Application Client ID
-    clientSecret: # GitHub Application Client Secret
-    repository  : # GitHub repo
-    owner       : # GitHub repo owner
-    admin: # GitHub repo owner and collaborators, only these guys can initialize GitHub issues, IT IS A LIST.
-      # - your GitHub Id
-
-  ## Valine
-  # please refer to https://valine.js.org/en/ for more info.
-  valine:
-    app_id      : # LeanCloud App id
-    app_key     : # LeanCloud App key
-    placeholder : # Prompt information
-    visitor     : # false (default)
-    meta        : # "[nick, mail, link]" (default) nickname, E-mail, Personal-site
-
-
-## => Pageview
-##############################
+# Page view (disabled)
 pageview:
-  provider: false # false (default), "leancloud", "custom"
+  provider: false
 
-  ## Leancloud
-  leancloud:
-    app_id    : # LeanCloud App id
-    app_key   : # LeanCloud App key
-    app_class : # LeanCloud App class
-
-
-## => Search
-##############################
+# Search (default built-in)
 search:
-  provider: default # "default" (default), false, "google", "custom"
+  provider: default
 
-  ## Google Custom Search Engine
-  google:
-    custom_search_engine_id: # Google Custom Search Engine ID
-
-
-## => Analytics
-##############################
+# Analytics (disabled)
 analytics:
-  provider: false # false (default), "google", "custom"
+  provider: false
 
-  ## Google Analytics
-  google:
-    tracking_id : # Google Analytics id for the site
-    anonymize_ip: false # Anonymize IP tracking for Analytics
+# --- Plugins ---
+plugins:
+  - jekyll-feed
+  - jekyll-paginate
+  - jekyll-sitemap
+  - jemoji
 
+# --- Markdown ---
+markdown: kramdown
+highlighter: rouge
+permalink: date
 
-## => Build
-##############################
-markdown    : kramdown
-highlighter : rouge
-permalink   : date
+# --- Defaults ---
+defaults:
+  - scope:
+      path: ""
+      type: posts
+    values:
+      layout: post
+      author: hejie
+  - scope:
+      path: ""
+      type: pages
+    values:
+      layout: page
+  - scope:
+      path: ""
+    values:
+      layout: article
 
+# --- Exclude ---
 exclude:
   - CHANGELOG.md
   - HOW_TO_RELEASE.md
   - Gemfile
   - Gemfile.lock
   - LICENSE
-  - README-*.md
   - README.md
-  - gulpfile.js
-  - jekyll-text-theme.gemspec
-  - package-lock.json
-  - package.json
+  - README-zh.md
+  - node_modules
+  - vendor
   - /docs
-  - /node_modules
-  - /screenshots
   - /test
-  - /vendor
+  - /tools
+  - /screenshots
+  - /docker
 
-defaults:
-  - scope:
-      path: ""
-      type: posts
-    values:
-      layout: article
-      sharing: true
-      license: true
-      aside:
-        toc: true
-      show_edit_on_github: true
-      show_subscribe: true
-      pageview: true
+# ===========================================
+# Document Management System (NEW FEATURE)
+# ===========================================
+# Store documents in a separate GitHub repo.
+# This repo serves as the web frontend & API gateway.
+#
+docs_repo:
+  # GitHub username/org that owns the doc repo
+  owner: stan-fuls
+  # Repository name for document storage
+  repo: knowledge-docs
+  # Branch to fetch documents from
+  branch: main
+  # Root directory in the doc repo where markdown files are stored
+  base_path: ""
+  # GitHub API token (optional, for higher rate limits)
+  # Set this via environment variable GITHUB_TOKEN instead of hardcoding
+  # token: ""
 
-
-## => Plugins
-##############################
-plugins:
-  - jekyll-feed
-  - jekyll-paginate
-  - jekyll-sitemap
-  - jemoji
+# Docs page settings
+docs_settings:
+  # Page title
+  title: "文档中心"
+  # Items per page
+  per_page: 12
+  # Enable search
+  search: true
+  # Enable category filter
+  categories: true
+  # Enable tag filter
+  tags: true

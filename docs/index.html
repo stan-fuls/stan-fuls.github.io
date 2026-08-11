@@ -1,0 +1,44 @@
+---
+layout: page
+title: 文档中心
+permalink: /docs/
+show_title: false
+---
+
+<!-- Config injected via meta tags for JS consumption -->
+<meta name="docs-owner" content="{{ site.docs_repo.owner }}">
+<meta name="docs-repo" content="{{ site.docs_repo.repo }}">
+<meta name="docs-branch" content="{{ site.docs_repo.branch }}">
+<meta name="docs-base-path" content="{{ site.docs_repo.base_path }}">
+
+<div class="docs-page">
+  <div class="docs-header">
+    <h1 class="docs-title">📚 文档中心</h1>
+    <div class="docs-controls">
+      <input type="text" id="docs-search" class="docs-search" placeholder="搜索文档..." autocomplete="off">
+      <select id="docs-category-filter" class="docs-filter">
+        <option value="">所有分类</option>
+      </select>
+    </div>
+  </div>
+
+  <div id="docs-stats" class="docs-stats">正在加载...</div>
+
+  <div id="docs-container">
+    <div class="docs-empty">
+      <div class="loading-spinner"></div>
+      <p>正在从文档仓库加载...</p>
+    </div>
+  </div>
+
+  <div id="docs-pagination" class="docs-pagination"></div>
+
+  <div style="margin-top:48px; padding:20px; background:var(--color-bg-alt); border-radius:var(--radius); font-size:0.85rem; color:var(--color-text-light);">
+    <p><strong>📖 关于文档中心</strong></p>
+    <p>文档存储在独立的 GitHub 仓库 <a href="https://github.com/{{ site.docs_repo.owner }}/{{ site.docs_repo.repo }}" target="_blank">{{ site.docs_repo.owner }}/{{ site.docs_repo.repo }}</a> 中。</p>
+    <p>只需在该仓库中添加 Markdown（.md）文件，即可在此页面浏览和检索。支持 YAML Frontmatter 定义标题、分类、标签等元数据。</p>
+    <p>查看 <a href="/docs/api/">API 接口文档</a> 了解更多。</p>
+  </div>
+</div>
+
+<script src="{{ '/assets/js/docs.js' | relative_url }}"></script>
