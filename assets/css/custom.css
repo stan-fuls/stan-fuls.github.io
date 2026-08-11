@@ -494,24 +494,13 @@
 }
 
 /* ---- Giscus 评论区 ---- */
-.comments-area {
-  max-width: 720px;             /* 适度收窄 */
-  margin: 40px auto;
-  padding: 20px 24px;
-  background: var(--color-bg-card);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius);
-  overflow: hidden;             /* 防止 iframe 撑破容器 */
-}
-.comments-area .giscus,
-.comments-area iframe {
-  max-height: 600px;            /* 限制评论 iframe 高度,避免过高 */
-  overflow-y: auto;
+#comments-section {
+  margin: 32px 0 24px;
 }
 .comments-title {
-  font-size: 1.15rem;
+  font-size: 1.05rem;
   font-weight: 700;
-  margin-bottom: 16px;
+  margin-bottom: 14px;
 }
 
 /* 评论加载失败时的回退提示 */
@@ -540,10 +529,7 @@
 
 /* 评论占位提示(Giscus 未配置) */
 .comments-placeholder {
-  padding: 20px 22px;
-  background: var(--color-bg-alt);
-  border: 1px dashed var(--color-border);
-  border-radius: 8px;
+  padding: 8px 0;
   color: var(--color-text-light);
   font-size: 0.9rem;
   line-height: 1.7;

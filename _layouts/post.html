@@ -65,7 +65,7 @@ layout: default
 
 {% if site.comments.provider == 'giscus' and site.comments.giscus.repo_id != '' and site.comments.giscus.category_id != '' %}
 <!-- Giscus 评论区 -->
-<section id="comments-section" class="comments-area">
+<section id="comments-section">
   <h3 class="comments-title">💬 评论</h3>
   <script src="https://giscus.app/client.js"
     data-repo="{{ site.comments.giscus.repo }}"
@@ -86,7 +86,7 @@ layout: default
 </section>
 {% else %}
 <!-- 评论占位(等待 Giscus 配置完成) -->
-<section id="comments-section" class="comments-area">
+<section id="comments-section">
   <h3 class="comments-title">💬 评论</h3>
   <div class="comments-placeholder">
     <p>📭 评论功能尚未启用</p>

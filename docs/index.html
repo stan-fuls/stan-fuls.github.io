@@ -42,7 +42,7 @@ window.DOCS_REPO_CONFIG = {
   owner:    "{{ site.docs_repo.owner }}",
   repo:     "{{ site.docs_repo.repo }}",
   branch:   "{{ site.docs_repo.branch }}",
-  token:    "{{ site.docs_repo.token }}",
+  token:    "",                           // Token 存储在 GitHub Actions Secret 中,由构建脚本使用
   siteBase: "{{ site.baseurl }}"
 };
 </script>
