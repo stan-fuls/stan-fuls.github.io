@@ -39,9 +39,23 @@ chart: true
 sharing:
   provider: false
 
-# Comments (disabled)
+# Comments — Giscus (基于 GitHub Discussions)
+# 使用前请执行以下步骤:
+#   1. 在仓库 Settings → General → Features 中勾选 Discussions
+#   2. 访问 https://github.com/apps/giscus 安装 Giscus App
+#   3. 访问 https://giscus.app/zh-CN 填写仓库名,获取 repo_id / category / category_id
 comments:
-  provider: false
+  provider: giscus
+  giscus:
+    repo: stan-fuls/stan-fuls.github.io
+    repo_id: ""
+    category: "Announcements"
+    category_id: ""
+    mapping: pathname
+    reactions_enabled: "1"
+    theme: light
+    lang: zh-CN
+    input_position: bottom
 
 # Page view (disabled)
 pageview:

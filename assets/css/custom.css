@@ -419,6 +419,146 @@
 }
 
 /* ============================================
+ * Post interaction bar: 点赞 / 评论 / 分享
+ * ============================================ */
+
+.post-interactions {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  margin: 32px 0 20px;
+  padding: 14px 0;
+  border-top: 1px solid var(--color-border);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.interaction-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 18px;
+  border: 1px solid var(--color-border);
+  border-radius: 24px;
+  background: var(--color-bg-card);
+  color: var(--color-text-light);
+  font-size: 0.88rem;
+  font-weight: 500;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.2s;
+  user-select: none;
+}
+.interaction-btn:hover {
+  color: var(--color-primary);
+  border-color: var(--color-primary);
+  background: rgba(37,99,235,0.04);
+}
+
+/* liked 状态 */
+#btn-like.is-liked {
+  color: #e11d48;
+  border-color: #fecdd3;
+  background: #fff1f2;
+  cursor: default;
+}
+#btn-like.is-liked .icon-heart {
+  fill: #e11d48;
+  stroke: #e11d48;
+}
+
+/* 点赞数字弹跳动画 */
+.like-pop {
+  animation: likeBounce 0.4s ease;
+}
+@keyframes likeBounce {
+  0%   { transform: scale(1); }
+  50%  { transform: scale(1.4); }
+  100% { transform: scale(1); }
+}
+
+/* ---- Giscus 评论区 ---- */
+.comments-area {
+  max-width: var(--max-width);
+  margin: 40px auto;
+  padding: 20px 24px;
+  background: var(--color-bg-card);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+}
+.comments-title {
+  font-size: 1.15rem;
+  font-weight: 700;
+  margin-bottom: 16px;
+}
+
+/* ---- 分享面板 (桌面端) ---- */
+.share-panel { position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: 500; }
+.share-overlay {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.35);
+}
+.share-panel-inner {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  background: var(--color-bg-card);
+  border-radius: 16px 16px 0 0;
+  padding: 20px 24px 32px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+  animation: slideUp 0.2s ease;
+}
+
+.share-option {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 14px 18px;
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  background: transparent;
+  color: var(--color-text);
+  font-size: 0.82rem;
+  cursor: pointer;
+  text-decoration: none;
+  min-width: 72px;
+  transition: all 0.15s;
+}
+.share-option:hover {
+  border-color: var(--color-primary);
+  background: rgba(37,99,235,0.05);
+}
+.share-option .share-icon { font-size: 1.3rem; }
+.share-cancel {
+  width: 100%;
+  margin-top: 6px;
+  border: none;
+  background: var(--color-bg-alt);
+  color: var(--color-text-light);
+}
+
+/* Toast */
+.interaction-toast {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%) translateY(10px);
+  background: #1e293b;
+  color: #fff;
+  padding: 10px 22px;
+  border-radius: 8px;
+  font-size: 0.88rem;
+  z-index: 600;
+  opacity: 0;
+  transition: all 0.25s;
+}
+.interaction-toast.is-visible { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+/* ============================================
  * About page
  * ============================================ */
 

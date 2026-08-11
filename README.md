@@ -20,10 +20,27 @@
 
 通过 GitHub API 从独立仓库 `stan-fuls/obsidian-knowledge-docs` 读取 Markdown 文档（支持私有库，需配置 Token）。
 
+- **递归遍历**：使用 Git Trees API 拉取仓库所有子文件夹中的 `.md` 文件
 - **搜索**：按标题、描述、标签实时过滤
 - **排序**：按创建时间倒序排列（最新在前）
 
 配置见 `_config.yml` 的 `docs_repo` 段。
+
+## 文章互动功能
+
+每篇博客文章底部提供三项互动：
+
+| 功能 | 实现方式 | 说明 |
+|------|----------|------|
+| **点赞** | localStorage | 同一篇文章同一浏览器仅可点赞一次 |
+| **评论** | Giscus (GitHub Discussions) | 免费开源，需先在仓库启用 Discussions |
+| **分享** | Web Share API + 复制链接 | 移动端原生分享，桌面端弹出面板 |
+
+### Giscus 评论配置
+
+1. 在仓库 Settings → Features 中勾选 **Discussions**
+2. 访问 [https://giscus.app/zh-CN](https://giscus.app/zh-CN) 填写仓库名获取配置
+3. 将 `repo_id` / `category_id` 填入 `_config.yml` 的 `comments.giscus` 段
 
 ## 部署
 

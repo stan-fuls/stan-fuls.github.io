@@ -1,34 +1,35 @@
 /* ================================================================
  * docs.js — 文档中心
- *   从 stan-fuls/obsidian-knowledge-docs 拉取 Markdown 文档
+ *   使用 Git Trees API 递归遍历仓库所有子文件夹中的 .md 文件
  *   支持私有库(需 Personal Access Token)
  * ================================================================ */
 
 (function () {
   'use strict';
 
-  // 由 docs/index.html 通过 Liquid 模板注入
   var CONFIG = window.DOCS_REPO_CONFIG || {};
-
   var REPO_OWNER = CONFIG.owner || 'stan-fuls';
   var REPO_NAME  = CONFIG.repo  || 'obsidian-knowledge-docs';
   var TOKEN      = CONFIG.token || '';
-  var API_BASE   = 'https://api.github.com/repos/' + REPO_OWNER + '/' + REPO_NAME + '/contents/';
-  var CACHE_KEY  = 'docs_cache';
+  var BRANCH     = CONFIG.branch || 'main';
+
+  var TREE_API   = 'https://api.github.com/repos/' + REPO_OWNER + '/' + REPO_NAME + '/git/trees/' + BRANCH + '?recursive=1';
+  var RAW_BASE   = 'https://raw.githubusercontent.com/' + REPO_OWNER + '/' + REPO_NAME + '/' + BRANCH + '/';
+
+  var CACHE_KEY  = 'docs_cache_v2';
   var CACHE_TTL  = 10 * 60 * 1000;
 
-  // GitHub API 请求头(有 Token 则带认证)
   function apiHeaders() {
     var h = { 'Accept': 'application/vnd.github.v3+json' };
     if (TOKEN) h['Authorization'] = 'token ' + TOKEN;
     return h;
   }
 
-  var allDocs    = [];
-  var $list      = null;
-  var $loading   = null;
-  var $error     = null;
-  var $search    = null;
+  var allDocs  = [];
+  var $list    = null;
+  var $loading = null;
+  var $error   = null;
+  var $search  = null;
 
   function init() {
     $list    = document.getElementById('docs-list');
@@ -40,7 +41,7 @@
     loadDocs();
   }
 
-  // --------------- 加载 ---------------
+  // --------------- 核心:递归拉取 ---------------
 
   function loadDocs() {
     var cached = getCache();
@@ -50,19 +51,31 @@
       render();
     }
 
-    fetch(API_BASE, { headers: apiHeaders() })
+    // Step 1: 用 Git Trees API 获取整个仓库的文件树
+    fetch(TREE_API, { headers: apiHeaders() })
       .then(function (res) {
-        if (res.status === 404) throw new Error('仓库不存在或未授权(私有库需要 Token)');
-        if (!res.ok) throw new Error('HTTP ' + res.status);
+        if (res.status === 404) throw new Error('仓库不存在或未授权(私有库需 Token)');
+        if (!res.ok) throw new Error('HTTP ' + res.status + ': ' + res.statusText);
         return res.json();
       })
-      .then(function (files) {
-        var mds = Array.isArray(files)
-          ? files.filter(function (f) { return f.type === 'file' && /\.md$/i.test(f.name); })
-          : [];
-        return Promise.all(mds.map(fetchMeta));
+      .then(function (treeData) {
+        // Step 2: 过滤出所有 .md 文件
+        var mdFiles = (treeData.tree || []).filter(function (item) {
+          return item.type === 'blob' && /\.md$/i.test(item.path || '');
+        });
+
+        if (mdFiles.length === 0) {
+          throw new Error('仓库中未找到 .md 文档');
+        }
+
+        // Step 3: 并行拉取每个 md 文件的内容并解析 frontmatter
+        var fetchers = mdFiles.map(function (item) {
+          return fetchRawAndParse(item.path);
+        });
+        return Promise.all(fetchers);
       })
       .then(function (docs) {
+        // 按日期倒序
         allDocs = docs.sort(function (a, b) {
           return (b.date || '').localeCompare(a.date || '');
         });
@@ -79,36 +92,67 @@
           if ($loading) $loading.style.display = 'none';
           if ($error) {
             $error.style.display = 'block';
-            // 私有库提示更明确的错误信息
-            if (!TOKEN && err.message.indexOf('404') > -1) {
+            if (!TOKEN && (err.message.indexOf('404') > -1 || err.message.indexOf('401') > -1)) {
               $error.innerHTML =
-                '<p>⚠️ 无法加载文档列表。仓库是私有库，请在 <code>_config.yml</code> 中配置 <code>docs_repo.token</code></p>' +
-                '<ol><li>访问 <a href="https://github.com/settings/tokens" target="_blank">GitHub Token 设置</a></li>' +
-                '<li>创建 Fine-grained token，仅授权 <code>stan-fuls/obsidian-knowledge-docs</code> 读取权限</li>' +
-                '<li>填入 _config.yml 的 docs_repo.token 字段</li></ol>';
+                '<p>⚠️ 无法拉取文档。仓库可能是私有库，请配置 Token</p>' +
+                '<ol><li><a href="https://github.com/settings/tokens" target="_blank">创建 GitHub Token</a></li>' +
+                '<li>填入 _config.yml 的 docs_repo.token</li></ol>';
             }
           }
         }
       });
   }
 
-  function fetchMeta(file) {
-    return fetch(file.url, { headers: apiHeaders() })
-      .then(function (r) { return r.json(); })
-      .then(function (d) {
-        var raw  = atob(d.content);
-        var meta = parseFM(raw);
-        return {
-          name:     file.name,
-          path:     file.path,
-          title:    meta.title  || file.name.replace(/\.md$/i, ''),
-          date:     meta.date   || '',
-          desc:     meta.description || '',
-          category: meta.category || '',
-          tags:     normTags(meta.tags),
-          htmlUrl:  d.html_url  || ''
-        };
-      });
+  // 直接通过 raw URL 获取文件内容(不走 API,不需要 Token 也可用公开库)
+  // 对于私有库,改用 contents API 通过 Token 获取
+  function fetchRawAndParse(fpath) {
+    var rawUrl = RAW_BASE + fpath;
+    var fetchOpts = {};
+    if (TOKEN) {
+      // 私有库:通过 contents API 获取(带认证)
+      var contentsUrl = 'https://api.github.com/repos/' + REPO_OWNER + '/' + REPO_NAME + '/contents/' + fpath;
+      return fetch(contentsUrl, { headers: apiHeaders() })
+        .then(function (r) {
+          if (!r.ok) throw new Error('获取文件失败: ' + fpath + ' HTTP ' + r.status);
+          return r.json();
+        })
+        .then(function (d) {
+          var raw = atob(d.content.replace(/\s/g, ''));
+          // 确保 base64 正确解码: 标准 base64
+          try {
+            raw = atob(d.content);
+          } catch (e2) {
+            // 某些特殊字符可能导致解码失败,尝试修复换行符
+            try { raw = atob(d.content.replace(/\s/g, '')); } catch(e3) { raw = ''; }
+          }
+          return buildDoc(fpath, raw, d.html_url);
+        });
+    } else {
+      // 公开库:直接用 raw URL
+      return fetch(rawUrl)
+        .then(function (r) {
+          if (!r.ok) throw new Error('获取文件失败: ' + fpath + ' HTTP ' + r.status);
+          return r.text();
+        })
+        .then(function (raw) {
+          return buildDoc(fpath, raw, rawUrl);
+        });
+    }
+  }
+
+  function buildDoc(fpath, raw, url) {
+    var meta = parseFM(raw);
+    var name = fpath.split('/').pop();
+    return {
+      name:     name,
+      path:     fpath,
+      title:    meta.title  || name.replace(/\.md$/i, ''),
+      date:     meta.date   || '',
+      desc:     meta.description || '',
+      category: meta.category || '',
+      tags:     normTags(meta.tags),
+      htmlUrl:  url || ''
+    };
   }
 
   function normTags(tags) {
@@ -171,7 +215,7 @@
     var filtered = filterDocs(allDocs);
 
     if (filtered.length === 0) {
-      $list.innerHTML = '<p class="docs-empty">📭 暂无文档</p>';
+      $list.innerHTML = '<p class="docs-empty" style="grid-column:1/-1;">📭 暂无匹配的文档</p>';
       return;
     }
 
@@ -187,13 +231,19 @@
     }
     return '<a class="doc-card" href="' + esc(d.htmlUrl) + '" target="_blank" rel="noopener">' +
       '<div class="doc-card-meta">' +
-        '<span class="doc-card-category">' + esc(d.category || '无分类') + '</span>' +
+        '<span class="doc-card-category">' + (d.path ? folderLabel(d.path) : '无分类') + '</span>' +
         (d.date ? '<span class="doc-card-date">' + d.date.substring(0, 10) + '</span>' : '') +
       '</div>' +
       '<h4 class="doc-card-title">' + esc(d.title) + '</h4>' +
       '<p class="doc-card-desc">' + (d.desc ? esc(d.desc) : '暂无描述') + '</p>' +
       tagsHtml +
     '</a>';
+  }
+
+  function folderLabel(fpath) {
+    var parts = fpath.split('/');
+    parts.pop(); // 去掉文件名
+    return parts.length > 0 ? parts.join(' / ') : '根目录';
   }
 
   function esc(s) {
