@@ -65,6 +65,7 @@ layout: default
 
 {% if site.comments.provider == 'giscus' and site.comments.giscus.repo_id != '' and site.comments.giscus.category_id != '' %}
 <!-- Giscus 评论区 -->
+<div class="comments-wrapper">
 <section id="comments-section">
   <h3 class="comments-title">💬 评论</h3>
   <script src="https://giscus.app/client.js"
@@ -84,8 +85,10 @@ layout: default
     async>
   </script>
 </section>
+</div>
 {% else %}
 <!-- 评论占位(等待 Giscus 配置完成) -->
+<div class="comments-wrapper">
 <section id="comments-section">
   <h3 class="comments-title">💬 评论</h3>
   <div class="comments-placeholder">
@@ -99,4 +102,5 @@ layout: default
     </ol>
   </div>
 </section>
+</div>
 {% endif %}

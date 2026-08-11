@@ -59,6 +59,90 @@ layout: default
     {% endfor %}
   </div>
   {% endif %}
+
+  <!-- 文档区域（由 JS 动态注入） -->
+  <section class="tag-group" id="tag-docs-section" style="display:none;">
+    <h2 class="tag-group-name">
+      <span class="tag-icon">📄</span>
+      文档
+      <span class="tag-count doc-count">0 篇</span>
+    </h2>
+    <ul class="tag-post-list" id="tag-docs-list"></ul>
+  </section>
 </div>
 
 <script src="{{ '/assets/js/archive.js' | relative_url }}"></script>
+
+<!-- 从 docs-index.json 注入文档条目到归档 -->
+<script>
+(function(){
+  var BASE = "{{ '/' | relative_url }}";
+  var OWNER = "{{ site.docs_repo.owner }}";
+  var REPO  = "{{ site.docs_repo.repo }}";
+  var BRANCH= "{{ site.docs_repo.branch }}";
+
+  fetch(BASE + 'assets/data/docs-index.json')
+    .then(function(r){ if(!r.ok) throw new Error(); return r.json(); })
+    .then(function(docs){
+      if(!Array.isArray(docs)||docs.length===0) return;
+      var addedAny = false;
+      var noMatch = [];
+
+      docs.forEach(function(d){
+        var tags = d.tags||[];
+        var matched = false;
+        tags.forEach(function(tag){
+          var slug = tag.toLowerCase().replace(/\s+/g,'-').replace(/[^\w\u4e00-\u9fff\-]/g,'');
+          var group = document.querySelector('.tag-group[data-tag="'+slug+'"]');
+          if(!group) return;
+          var list = group.querySelector('.tag-post-list');
+          if(!list) return;
+          var li = makeItem(d);
+          list.appendChild(li);
+          matched = true;
+          addedAny = true;
+        });
+        if(!matched||tags.length===0){
+          noMatch.push(d);
+        }
+      });
+
+      // 未匹配到标签的文档 → 追加到"文档"分组
+      injectDocSection(noMatch);
+
+      // 更新每个组的计数
+      if(addedAny){
+        document.querySelectorAll('.tag-group .tag-count').forEach(function(span){
+          var ul = span.parentElement.parentElement.querySelector('.tag-post-list');
+          if(ul) span.textContent = ul.querySelectorAll('li').length + ' 篇';
+        });
+      }
+    })
+    .catch(function(){});
+
+  function makeItem(d){
+    var li = document.createElement('li');
+    li.className = 'tag-post-item doc-post-item';
+    var dateStr = d.date ? d.date.substring(0,10) : '';
+    var githubUrl = 'https://github.com/'+OWNER+'/'+REPO+'/blob/'+BRANCH+'/'+d.path;
+    li.innerHTML =
+      '<time class="post-date" datetime="'+esc(dateStr)+'">'+esc(dateStr)+'</time>'+
+      '<a href="'+esc(githubUrl)+'" target="_blank" rel="noopener" class="post-link doc-link">'+esc(d.title)+'</a>'+
+      '<span class="post-category doc-source">📄 文档</span>';
+    return li;
+  }
+
+  function injectDocSection(docs){
+    if(!docs.length) return;
+    var sec = document.getElementById('tag-docs-section');
+    var list = document.getElementById('tag-docs-list');
+    if(!sec||!list) return;
+    docs.sort(function(a,b){ return (b.date||'').localeCompare(a.date||''); });
+    docs.forEach(function(d){ list.appendChild(makeItem(d)); });
+    sec.style.display = '';
+    sec.querySelector('.doc-count').textContent = list.querySelectorAll('li').length + ' 篇';
+  }
+
+  function esc(s){ var d=document.createElement('div'); d.appendChild(document.createTextNode(s||'')); return d.innerHTML; }
+})();
+</script>
