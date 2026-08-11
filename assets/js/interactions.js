@@ -1,64 +1,103 @@
 /**
  * Share of Stam - 文章互动功能
- * 点赞 (localStorage) / 评论 (Giscus) / 分享 (Web Share + 复制链接)
+ *   点赞 (localStorage,可切换)
+ *   评论 (滚动到 Giscus / fallback 提示)
+ *   分享 (Web Share API + 复制链接)
+ *
+ * 说明: 由于这是 GitHub Pages 静态站,无后端,
+ *       "点赞"仅在本机记录,不跨设备同步;状态可在同浏览器随时取消。
  */
 (function () {
   'use strict';
 
-  // ============================================================
-  // 1. 点赞系统 (localStorage)
-  // ============================================================
   const pageKey = window.location.pathname;
+  const likedKey = 'sos_liked_' + btoa(pageKey);
 
-  function getLikes() {
-    try {
-      const data = JSON.parse(localStorage.getItem('sos_likes') || '{}');
-      return data;
-    } catch (e) { return {}; }
-  }
-
-  function saveLikes(data) {
-    localStorage.setItem('sos_likes', JSON.stringify(data));
-  }
-
+  // ============================================================
+  // 1. 点赞系统 (可切换,个人状态)
+  // ============================================================
   function initLikes() {
     const btn = document.getElementById('btn-like');
-    const countEl = document.getElementById('like-count');
-    if (!btn || !countEl) return;
+    const label = document.getElementById('like-label');
+    if (!btn || !label) return;
 
-    const likes = getLikes();
-    const count = likes[pageKey] || 0;
-    countEl.textContent = count;
+    // 读取初始状态
+    const sync = () => {
+      const liked = localStorage.getItem(likedKey) === '1';
+      btn.classList.toggle('is-liked', liked);
+      label.textContent = liked ? '已点赞' : '点赞';
+      btn.setAttribute('aria-pressed', liked ? 'true' : 'false');
+      btn.title = liked ? '再次点击取消点赞' : '点赞这篇文章';
+    };
 
-    // 检查当前用户是否已点赞
-    if (localStorage.getItem('sos_liked_' + btoa(pageKey)) === '1') {
-      btn.classList.add('is-liked');
-      btn.disabled = true;
-      btn.title = '已点赞';
-    }
+    sync();
 
     btn.addEventListener('click', function () {
-      if (this.classList.contains('is-liked')) return;
-
-      const current = getLikes();
-      current[pageKey] = (current[pageKey] || 0) + 1;
-      saveLikes(current);
-      localStorage.setItem('sos_liked_' + btoa(pageKey), '1');
-
-      countEl.textContent = current[pageKey];
-      this.classList.add('is-liked');
-      this.disabled = true;
-      this.title = '已点赞';
-
-      // 点赞动画
-      countEl.classList.remove('like-pop');
-      void countEl.offsetWidth; // reflow
-      countEl.classList.add('like-pop');
+      const liked = localStorage.getItem(likedKey) === '1';
+      if (liked) {
+        localStorage.removeItem(likedKey);
+        showToast('已取消点赞');
+      } else {
+        localStorage.setItem(likedKey, '1');
+        // 点赞动画
+        btn.classList.remove('like-pulse');
+        void btn.offsetWidth;
+        btn.classList.add('like-pulse');
+        showToast('感谢你的点赞 ❤');
+      }
+      sync();
     });
   }
 
   // ============================================================
-  // 2. 分享功能
+  // 2. 评论按钮 — 滚动到评论区,失败时给提示
+  // ============================================================
+  function initComments() {
+    const btn = document.getElementById('btn-comment');
+    if (!btn) return;
+
+    btn.addEventListener('click', function (e) {
+      e.preventDefault();
+      const target = document.getElementById('comments-section');
+      if (!target) {
+        showToast('评论功能尚未配置');
+        return;
+      }
+
+      // 平滑滚动到评论区
+      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+      // 检测 Giscus 是否成功加载(等待 3 秒)
+      setTimeout(() => {
+        const giscusFrame = document.querySelector('iframe.giscus-frame');
+        const errorEl = target.querySelector('.giscus-error, .giscus-loading-error');
+        if (errorEl || !giscusFrame) {
+          showCommentsConfigHint(target);
+        }
+      }, 3500);
+    });
+  }
+
+  function showCommentsConfigHint(section) {
+    if (section.querySelector('.comments-fallback')) return;
+
+    const hint = document.createElement('div');
+    hint.className = 'comments-fallback';
+    hint.innerHTML = `
+      <p>⚠️ Giscus 评论组件未加载成功。</p>
+      <p>可能原因:</p>
+      <ol>
+        <li>仓库 <code>stan-fuls/stan-fuls.github.io</code> 尚未启用 <strong>Discussions</strong></li>
+        <li>未安装 <a href="https://github.com/apps/giscus" target="_blank" rel="noopener">Giscus GitHub App</a></li>
+        <li><code>_config.yml</code> 中 <code>repo_id</code> / <code>category_id</code> 未填写</li>
+      </ol>
+      <p>请访问 <a href="https://giscus.app/zh-CN" target="_blank" rel="noopener">giscus.app</a> 生成配置后填入 <code>_config.yml</code>。</p>
+    `;
+    section.appendChild(hint);
+  }
+
+  // ============================================================
+  // 3. 分享
   // ============================================================
   function initShare() {
     const shareBtn = document.getElementById('btn-share');
@@ -68,18 +107,15 @@
     const title = document.title.replace(/\s*\|\s*Share of Stam$/, '');
 
     shareBtn.addEventListener('click', function () {
-      // 优先使用 Web Share API (移动端原生分享)
       if (navigator.share) {
         navigator.share({ title: title, url: url }).catch(() => {});
         return;
       }
-      // 桌面端: 弹出分享面板
       showSharePanel(url, title);
     });
   }
 
   function showSharePanel(url, title) {
-    // 移除已有面板
     const existing = document.querySelector('.share-panel');
     if (existing) { existing.remove(); return; }
 
@@ -105,32 +141,38 @@
     `;
     document.body.appendChild(panel);
 
-    // 点击复制
     panel.querySelector('[data-action="copy"]').addEventListener('click', () => {
-      navigator.clipboard.writeText(url).then(() => {
-        showToast('链接已复制到剪贴板');
-      }).catch(() => {
-        // fallback
-        const ta = document.createElement('textarea');
-        ta.value = url;
-        ta.style.position = 'fixed';
-        ta.style.left = '-9999px';
-        document.body.appendChild(ta);
-        ta.select();
-        document.execCommand('copy');
-        document.body.removeChild(ta);
-        showToast('链接已复制到剪贴板');
-      });
+      copyToClipboard(url);
       panel.remove();
     });
-
-    // 点击遮罩关闭
     panel.querySelector('.share-overlay').addEventListener('click', () => panel.remove());
     panel.querySelector('.share-cancel').addEventListener('click', () => panel.remove());
   }
 
+  function copyToClipboard(text) {
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(text)
+        .then(() => showToast('链接已复制到剪贴板'))
+        .catch(() => fallbackCopy(text));
+      return;
+    }
+    fallbackCopy(text);
+  }
+
+  function fallbackCopy(text) {
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.position = 'fixed';
+    ta.style.left = '-9999px';
+    document.body.appendChild(ta);
+    ta.select();
+    try { document.execCommand('copy'); showToast('链接已复制到剪贴板'); }
+    catch (e) { showToast('复制失败,请手动复制'); }
+    document.body.removeChild(ta);
+  }
+
   // ============================================================
-  // 3. Toast 提示
+  // 4. Toast
   // ============================================================
   function showToast(msg) {
     const existing = document.querySelector('.interaction-toast');
@@ -153,6 +195,7 @@
   // ============================================================
   document.addEventListener('DOMContentLoaded', function () {
     initLikes();
+    initComments();
     initShare();
   });
 })();

@@ -39,9 +39,10 @@ permalink: /docs/
 
 <script>
 window.DOCS_REPO_CONFIG = {
-  owner: "{{ site.docs_repo.owner }}",
-  repo: "{{ site.docs_repo.repo }}",
-  token: "{{ site.docs_repo.token }}"
+  owner:  "{{ site.docs_repo.owner }}",
+  repo:   "{{ site.docs_repo.repo }}",
+  branch: "{{ site.docs_repo.branch }}",
+  token:  "{{ site.docs_repo.token }}"
 };
 </script>
 <script src="{{ '/assets/js/docs.js' | relative_url }}"></script>

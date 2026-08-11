@@ -425,7 +425,7 @@
 .post-interactions {
   display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: stretch;
   gap: 12px;
   margin: 32px 0 20px;
   padding: 14px 0;
@@ -434,12 +434,15 @@
 }
 
 .interaction-btn {
+  flex: 1 1 0;
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 6px;
-  padding: 8px 18px;
+  padding: 10px 12px;
+  min-width: 0;
   border: 1px solid var(--color-border);
-  border-radius: 24px;
+  border-radius: 10px;
   background: var(--color-bg-card);
   color: var(--color-text-light);
   font-size: 0.88rem;
@@ -460,20 +463,20 @@
   color: #e11d48;
   border-color: #fecdd3;
   background: #fff1f2;
-  cursor: default;
 }
 #btn-like.is-liked .icon-heart {
   fill: #e11d48;
   stroke: #e11d48;
 }
 
-/* 点赞数字弹跳动画 */
-.like-pop {
-  animation: likeBounce 0.4s ease;
+/* 点赞按钮脉动动画 */
+.like-pulse {
+  animation: likePulse 0.5s ease;
 }
-@keyframes likeBounce {
+@keyframes likePulse {
   0%   { transform: scale(1); }
-  50%  { transform: scale(1.4); }
+  30%  { transform: scale(1.12); }
+  60%  { transform: scale(0.96); }
   100% { transform: scale(1); }
 }
 
@@ -491,6 +494,30 @@
   font-weight: 700;
   margin-bottom: 16px;
 }
+
+/* 评论加载失败时的回退提示 */
+.comments-fallback {
+  margin-top: 16px;
+  padding: 16px 18px;
+  background: #fef3c7;
+  border: 1px solid #fde68a;
+  border-radius: 8px;
+  color: #78350f;
+  font-size: 0.88rem;
+  line-height: 1.6;
+}
+.comments-fallback p:first-child {
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+.comments-fallback ol { padding-left: 20px; margin: 8px 0; }
+.comments-fallback code {
+  background: rgba(120,53,15,0.08);
+  padding: 1px 6px;
+  border-radius: 3px;
+  font-size: 0.85em;
+}
+.comments-fallback a { color: #78350f; text-decoration: underline; }
 
 /* ---- 分享面板 (桌面端) ---- */
 .share-panel { position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: 500; }
