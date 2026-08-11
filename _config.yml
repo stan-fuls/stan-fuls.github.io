@@ -48,12 +48,12 @@ comments:
   provider: giscus
   giscus:
     repo: stan-fuls/stan-fuls.github.io
-    repo_id: ""
+    repo_id: "R_kgDOG-8HXg"
     category: "Announcements"
-    category_id: ""
+    category_id: "DIC_kwDOG-8HXs4DDH-R"
     mapping: pathname
     reactions_enabled: "1"
-    theme: light
+    theme: preferred_color_scheme
     lang: zh-CN
     input_position: bottom
 
