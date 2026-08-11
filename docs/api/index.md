@@ -13,7 +13,7 @@ toc: true
 
 ```
 ┌──────────────────────────┐      GitHub API        ┌──────────────────────────┐
-│  stan-fuls.github.io     │  ◄──────────────────►   │  stan-fuls/knowledge-docs │
+│  stan-fuls.github.io     │  ◄──────────────────►   │  stan-fuls/obsidian-knowledge-docs │
 │  (Web 前端 + 服务)         │   fetch/contents       │  (文档存储仓库)             │
 │                          │   fetch/file            │                          │
 │  • 博客展示               │                         │  • Markdown 文件           │
@@ -30,10 +30,10 @@ toc: true
 
 ### 仓库结构要求
 
-文档仓库 `stan-fuls/knowledge-docs` 的结构如下：
+文档仓库 `stan-fuls/obsidian-knowledge-docs` 的结构如下：
 
 ```
-knowledge-docs/
+obsidian-knowledge-docs/
 ├── README.md              # 仓库说明
 ├── database/
 │   ├── mysql-guide.md     # 文档：MySQL 指南
@@ -202,15 +202,14 @@ GET https://api.github.com/repos/{owner}/{repo}/contents/{filePath}?ref={branch}
 
 ---
 
-## GitHub Token 配置（可选）
+## GitHub Token 配置（私有库必备）
 
-无 Token 访问的频率限制为 **60次/小时**。如需更高频率：
+> ⚠️ 由于 `obsidian-knowledge-docs` 为私有仓库，**必须**配置 Token 才能拉取文档。
 
-1. 在 GitHub Settings → Developer settings → Personal access tokens 创建一个 Token
-2. 在页面 URL 后添加 `?token=ghp_xxxxx` 参数访问
-3. 或在部署时设置环境变量 `GITHUB_TOKEN`
-
-> ⚠️ 注意：Token 放在前端 URL 中不安全。仅建议个人使用或通过构建步骤注入。
+1. 访问 [GitHub Settings → Tokens](https://github.com/settings/tokens) 创建 Fine-grained token
+2. 权限范围选择 **Only select repositories** → 仅授权 `stan-fuls/obsidian-knowledge-docs`
+3. Repository permissions 设为 `Contents: Read-only`
+4. 将生成的 Token 填入 `_config.yml` 的 `docs_repo.token` 字段
 
 ---
 
@@ -220,11 +219,11 @@ GET https://api.github.com/repos/{owner}/{repo}/contents/{filePath}?ref={branch}
 
 ```bash
 # 1. 创建文档仓库
-#    在 GitHub 上创建新仓库: stan-fuls/knowledge-docs
+#    在 GitHub 上创建新仓库: stan-fuls/obsidian-knowledge-docs
 
 # 2. 克隆并添加示例文档
-git clone https://github.com/stan-fuls/knowledge-docs.git
-cd knowledge-docs
+git clone https://github.com/stan-fuls/obsidian-knowledge-docs.git
+cd obsidian-knowledge-docs
 
 # 3. 创建分类目录和文档
 mkdir -p database backend devops

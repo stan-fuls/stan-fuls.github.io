@@ -18,7 +18,7 @@
 
 ## 文档管理系统
 
-通过 GitHub API 从独立仓库 `stan-fuls/knowledge-docs` 读取 Markdown 文档。
+通过 GitHub API 从独立仓库 `stan-fuls/obsidian-knowledge-docs` 读取 Markdown 文档（支持私有库，需配置 Token）。
 
 - **搜索**：按标题、描述、标签实时过滤
 - **排序**：按创建时间倒序排列（最新在前）
@@ -84,11 +84,15 @@ YYYY-MM-DD-标题.md
 
 ### 5. 同步到文档中心
 
-将编辑好的 `.md` 文件保存到 `stan-fuls/knowledge-docs` 仓库（默认根目录）。推送后几分钟：
+将编辑好的 `.md` 文件保存到 `stan-fuls/obsidian-knowledge-docs` 仓库（默认根目录）。推送后几分钟：
 
 1. Jekyll 文档中心的 [`docs.js`](assets/js/docs.js) 调用 GitHub API 拉取最新文档
 2. 按创建时间倒序排列展示
 3. 支持搜索框实时过滤（按标题、描述、标签名）
+
+> ⚠️ **私有库 Token 配置**：`obsidian-knowledge-docs` 是私有仓库，必须在 `_config.yml` 中配置 `docs_repo.token`。
+> 
+> 创建 [Fine-grained Token](https://github.com/settings/tokens)，仅授权此仓库的 `Contents: Read` 权限即可。
 
 ### 6. Obsidian 特有语法在文档中心可用性
 

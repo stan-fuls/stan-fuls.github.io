@@ -14,7 +14,7 @@ author: Stam            # 作者,与 _config.yml 中 author.name 保持一致
 
 > [!info] 标签归档说明
 > **`tags` 是文档中心自动归档的核心字段。**
-> - 同步到 `knowledge-docs` 后,文档中心「标签归档」视图会自动读取你的 tags
+> - 同步到 `obsidian-knowledge-docs` 后,文档中心会自动读取你的 tags
 > - **已有标签** → 文档直接归入该标签分组
 > - **新标签** → 自动创建一个新的标签分组
 > - 一个文档可以有多个标签,会同时出现在多个分组中
@@ -67,7 +67,7 @@ $$
 
 ```mermaid
 flowchart LR
-    A[Obsidian 编辑] --> B[Git 推送 knowledge-docs]
+    A[Obsidian 编辑] --> B[Git 推送 obsidian-knowledge-docs]
     B --> C[文档中心加载]
     C --> D[按标签自动归档]
 ```
@@ -87,5 +87,5 @@ flowchart LR
 
 > **发布流程**
 > 1. 在 Obsidian 中编辑本文档（推荐使用 Templater 插件）
-> 2. 提交到 `stan-fuls/knowledge-docs` 仓库
+> 2. 提交到 `stan-fuls/obsidian-knowledge-docs` 仓库
 > 3. 文档中心自动按标签归档展示 ✅

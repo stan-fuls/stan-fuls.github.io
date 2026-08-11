@@ -1,16 +1,28 @@
 /* ================================================================
  * docs.js — 文档中心
- *   从 stan-fuls/knowledge-docs 拉取 Markdown 文档，按时间排序展示
+ *   从 stan-fuls/obsidian-knowledge-docs 拉取 Markdown 文档
+ *   支持私有库(需 Personal Access Token)
  * ================================================================ */
 
 (function () {
   'use strict';
 
-  var REPO_OWNER = 'stan-fuls';
-  var REPO_NAME  = 'knowledge-docs';
+  // 由 docs/index.html 通过 Liquid 模板注入
+  var CONFIG = window.DOCS_REPO_CONFIG || {};
+
+  var REPO_OWNER = CONFIG.owner || 'stan-fuls';
+  var REPO_NAME  = CONFIG.repo  || 'obsidian-knowledge-docs';
+  var TOKEN      = CONFIG.token || '';
   var API_BASE   = 'https://api.github.com/repos/' + REPO_OWNER + '/' + REPO_NAME + '/contents/';
   var CACHE_KEY  = 'docs_cache';
   var CACHE_TTL  = 10 * 60 * 1000;
+
+  // GitHub API 请求头(有 Token 则带认证)
+  function apiHeaders() {
+    var h = { 'Accept': 'application/vnd.github.v3+json' };
+    if (TOKEN) h['Authorization'] = 'token ' + TOKEN;
+    return h;
+  }
 
   var allDocs    = [];
   var $list      = null;
@@ -38,8 +50,9 @@
       render();
     }
 
-    fetch(API_BASE)
+    fetch(API_BASE, { headers: apiHeaders() })
       .then(function (res) {
+        if (res.status === 404) throw new Error('仓库不存在或未授权(私有库需要 Token)');
         if (!res.ok) throw new Error('HTTP ' + res.status);
         return res.json();
       })
@@ -50,7 +63,6 @@
         return Promise.all(mds.map(fetchMeta));
       })
       .then(function (docs) {
-        // 按时间倒序排列
         allDocs = docs.sort(function (a, b) {
           return (b.date || '').localeCompare(a.date || '');
         });
@@ -65,13 +77,23 @@
           render();
         } else {
           if ($loading) $loading.style.display = 'none';
-          if ($error)   $error.style.display   = 'block';
+          if ($error) {
+            $error.style.display = 'block';
+            // 私有库提示更明确的错误信息
+            if (!TOKEN && err.message.indexOf('404') > -1) {
+              $error.innerHTML =
+                '<p>⚠️ 无法加载文档列表。仓库是私有库，请在 <code>_config.yml</code> 中配置 <code>docs_repo.token</code></p>' +
+                '<ol><li>访问 <a href="https://github.com/settings/tokens" target="_blank">GitHub Token 设置</a></li>' +
+                '<li>创建 Fine-grained token，仅授权 <code>stan-fuls/obsidian-knowledge-docs</code> 读取权限</li>' +
+                '<li>填入 _config.yml 的 docs_repo.token 字段</li></ol>';
+            }
+          }
         }
       });
   }
 
   function fetchMeta(file) {
-    return fetch(file.url)
+    return fetch(file.url, { headers: apiHeaders() })
       .then(function (r) { return r.json(); })
       .then(function (d) {
         var raw  = atob(d.content);

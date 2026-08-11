@@ -111,14 +111,16 @@ docs_repo:
   # GitHub username/org that owns the doc repo
   owner: stan-fuls
   # Repository name for document storage
-  repo: knowledge-docs
+  repo: obsidian-knowledge-docs
   # Branch to fetch documents from
   branch: main
   # Root directory in the doc repo where markdown files are stored
   base_path: ""
-  # GitHub API token (optional, for higher rate limits)
-  # Set this via environment variable GITHUB_TOKEN instead of hardcoding
-  # token: ""
+  # GitHub Personal Access Token (必需! 私有库没有 Token 无法拉取)
+  # 在 https://github.com/settings/tokens 创建,权限只需 repo scope
+  # ⚠️ 由于 GitHub Pages 是公开的,部署即对外暴露此 Token
+  #    请使用 Fine-grained token 并仅授权此单个仓库访问
+  token: ""
 
 # Docs page settings
 docs_settings:
