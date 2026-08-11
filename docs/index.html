@@ -16,32 +16,15 @@ permalink: /docs/
     </p>
   </header>
 
-  <!-- 工具栏:搜索 + 视图切换 + 时间过滤 -->
-  <div class="docs-toolbar" id="docs-toolbar">
-    <div class="docs-search">
-      <input type="text" id="docs-search-input" placeholder="🔍 搜索文档..." autocomplete="off">
-    </div>
-    <div class="docs-view-toggle">
-      <button id="docs-view-time" class="docs-view-btn is-active" title="按时间段分组">📅 时间段</button>
-      <button id="docs-view-tag"  class="docs-view-btn"             title="按标签归档">🏷️ 标签归档</button>
-    </div>
-    <div class="docs-time-filter" id="docs-time-filter">
-      <select id="docs-time-range">
-        <option value="all">全部时间</option>
-        <option value="6months">最近半年</option>
-        <option value="3months">最近三个月</option>
-        <option value="1month">最近一个月</option>
-      </select>
-    </div>
+  <div class="docs-toolbar">
+    <input type="text" id="docs-search-input" class="docs-search-input" placeholder="🔍 搜索文档..." autocomplete="off">
   </div>
 
-  <!-- 加载状态 -->
   <div id="docs-loading" class="docs-loading">
     <div class="loading-spinner"></div>
     <p>正在从 <code>stan-fuls/knowledge-docs</code> 加载文档...</p>
   </div>
 
-  <!-- 错误提示 -->
   <div id="docs-error" class="docs-error" style="display:none;">
     <p>⚠️ 无法加载文档列表，请确认：</p>
     <ol>
@@ -51,9 +34,7 @@ permalink: /docs/
     </ol>
   </div>
 
-  <!-- 文档列表 (docs.js 动态渲染) -->
-  <div id="docs-container" class="docs-container" style="display:none;">
-  </div>
+  <div id="docs-list" class="doc-card-grid" style="display:none;"></div>
 </div>
 
 <script src="{{ '/assets/js/docs.js' | relative_url }}"></script>

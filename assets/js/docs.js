@@ -1,7 +1,6 @@
 /* ================================================================
  * docs.js — 文档中心
- *   从 stan-fuls/knowledge-docs 拉取 Markdown 文档列表
- *   支持两种视图: 时间段分组 / 标签归档（自动识别已有/新标签）
+ *   从 stan-fuls/knowledge-docs 拉取 Markdown 文档，按时间排序展示
  * ================================================================ */
 
 (function () {
@@ -13,34 +12,19 @@
   var CACHE_KEY  = 'docs_cache';
   var CACHE_TTL  = 10 * 60 * 1000;
 
-  var allDocs     = [];
-  var currentView = 'time'; // 'time' | 'tag'
-
-  // DOM 引用
-  var $container  = null;
-  var $loading    = null;
-  var $error      = null;
-  var $search     = null;
-  var $timeRange  = null;
-  var $timeFilter = null;
-  var $btnTime    = null;
-  var $btnTag     = null;
+  var allDocs    = [];
+  var $list      = null;
+  var $loading   = null;
+  var $error     = null;
+  var $search    = null;
 
   function init() {
-    $container  = document.getElementById('docs-container');
-    $loading    = document.getElementById('docs-loading');
-    $error      = document.getElementById('docs-error');
-    $search     = document.getElementById('docs-search-input');
-    $timeRange  = document.getElementById('docs-time-range');
-    $timeFilter = document.getElementById('docs-time-filter');
-    $btnTime    = document.getElementById('docs-view-time');
-    $btnTag     = document.getElementById('docs-view-tag');
+    $list    = document.getElementById('docs-list');
+    $loading = document.getElementById('docs-loading');
+    $error   = document.getElementById('docs-error');
+    $search  = document.getElementById('docs-search-input');
 
-    if ($search)    $search.addEventListener('input', render);
-    if ($timeRange) $timeRange.addEventListener('change', render);
-    if ($btnTime)   $btnTime.addEventListener('click', function () { switchView('time'); });
-    if ($btnTag)    $btnTag.addEventListener('click',  function () { switchView('tag');  });
-
+    if ($search) $search.addEventListener('input', render);
     loadDocs();
   }
 
@@ -50,7 +34,7 @@
     var cached = getCache();
     if (cached && cached.length > 0) {
       allDocs = cached;
-      showContainer();
+      showList();
       render();
     }
 
@@ -66,17 +50,18 @@
         return Promise.all(mds.map(fetchMeta));
       })
       .then(function (docs) {
+        // 按时间倒序排列
         allDocs = docs.sort(function (a, b) {
           return (b.date || '').localeCompare(a.date || '');
         });
         setCache(allDocs);
-        showContainer();
+        showList();
         render();
       })
       .catch(function (err) {
-        console.warn('docs.js: 拉取失败，尝试缓存:', err.message);
+        console.warn('docs.js: 拉取失败:', err.message);
         if (allDocs.length > 0) {
-          showContainer();
+          showList();
           render();
         } else {
           if ($loading) $loading.style.display = 'none';
@@ -99,7 +84,6 @@
           desc:     meta.description || '',
           category: meta.category || '',
           tags:     normTags(meta.tags),
-          status:   meta.status || '',
           htmlUrl:  d.html_url  || ''
         };
       });
@@ -141,31 +125,12 @@
     try { localStorage.setItem(CACHE_KEY, JSON.stringify({ data: data, ts: Date.now() })); } catch (e) {}
   }
 
-  function showContainer() {
+  function showList() {
     if ($loading) $loading.style.display = 'none';
-    if ($container) $container.style.display = 'block';
+    if ($list)    $list.style.display    = 'grid';
   }
 
-  // --------------- 视图切换 ---------------
-
-  function switchView(view) {
-    currentView = view;
-    if ($btnTime) $btnTime.classList.toggle('is-active', view === 'time');
-    if ($btnTag)  $btnTag.classList.toggle('is-active',  view === 'tag');
-    if ($timeFilter) $timeFilter.style.display = (view === 'tag') ? 'none' : '';
-    render();
-  }
-
-  // --------------- 渲染 ---------------
-
-  function render() {
-    var filtered = filterDocs(allDocs);
-    if (currentView === 'tag') {
-      $container.innerHTML = buildTagView(filtered);
-    } else {
-      $container.innerHTML = buildTimeView(filtered);
-    }
-  }
+  // --------------- 搜索过滤 ---------------
 
   function filterDocs(docs) {
     var q = $search ? $search.value.trim().toLowerCase() : '';
@@ -177,112 +142,19 @@
     });
   }
 
-  // ==============================================================
-  //  时间段视图
-  // ==============================================================
+  // --------------- 渲染 ---------------
 
-  function buildTimeView(docs) {
-    var range = $timeRange ? $timeRange.value : 'all';
-    var groups = groupByTime(docs);
+  function render() {
+    if (!$list) return;
+    var filtered = filterDocs(allDocs);
 
-    if (range !== 'all') {
-      groups = groups.filter(function (g) { return passesFilter(g.key, range); });
+    if (filtered.length === 0) {
+      $list.innerHTML = '<p class="docs-empty">📭 暂无文档</p>';
+      return;
     }
 
-    if (groups.length === 0) {
-      return '<p class="docs-empty">📭 该时间段暂无文档</p>';
-    }
-
-    return groups.map(function (g) {
-      return '<div class="doc-time-group">' +
-        '<h3 class="doc-group-heading">' + g.label + ' <span class="doc-count">' + g.docs.length + '</span></h3>' +
-        '<div class="doc-card-grid">' + g.docs.map(card).join('') + '</div></div>';
-    }).join('');
+    $list.innerHTML = filtered.map(card).join('');
   }
-
-  function getTimeGroup(dateStr) {
-    if (!dateStr) return { key: 'unknown', label: '日期未知' };
-    var d = new Date(dateStr);
-    if (isNaN(d.getTime())) return { key: 'unknown', label: '日期未知' };
-    var now  = new Date();
-    var dm   = d.getMonth(); var dy = d.getFullYear();
-    var nm   = now.getMonth(); var ny = now.getFullYear();
-    if (dy === ny && dm === nm) return { key: 'thisMonth',    label: '本月' };
-    var prev = new Date(ny, nm - 1, 1);
-    if (dy === prev.getFullYear() && dm === prev.getMonth()) return { key: 'lastMonth', label: '上个月' };
-    var m3 = new Date(ny, nm - 3, 1);
-    if (d >= m3) return { key: 'last3Months', label: '最近三个月' };
-    var m6 = new Date(ny, nm - 6, 1);
-    if (d >= m6) return { key: 'last6Months', label: '最近半年' };
-    return { key: 'older', label: '更早' };
-  }
-
-  function groupByTime(docs) {
-    var order = ['thisMonth', 'lastMonth', 'last3Months', 'last6Months', 'older', 'unknown'];
-    var map = {};
-    docs.forEach(function (d) {
-      var g = getTimeGroup(d.date);
-      if (!map[g.key]) map[g.key] = { key: g.key, label: g.label, docs: [] };
-      map[g.key].docs.push(d);
-    });
-    return order.filter(function (k) { return map[k] && map[k].docs.length > 0; }).map(function (k) { return map[k]; });
-  }
-
-  function passesFilter(key, range) {
-    if (range === 'all')      return true;
-    if (range === '6months')  return ['thisMonth','lastMonth','last3Months','last6Months'].indexOf(key) > -1;
-    if (range === '3months')  return ['thisMonth','lastMonth','last3Months'].indexOf(key) > -1;
-    if (range === '1month')   return ['thisMonth','lastMonth'].indexOf(key) > -1;
-    return true;
-  }
-
-  // ==============================================================
-  //  标签归档视图 — 核心: 已有标签归入 新标签自动建组
-  // ==============================================================
-
-  function buildTagView(docs) {
-    if (docs.length === 0) {
-      return '<p class="docs-empty">📭 暂无文档</p>';
-    }
-
-    var tagMap = {};
-    var untagged = [];
-
-    docs.forEach(function (d) {
-      if (d.tags.length === 0) {
-        untagged.push(d);
-      } else {
-        d.tags.forEach(function (t) {
-          if (!tagMap[t]) tagMap[t] = [];
-          tagMap[t].push(d);
-        });
-      }
-    });
-
-    // 标签名按字母排序 (中文按 localeCompare)
-    var tagNames = Object.keys(tagMap).sort(function (a, b) {
-      return a.localeCompare(b, 'zh-CN');
-    });
-
-    var html = '';
-
-    tagNames.forEach(function (tag) {
-      var list = tagMap[tag];
-      html += '<div class="doc-tag-group">' +
-        '<h3 class="doc-group-heading doc-tag-heading">#' + esc(tag) + ' <span class="doc-count">' + list.length + '</span></h3>' +
-        '<div class="doc-card-grid">' + list.map(card).join('') + '</div></div>';
-    });
-
-    if (untagged.length > 0) {
-      html += '<div class="doc-tag-group doc-tag-untagged">' +
-        '<h3 class="doc-group-heading">📋 未分类 <span class="doc-count">' + untagged.length + '</span></h3>' +
-        '<div class="doc-card-grid">' + untagged.map(card).join('') + '</div></div>';
-    }
-
-    return html;
-  }
-
-  // --------------- 文档卡片 ---------------
 
   function card(d) {
     var tagsHtml = '';
