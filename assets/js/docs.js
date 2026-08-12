@@ -1,41 +1,33 @@
 /* ================================================================
  * docs.js — 文档中心
  *
- * 数据源:
- *   1. /assets/data/docs-index.json  (静态索引,GitHub Actions 自动同步)
- *   2. GitHub Trees API (回退)
- *
- * 展示: 按时间段(年-月)分组的列表
- * 点击: 弹出模态窗口,不跳转仓库
+ * 数据源: /assets/data/docs-index.json (CI 构建时由 gen-docs-index.js 生成)
+ * 展示:   按时间段(年-月)分组的列表
+ * 点击:   弹出模态窗口查看文档内容
  * ================================================================ */
 
 (function () {
   'use strict';
 
   var CONFIG   = window.DOCS_REPO_CONFIG || {};
-  var OWNER    = CONFIG.owner || 'stan-fuls';
-  var REPO     = CONFIG.repo  || 'obsidian-knowledge-docs';
-  var BRANCH   = CONFIG.branch || 'main';
-  var TOKEN    = CONFIG.token || '';
+  var SITE_BASE = CONFIG.siteBase || '';
 
-  var INDEX_URL = (CONFIG.siteBase || '') + '/assets/data/docs-index.json';
-  var TREE_API  = 'https://api.github.com/repos/' + OWNER + '/' + REPO + '/git/trees/' + BRANCH + '?recursive=1';
-  var RAW_BASE  = 'https://raw.githubusercontent.com/' + OWNER + '/' + REPO + '/' + BRANCH + '/';
+  var INDEX_URL = SITE_BASE + '/assets/data/docs-index.json';
 
-  var CACHE_KEY = 'docs_cache_v3';
+  // 本仓库固定信息
+  var GITHUB_MASTER  = 'https://github.com/stan-fuls/stan-fuls.github.io/blob/master/';
+  var RAW_BASE       = 'https://raw.githubusercontent.com/stan-fuls/stan-fuls.github.io/master/';
+
+  var CACHE_KEY = 'docs_cache_v4';
   var CACHE_TTL = 10 * 60 * 1000;
-
-  function apiHeaders() {
-    var h = { 'Accept': 'application/vnd.github.v3+json' };
-    if (TOKEN) h['Authorization'] = 'token ' + TOKEN;
-    return h;
-  }
 
   var allDocs  = [];
   var $list    = null;
   var $loading = null;
   var $error   = null;
   var $search  = null;
+
+  // ---- 初始化 ----
 
   function init() {
     $list    = document.getElementById('docs-list');
@@ -44,8 +36,7 @@
     $search  = document.getElementById('docs-search-input');
 
     if ($search) $search.addEventListener('input', render);
-    // 委托点击,拦截文档条目
-    if ($list) $list.addEventListener('click', onDocClick);
+    if ($list)   $list.addEventListener('click', onDocClick);
 
     var cached = getCache();
     if (cached && cached.length > 0) {
@@ -64,87 +55,32 @@
       })
       .then(function (data) {
         if (!Array.isArray(data) || data.length === 0) throw new Error('empty index');
-        allDocs = data.map(normalizeIndexEntry).filter(Boolean);
+        allDocs = data.map(normalizeEntry).filter(Boolean);
         finishLoad();
       })
-      .catch(function () { loadViaAPI(); });
-  }
-
-  function loadViaAPI() {
-    fetch(TREE_API, { headers: apiHeaders() })
-      .then(function (res) {
-        if (res.status === 404) throw new Error('仓库不存在或未授权(私有库需 Token)');
-        if (res.status === 401) throw new Error('Token 无效或已过期');
-        if (!res.ok) throw new Error('HTTP ' + res.status + ': ' + res.statusText);
-        return res.json();
-      })
-      .then(function (treeData) {
-        var mdFiles = (treeData.tree || []).filter(function (item) {
-          return item.type === 'blob' && /\.md$/i.test(item.path || '');
-        });
-        if (mdFiles.length === 0) throw new Error('仓库中未找到 .md 文档');
-        return Promise.all(mdFiles.map(fetchRawAndParse));
-      })
-      .then(function (docs) {
-        allDocs = docs.sort(function (a, b) { return (b.date || '').localeCompare(a.date || ''); });
-        finishLoad();
-      })
-      .catch(function (err) { showError(err); });
+      .catch(function (err) {
+        showError(err);
+      });
   }
 
   function finishLoad() {
     if (allDocs.length > 0) {
-      allDocs.sort(function (a, b) { return (b.date || '').localeCompare(a.date || ''); });
       setCache(allDocs);
       showList();
       render();
     }
   }
 
-  function normalizeIndexEntry(raw, idx) {
+  function normalizeEntry(raw, idx) {
     if (!raw || typeof raw !== 'object') return null;
     return {
       title:    raw.title || (raw.path || 'doc-' + idx).replace(/\.md$/i, '').split('/').pop(),
       path:     raw.path || '',
       date:     raw.date || '',
       desc:     raw.description || raw.desc || '',
-      tags:     normTags(raw.tags),
       category: raw.category || '',
-      htmlUrl:  raw.url || raw.htmlUrl || ('https://github.com/' + OWNER + '/' + REPO + '/blob/' + BRANCH + '/' + raw.path)
-    };
-  }
-
-  function fetchRawAndParse(fpath) {
-    if (TOKEN) {
-      var contentsUrl = 'https://api.github.com/repos/' + OWNER + '/' + REPO + '/contents/' + fpath;
-      return fetch(contentsUrl, { headers: apiHeaders() })
-        .then(function (r) { if (!r.ok) throw new Error('fail: ' + fpath); return r.json(); })
-        .then(function (d) {
-          var raw = '';
-          try {
-            var clean = (d.content || '').replace(/\s/g, '');
-            var padded = clean + '='.repeat((4 - clean.length % 4) % 4);
-            raw = decodeURIComponent(escape(atob(padded)));
-          } catch (e) { raw = ''; }
-          return buildDoc(fpath, raw, d.html_url);
-        });
-    }
-    var rawUrl = RAW_BASE + fpath;
-    return fetch(rawUrl)
-      .then(function (r) { if (!r.ok) throw new Error('fail: ' + fpath); return r.text(); })
-      .then(function (raw) { return buildDoc(fpath, raw, rawUrl); });
-  }
-
-  function buildDoc(fpath, raw, url) {
-    var meta = parseFM(raw);
-    return {
-      title:    meta.title  || fpath.split('/').pop().replace(/\.md$/i, ''),
-      path:     fpath,
-      date:     meta.date   || '',
-      desc:     meta.description || '',
-      category: meta.category || '',
-      tags:     normTags(meta.tags),
-      htmlUrl:  url || ('https://github.com/' + OWNER + '/' + REPO + '/blob/' + BRANCH + '/' + fpath)
+      tags:     normTags(raw.tags),
+      htmlUrl:  raw.url || (GITHUB_MASTER + (raw.path || '')),
     };
   }
 
@@ -154,67 +90,20 @@
     return String(tags).split(',').map(function (t) { return t.trim().replace(/^["']|["']$/g, ''); }).filter(Boolean);
   }
 
-  function parseFM(raw) {
-    var meta = {};
-    var m = raw.match(/^---\s*\n([\s\S]*?)\n---/);
-    if (!m) return meta;
-    var lines = m[1].split('\n');
-    var key = null;
-    lines.forEach(function (line) {
-      var arr = line.match(/^\s*-\s+(.+)/);
-      if (arr && key) { if (!meta[key]) meta[key] = []; meta[key].push(arr[1].trim().replace(/^["']|["']$/g, '')); return; }
-      var kv = line.match(/^(\w[\w-]*)\s*:\s*(.+)/);
-      if (kv) { key = kv[1]; meta[key] = kv[2].trim().replace(/^["']|["']$/g, ''); }
-    });
-    return meta;
-  }
-
-  function showError(err) {
-    if (allDocs.length > 0) { showList(); render(); return; }
-    if ($loading) $loading.style.display = 'none';
-    if (!$error) return;
-    $error.style.display = 'block';
-    var msg = err.message || String(err);
-    var reason = '未知错误';
-    if (msg.indexOf('404') > -1) reason = '仓库不可访问(私有库需 Token)';
-    else if (msg.indexOf('401') > -1) reason = 'Token 无效';
-    else if (msg.indexOf('403') > -1) reason = 'API 频率超限';
-    else if (msg.indexOf('HTTP') > -1) reason = msg;
-    $error.innerHTML = '<p>⚠️ 无法加载文档列表</p>' +
-      '<p style="color:#78350f;">原因: ' + esc(reason) + '</p>' +
-      '<p>请确认 <code>scripts/gen-docs-index.js</code> 已在 Actions 中正确执行,<br>生成的 <code>assets/data/docs-index.json</code> 已提交。</p>';
-  }
-
-  function getCache() {
-    try {
-      var r = localStorage.getItem(CACHE_KEY);
-      if (!r) return null;
-      var o = JSON.parse(r);
-      return (Date.now() - o.ts < CACHE_TTL) ? o.data : null;
-    } catch (e) { return null; }
-  }
-
-  function setCache(data) {
-    try { localStorage.setItem(CACHE_KEY, JSON.stringify({ data: data, ts: Date.now() })); } catch (e) {}
-  }
-
-  function showList() {
-    if ($loading) $loading.style.display = 'none';
-    if ($list)    $list.style.display    = 'block';
-  }
-
   // ---- 搜索 ----
+
   function filterDocs(docs) {
     var q = $search ? $search.value.trim().toLowerCase() : '';
     if (!q) return docs;
     return docs.filter(function (d) {
       return d.title.toLowerCase().indexOf(q) > -1 ||
-             d.desc.toLowerCase().indexOf(q) > -1 ||
+             d.desc.toLowerCase().indexOf(q)  > -1 ||
              d.tags.some(function (t) { return t.toLowerCase().indexOf(q) > -1; });
     });
   }
 
-  // ---- 渲染: 按时间段 (YYYY年M月) 分组 ----
+  // ---- 渲染: 按时间段分组 ----
+
   function render() {
     if (!$list) return;
     var filtered = filterDocs(allDocs);
@@ -232,13 +121,12 @@
       html += '<ul class="doc-item-list">';
       g.items.forEach(function (d, i) {
         var dateStr = d.date ? d.date.substring(0, 10) : '';
-        // base64 编码后塞到 data-doc 属性,避免 JSON 中的双引号被 HTML 解析器截断
         var srcAttr = btoa(unescape(encodeURIComponent(JSON.stringify(d))));
         html += '<li class="doc-item" data-index="' + i + '" data-doc="' + srcAttr + '">';
         html +=   '<div class="doc-item-main">';
         html +=     '<time class="doc-item-date">' + esc(dateStr) + '</time>';
         html +=     '<span class="doc-item-title">' + esc(d.title) + '</span>';
-        html +=     '<span class="doc-item-category">' + esc(d.category || folderLabel(d)) + '</span>';
+        if (d.category) html += '<span class="doc-item-category">' + esc(d.category) + '</span>';
         html +=   '</div>';
         if (d.desc) html += '<p class="doc-item-desc">' + esc(d.desc) + '</p>';
         if (d.tags.length > 0) {
@@ -272,14 +160,8 @@
     return order.map(function (k) { return { label: k, items: map[k] }; });
   }
 
-  function folderLabel(d) {
-    if (!d.path) return '';
-    var parts = d.path.split('/');
-    parts.pop();
-    return parts.length > 0 ? parts.join('/') : '';
-  }
-
   // ---- 模态窗口 ----
+
   function onDocClick(e) {
     var item = e.target.closest('.doc-item');
     if (!item) return;
@@ -287,7 +169,6 @@
     if (!src) return;
     var doc;
     try {
-      // base64 解码 → JSON.parse (避免 HTML 属性中的 " 被截断问题)
       doc = JSON.parse(decodeURIComponent(escape(atob(src))));
     } catch (err) { return; }
     openModal(doc);
@@ -335,17 +216,14 @@
     document.body.appendChild(overlay);
     document.body.style.overflow = 'hidden';
 
-    // 绑定关闭
     modal.querySelector('.doc-modal-close').addEventListener('click', removeModal);
 
-    // 尝试加载原始内容
     fetchDocContent(doc, modal);
   }
 
   function fetchDocContent(doc, modal) {
     var contentDiv = modal.querySelector('.doc-modal-content');
     var loadingDiv = modal.querySelector('.doc-modal-loading');
-
     var rawUrl = RAW_BASE + doc.path;
 
     fetch(rawUrl)
@@ -360,22 +238,19 @@
         if (loadingDiv) loadingDiv.style.display = 'none';
       })
       .catch(function (err) {
-        // 拉取失败（私有仓库/网络问题）→ 显示摘要 + 引导
         if (loadingDiv) loadingDiv.style.display = 'none';
-        var reason = (err && err.message) ? err.message : '';
-        var tip = '⚠️ 文档正文无法直接预览（可能为私有仓库或网络问题），请在 GitHub 查看完整文件。';
+        var reason = (err && err.message) ? err.message : '网络错误';
         if (doc.desc) {
           contentDiv.innerHTML = '<div class="doc-modal-desc-only">' +
             '<p>📖 <strong>摘要</strong></p>' +
             '<p>' + esc(doc.desc) + '</p>' +
             '<p style="margin-top:16px;color:var(--color-text-light);font-size:0.88rem;">' +
-            esc(tip) + '</p>' +
-            (reason ? '<p style="color:#b91c1c;font-size:0.78rem;">错误详情: ' + esc(reason) + '</p>' : '') +
+            '⚠️ 正文预览失败 (' + esc(reason) + ')，点击下方按钮查看完整文件。</p>' +
             '</div>';
         } else {
           contentDiv.innerHTML = '<div class="doc-modal-desc-only">' +
             '<p style="color:var(--color-text-light);font-size:0.88rem;">' +
-            esc(tip) + '</p>' +
+            '⚠️ 正文预览失败 (' + esc(reason) + ')，点击下方按钮查看完整文件。</p>' +
             '</div>';
         }
         contentDiv.style.display = 'block';
@@ -383,53 +258,65 @@
   }
 
   function renderMarkdown(raw) {
-    // 移除 frontmatter
     var body = raw.replace(/^---\s*\n[\s\S]*?\n---\s*\n?/, '');
-
-    // 简单 markdown → HTML
     var html = body
-      // 代码块
       .replace(/```(\w*)\n([\s\S]*?)```/g, function (_, lang, code) {
         return '<pre><code class="language-' + esc(lang) + '">' + esc(code.trim()) + '</code></pre>';
       })
-      // 行内代码
       .replace(/`([^`]+)`/g, '<code>$1</code>')
-      // 标题
       .replace(/^#### (.+)$/gm, '<h4>$1</h4>')
       .replace(/^### (.+)$/gm, '<h3>$1</h3>')
       .replace(/^## (.+)$/gm, '<h2>$1</h2>')
       .replace(/^# (.+)$/gm, '<h2>$1</h2>')
-      // 粗体/斜体
       .replace(/\*\*\*(.+?)\*\*\*/g, '<strong><em>$1</em></strong>')
       .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
       .replace(/\*(.+?)\*/g, '<em>$1</em>')
-      // 链接
       .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener">$1</a>')
-      // 图片
       .replace(/!\[([^\]]*)\]\(([^)]+)\)/g, '<img src="$2" alt="$1">')
-      // 水平线
       .replace(/^---$/gm, '<hr>')
-      // 无序列表
-      .replace(/^(\s*)- (.+)$/gm, function (_, indent, text) {
-        return '<li>' + text + '</li>';
-      })
-      // 有序列表 (简单处理)
+      .replace(/^(\s*)- (.+)$/gm, '<li>$2</li>')
       .replace(/^\d+\. (.+)$/gm, '<li>$1</li>')
-      // 段落 (非空行,非标签开头)
       .replace(/^(?!<[a-z])(.+)$/gm, '<p>$1</p>')
-      // 包裹连续的 <li>
       .replace(/((?:<li>.*<\/li>\n?)+)/g, '<ul>$1</ul>')
-      // 清理空段
       .replace(/<p>\s*<\/p>/g, '');
-
     return html;
+  }
+
+  // ---- 缓存 / 辅助 ----
+
+  function showError(err) {
+    if (allDocs.length > 0) { showList(); render(); return; }
+    if ($loading) $loading.style.display = 'none';
+    if (!$error) return;
+    $error.style.display = 'block';
+    var msg = err.message || String(err);
+    $error.innerHTML = '<p>⚠️ 无法加载文档列表</p>' +
+      '<p style="color:#78350f;">原因: ' + esc(msg) + '</p>' +
+      '<p>请确认 <code>scripts/gen-docs-index.js</code> 已在 CI 中正确运行。</p>';
+  }
+
+  function getCache() {
+    try {
+      var r = localStorage.getItem(CACHE_KEY);
+      if (!r) return null;
+      var o = JSON.parse(r);
+      return (Date.now() - o.ts < CACHE_TTL) ? o.data : null;
+    } catch (e) { return null; }
+  }
+
+  function setCache(data) {
+    try { localStorage.setItem(CACHE_KEY, JSON.stringify({ data: data, ts: Date.now() })); } catch (e) {}
+  }
+
+  function showList() {
+    if ($loading) $loading.style.display = 'none';
+    if ($list)    $list.style.display    = 'block';
   }
 
   function removeModal() {
     var el = document.querySelector('.doc-overlay');
     if (el) el.remove();
     document.body.style.overflow = '';
-    document.body.style.paddingRight = '';
   }
 
   function esc(s) {

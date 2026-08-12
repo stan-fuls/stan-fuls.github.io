@@ -2,45 +2,46 @@
 /**
  * gen-docs-index.js
  *
- * 在 GitHub Actions 构建阶段运行,从 obsidian-knowledge-docs 私有仓库
- * 实时拉取所有 .md 文件,解析 frontmatter,生成 assets/data/docs-index.json
+ * 在 GitHub Actions 构建阶段运行,扫描本仓库的:
+ *   - docs/knowledge-docs/   (知识库文档)
+ *   - _posts/                (博客文章)
  *
- * 使用方式:
- *   node scripts/gen-docs-index.js <owner/repo> <branch> <token>
+ * 解析每篇 .md 的 frontmatter,生成 assets/data/docs-index.json
  */
 
-const fs = require('fs');
+const fs   = require('fs');
 const path = require('path');
 
-const [,, REPO_SLUG = 'stan-fuls/obsidian-knowledge-docs', BRANCH = 'main', TOKEN = ''] = process.argv;
-const [OWNER, REPO] = REPO_SLUG.split('/');
-const OUT = path.join(__dirname, '..', 'assets', 'data', 'docs-index.json');
+const ROOT = path.join(__dirname, '..');
+const OUT  = path.join(ROOT, 'assets', 'data', 'docs-index.json');
 
-const headers = {
-  'Accept': 'application/vnd.github+json',
-  'User-Agent': 'docs-index-bot',
-};
-if (TOKEN) headers['Authorization'] = `Bearer ${TOKEN}`;
+const SCAN_DIRS = [
+  'docs/knowledge-docs',
+  '_posts',
+];
 
-function gh(path) {
-  return `https://api.github.com/repos/${OWNER}/${REPO}/${path.replace(/^\//, '')}`;
-}
+// ---- frontmatter 解析 (YAML 子集) ----
 
-/** frontmatter parser — handles both JSON-safe and YAML-ish values */
 function parseFM(raw) {
   const meta = {};
   const m = raw.match(/^---\s*\n([\s\S]*?)\n---/);
   if (!m) return meta;
+
   const lines = m[1].split('\n');
   let key = null;
   const arrKeys = new Set(['tags', 'categories', 'keywords']);
+
   for (const line of lines) {
     // inline array item:   - tagName
     const arrItem = line.match(/^\s*-\s+(.+)/);
     if (arrItem && key && arrKeys.has(key)) {
       const v = arrItem[1].trim().replace(/^["']|["']$/g, '');
-      if (!Array.isArray(meta[key])) meta[key] = [];
-      meta[key].push(v);
+      // strip inline comment
+      const clean = v.replace(/\s*#.*$/, '').trim();
+      if (clean) {
+        if (!Array.isArray(meta[key])) meta[key] = [];
+        meta[key].push(clean);
+      }
       continue;
     }
     // key: value
@@ -48,9 +49,9 @@ function parseFM(raw) {
     if (kv) {
       key = kv[1].toLowerCase();
       let val = kv[2].trim().replace(/^["']|["']$/g, '');
-      // strip YAML inline comment (# ...)
+      // strip inline comment
       val = val.replace(/\s*#.*$/, '').trim();
-      // normalize array-like strings: "tag1, tag2" or "[tag1, tag2]"
+      // array-like
       if (arrKeys.has(key) && !Array.isArray(meta[key])) {
         val = val.replace(/^\[|\]$/g, '').trim();
         meta[key] = val ? val.split(',').map(s => s.trim().replace(/^["']|["']$/g, '')) : [];
@@ -62,65 +63,83 @@ function parseFM(raw) {
   return meta;
 }
 
-function sleep(ms) { return new Promise(resolve => setTimeout(resolve, ms)); }
+// ---- 递归扫描 ----
 
-async function main() {
-  console.error(`📂 fetching tree: ${OWNER}/${REPO} @ ${BRANCH}`);
+function scanDir(dir) {
+  const results = [];
+  const fullDir = path.join(ROOT, dir);
+  if (!fs.existsSync(fullDir)) return results;
 
-  // 1. 获取目录树
-  const treeRes = await fetch(gh(`git/trees/${BRANCH}?recursive=1`), { headers });
-  if (!treeRes.ok) {
-    console.error(`❌ tree api failed: ${treeRes.status}`);
-    // 如果失败,保留已有 index 不变
-    if (fs.existsSync(OUT)) { console.error('⚠️  kept existing index'); process.exit(0); }
-    process.exit(1);
+  const entries = fs.readdirSync(fullDir, { withFileTypes: true });
+  for (const entry of entries) {
+    const relPath = path.join(dir, entry.name);
+    const fullPath = path.join(fullDir, entry.name);
+    if (entry.isDirectory()) {
+      results.push(...scanDir(relPath));
+    } else if (entry.isFile() && /\.md$/i.test(entry.name)) {
+      results.push({ relPath, fullPath });
+    }
   }
-  const { tree = [] } = await treeRes.json();
-  const mdFiles = tree.filter(t => t.type === 'blob' && /\.md$/i.test(t.path));
-  console.error(`📄 found ${mdFiles.length} .md file(s)`);
+  return results;
+}
 
-  if (mdFiles.length === 0) {
-    // 空仓库: 写空数组
-    fs.mkdirSync(path.dirname(OUT), { recursive: true });
-    fs.writeFileSync(OUT, '[]\n');
-    console.error('✅ wrote empty index');
-    return;
+function extractDate(dateVal) {
+  if (!dateVal) return '';
+  // 如果是字符串,尝试提取 YYYY-MM-DD
+  if (typeof dateVal === 'string') {
+    const m = dateVal.match(/(\d{4}-\d{2}-\d{2})/);
+    return m ? m[1] : '';
   }
+  // _posts 文件名自带日期,不在此处理
+  return '';
+}
 
-  // 2. 逐个读取文件并解析 frontmatter
-  const out = [];
-  for (const { path: fp } of mdFiles) {
-    try {
-      const r = await fetch(gh(`contents/${fp}?ref=${BRANCH}`), { headers });
-      if (!r.ok) throw new Error(`contents: ${r.status}`);
-      const d = await r.json();
-      const raw = Buffer.from((d.content || '').replace(/\s/g, ''), 'base64').toString('utf8');
-      const meta = parseFM(raw);
-      const name = fp.split('/').pop();
+// ---- 主流程 ----
 
-      out.push({
-        title: meta.title || name.replace(/\.md$/i, ''),
-        path: fp,
-        date: meta.date || '',
-        description: meta.description || meta.desc || '',
-        category: meta.category || '',
-        tags: Array.isArray(meta.tags) ? meta.tags : (meta.tags ? [meta.tags] : []),
-        url: d.html_url,
-      });
+function main() {
+  const allDocs = [];
 
-      // gentle rate limit
-      if (mdFiles.length > 20) await sleep(100);
-    } catch (e) {
-      console.error(`⚠️  skip ${fp}: ${e.message}`);
-      // 跳过单个失败的文件
+  for (const scanDirName of SCAN_DIRS) {
+    const mdFiles = scanDir(scanDirName);
+    console.error(`📂 ${scanDirName}: ${mdFiles.length} .md file(s)`);
+
+    for (const { relPath, fullPath } of mdFiles) {
+      try {
+        const raw = fs.readFileSync(fullPath, 'utf8');
+        const meta = parseFM(raw);
+
+        // _posts 文件名格式: YYYY-MM-DD-slug.md
+        let date = extractDate(meta.date);
+        if (!date && scanDirName === '_posts') {
+          const name = path.basename(relPath);
+          const postDateMatch = name.match(/^(\d{4}-\d{2}-\d{2})/);
+          if (postDateMatch) date = postDateMatch[1];
+        }
+
+        const name = path.basename(relPath, '.md');
+        const blobUrl = `https://github.com/stan-fuls/stan-fuls.github.io/blob/master/${relPath}`;
+
+        allDocs.push({
+          title:       meta.title || name,
+          path:        relPath,
+          date:        date,
+          description: meta.description || meta.desc || '',
+          category:    meta.category || '',
+          tags:        Array.isArray(meta.tags) ? meta.tags : (meta.tags ? [meta.tags] : []),
+          url:         blobUrl,
+        });
+      } catch (e) {
+        console.error(`⚠️  skip ${relPath}: ${e.message}`);
+      }
     }
   }
 
-  // 3. 排序 & 写入
-  out.sort((a, b) => (b.date || '').localeCompare(a.date || ''));
+  // 按日期倒序
+  allDocs.sort((a, b) => (b.date || '').localeCompare(a.date || ''));
+
   fs.mkdirSync(path.dirname(OUT), { recursive: true });
-  fs.writeFileSync(OUT, JSON.stringify(out, null, 2) + '\n');
-  console.error(`✅ wrote ${out.length} doc(s) → assets/data/docs-index.json`);
+  fs.writeFileSync(OUT, JSON.stringify(allDocs, null, 2) + '\n');
+  console.error(`✅ wrote ${allDocs.length} doc(s) → assets/data/docs-index.json`);
 }
 
-main().catch(e => { console.error(e); process.exit(1); });
+main();

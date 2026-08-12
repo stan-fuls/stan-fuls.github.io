@@ -14,7 +14,7 @@ toc: false
 ### 站点特性
 
 - 📝 **博客写作** — 记录技术心得、项目经验与日常感悟
-- 📚 **文档中心** — 基于独立仓库 `stan-fuls/obsidian-knowledge-docs` 管理的 Markdown 文档库，按时间排序检索与浏览
+- 📚 **文档中心** — 基于 `docs/knowledge-docs/` 目录存储的 Markdown 文档库，CI 自动生成索引、按时间分组检索与浏览
 - 🏷️ **标签归档** — 按标签对文章进行归类整理，方便按主题检索
 - 🎨 **极简设计** — 响应式布局，适配桌面与移动端，专注内容本身
 - ⚡ **纯静态部署** — 基于 GitHub Pages + Jekyll，无需后端服务器
@@ -25,7 +25,7 @@ toc: false
 |------|------|
 | 站点框架 | Jekyll |
 | 托管平台 | GitHub Pages |
-| 文档存储 | GitHub API + 独立仓库 |
+| 文档存储 | 本地 docs/knowledge-docs/ 目录 |
 | 样式 | CSS3 / SCSS |
 | 脚本 | Vanilla JavaScript |
 | 图表 | Mermaid / Chart.js |

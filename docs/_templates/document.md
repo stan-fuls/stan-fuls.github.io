@@ -19,9 +19,10 @@ author: Stam
 
 # {{title}}
 
-> [!info] 标签归档说明
-> **`tags` 是文档中心自动归档的核心字段。**
-> - 同步到 `obsidian-knowledge-docs` 后,文档中心会自动读取你的 tags
+> [!info] 发布流程
+> 1. 在 Obsidian 中通过 Templater 插件基于本模板创建新笔记
+> 2. 保存到本仓库的 `docs/knowledge-docs/` 目录
+> 3. Push 到 GitHub → CI 自动生成索引 → 文档中心展示 ✅
 > - **已有标签** → 文档直接归入该标签分组
 > - **新标签** → 自动创建一个新的标签分组
 > - 一个文档可以有多个标签,会同时出现在多个分组中

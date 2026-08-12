@@ -8,11 +8,11 @@ permalink: /docs/
 <div class="docs-page">
   <header class="docs-header">
     <h1 class="docs-title">📚 文档中心</h1>
-    <p class="docs-subtitle">技术文档阅览，数据来源于独立知识仓库 <code>stan-fuls/obsidian-knowledge-docs</code></p>
+    <p class="docs-subtitle">知识文档阅览，文档存放在 <code>docs/knowledge-docs/</code> 目录，与博客文章同步展示</p>
     <p class="docs-template-hint">
       📥 <a href="https://raw.githubusercontent.com/stan-fuls/stan-fuls.github.io/master/docs/_templates/document.md" target="_blank" rel="noopener">下载 Obsidian 文档模板</a>
       &nbsp;·&nbsp;
-      <a href="https://github.com/stan-fuls/obsidian-knowledge-docs" target="_blank" rel="noopener">前往文档仓库</a>
+      <a href="https://github.com/stan-fuls/stan-fuls.github.io/tree/master/docs/knowledge-docs" target="_blank" rel="noopener">浏览文档目录</a>
     </p>
   </header>
 
@@ -22,15 +22,14 @@ permalink: /docs/
 
   <div id="docs-loading" class="docs-loading">
     <div class="loading-spinner"></div>
-    <p>正在从 <code>stan-fuls/obsidian-knowledge-docs</code> 加载文档...</p>
+    <p>正在加载文档索引...</p>
   </div>
 
   <div id="docs-error" class="docs-error" style="display:none;">
     <p>⚠️ 无法加载文档列表，请确认：</p>
     <ol>
-      <li>已创建 <a href="https://github.com/stan-fuls/obsidian-knowledge-docs" target="_blank" rel="noopener">stan-fuls/obsidian-knowledge-docs</a> 仓库</li>
-      <li>仓库中包含 <code>.md</code> 格式的文档</li>
-      <li>GitHub API 未超限（匿名调用 60次/小时）</li>
+      <li><code>docs/knowledge-docs/</code> 目录下包含 <code>.md</code> 格式的文档</li>
+      <li>CI 构建中 <code>gen-docs-index.js</code> 已成功运行</li>
     </ol>
   </div>
 
@@ -39,10 +38,6 @@ permalink: /docs/
 
 <script>
 window.DOCS_REPO_CONFIG = {
-  owner:    "{{ site.docs_repo.owner }}",
-  repo:     "{{ site.docs_repo.repo }}",
-  branch:   "{{ site.docs_repo.branch }}",
-  token:    "",                           // Token 存储在 GitHub Actions Secret 中,由构建脚本使用
   siteBase: "{{ site.baseurl }}"
 };
 </script>

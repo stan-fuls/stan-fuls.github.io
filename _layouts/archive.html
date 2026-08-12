@@ -77,9 +77,6 @@ layout: default
 <script>
 (function(){
   var BASE = "{{ '/' | relative_url }}";
-  var OWNER = "{{ site.docs_repo.owner }}";
-  var REPO  = "{{ site.docs_repo.repo }}";
-  var BRANCH= "{{ site.docs_repo.branch }}";
 
   fetch(BASE + 'assets/data/docs-index.json')
     .then(function(r){ if(!r.ok) throw new Error(); return r.json(); })
@@ -124,10 +121,10 @@ layout: default
     var li = document.createElement('li');
     li.className = 'tag-post-item doc-post-item';
     var dateStr = d.date ? d.date.substring(0,10) : '';
-    var githubUrl = 'https://github.com/'+OWNER+'/'+REPO+'/blob/'+BRANCH+'/'+d.path;
+    var fileUrl = d.url || ('https://github.com/stan-fuls/stan-fuls.github.io/blob/master/'+d.path);
     li.innerHTML =
       '<time class="post-date" datetime="'+esc(dateStr)+'">'+esc(dateStr)+'</time>'+
-      '<a href="'+esc(githubUrl)+'" target="_blank" rel="noopener" class="post-link doc-link">'+esc(d.title)+'</a>'+
+      '<a href="'+esc(fileUrl)+'" target="_blank" rel="noopener" class="post-link doc-link">'+esc(d.title)+'</a>'+
       '<span class="post-category doc-source">📄 文档</span>';
     return li;
   }

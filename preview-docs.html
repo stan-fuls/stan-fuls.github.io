@@ -19,18 +19,18 @@
 
 <div class="preview-banner">
   <strong>⏱ 本地预览页：</strong>
-  打开此页验证 <code>docs.js</code> / <code>docs-index.json</code> / <code>custom.css</code> 在本地渲染是否正确。
-  与 GitHub Pages 上的卡片旧版对比，差异一目了然。
+  文档存放在本仓库 <code>docs/knowledge-docs/</code> 目录,
+  需先运行 <code>node scripts/gen-docs-index.js</code> 生成索引。
 </div>
 
 <div class="docs-page">
   <header class="docs-header">
     <h1 class="docs-title">📚 文档中心</h1>
-    <p class="docs-subtitle">技术文档阅览，数据来源于独立知识仓库 <code>stan-fuls/obsidian-knowledge-docs</code></p>
+    <p class="docs-subtitle">知识文档阅览，文档存储在 <code>docs/knowledge-docs/</code> 目录</p>
     <p class="docs-template-hint">
       📥 <a href="https://raw.githubusercontent.com/stan-fuls/stan-fuls.github.io/master/docs/_templates/document.md" target="_blank" rel="noopener">下载 Obsidian 文档模板</a>
       &nbsp;·&nbsp;
-      <a href="https://github.com/stan-fuls/obsidian-knowledge-docs" target="_blank" rel="noopener">前往文档仓库</a>
+      <a href="https://github.com/stan-fuls/stan-fuls.github.io/tree/master/docs/knowledge-docs" target="_blank" rel="noopener">浏览文档目录</a>
     </p>
   </header>
 
@@ -49,10 +49,6 @@
 
 <script>
 window.DOCS_REPO_CONFIG = {
-  owner:    'stan-fuls',
-  repo:     'obsidian-knowledge-docs',
-  branch:   'main',
-  token:    '',
   siteBase: ''
 };
 </script>

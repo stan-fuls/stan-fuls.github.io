@@ -116,35 +116,13 @@ exclude:
   - /docker
 
 # ===========================================
-# Document Management System (NEW FEATURE)
+# 文档中心 (knowledge-docs 位于本仓库内)
 # ===========================================
-# Store documents in a separate GitHub repo.
-# This repo serves as the web frontend & API gateway.
-#
-docs_repo:
-  # GitHub username/org that owns the doc repo
-  owner: stan-fuls
-  # Repository name for document storage
-  repo: obsidian-knowledge-docs
-  # Branch to fetch documents from
-  branch: main
-  # Root directory in the doc repo where markdown files are stored
-  base_path: ""
-  # GitHub Personal Access Token (必需! 私有库没有 Token 无法拉取)
-  # 在 https://github.com/settings/tokens 创建,权限只需 repo scope
-  # ⚠️ 由于 GitHub Pages 是公开的,部署即对外暴露此 Token
-  #    请使用 Fine-grained token 并仅授权此单个仓库访问
-  token: ""
+# 文档存放在 docs/knowledge-docs/ 目录下,
+# 构建时由 scripts/gen-docs-index.js 扫描生成索引。
 
-# Docs page settings
 docs_settings:
-  # Page title
   title: "文档中心"
-  # Items per page
-  per_page: 12
-  # Enable search
   search: true
-  # Enable category filter
   categories: true
-  # Enable tag filter
   tags: true
