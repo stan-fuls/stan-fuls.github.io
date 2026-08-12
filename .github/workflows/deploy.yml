@@ -1,0 +1,56 @@
+name: Build & Deploy
+
+on:
+  push:
+    branches: [master]
+  workflow_dispatch:              # 允许手动触发
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build-deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+
+    steps:
+      # 1. 检出博客仓库
+      - uses: actions/checkout@v4
+
+      # 2. 安装 Node,从私有文档仓库实时拉取索引
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Generate docs index from obsidian-knowledge-docs
+        env:
+          TOKEN: ${{ secrets.OBSIDIAN_REPO_TOKEN }}
+        run: |
+          node scripts/gen-docs-index.js stan-fuls/obsidian-knowledge-docs main "$TOKEN"
+
+      # 3. 安装 Ruby & Jekyll,构建站点
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.2'
+          bundler-cache: true
+
+      - name: Build Jekyll site
+        run: bundle exec jekyll build --destination _site
+
+      # 4. 配置 Pages & 部署
+      - uses: actions/configure-pages@v4
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+      - id: deploy
+        uses: actions/deploy-pages@v4
