@@ -55,7 +55,17 @@ jobs:
           bundler-cache: true
 
       - name: Build Jekyll site
-        run: bundle exec jekyll build --destination _site --trace
+        run: |
+          set -o pipefail
+          bundle exec jekyll build --destination _site --trace 2>&1 | tee /tmp/jekyll-build.log
+          echo "===== Jekyll build log ====="
+          cat /tmp/jekyll-build.log
+          echo "===== Listing _site ====="
+          ls -la _site/ 2>&1 || echo "ERROR: _site directory was not created"
+          test -d _site && test -n "$(ls -A _site 2>/dev/null)" || {
+            echo "FATAL: _site is empty or missing"
+            exit 1
+          }
 
       # Pages 部署
       - uses: actions/configure-pages@v4
