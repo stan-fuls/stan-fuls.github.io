@@ -111,20 +111,37 @@ function pathToDisplay(relPath) {
   return null;
 }
 
-// 为 docs/knowledge-docs/*.md 注入 layout: doc,让 Jekyll 自动渲染为页面
+// 为 docs/knowledge-docs/*.md 注入 layout: doc + permalink,
+// 让 Jekyll 渲染为 /path/index.html (带尾斜杠)
 function ensureDocLayout(relPath, fullPath) {
   if (!relPath.startsWith('docs/knowledge-docs/')) return;
   const raw = fs.readFileSync(fullPath, 'utf8');
+
+  // 计算 permalink: /docs/knowledge-docs/xxx/
+  let p = relPath.replace(/^docs\/knowledge-docs\//, '');
+  p = p.replace(/\.md$/i, '');
+  if (!p.endsWith('/')) p += '/';
+  const permalink = '/docs/knowledge-docs/' + p;
+
   const fmMatch = raw.match(/^---\s*\n([\s\S]*?)\n---/);
   if (fmMatch) {
-    const fm = fmMatch[1];
-    if (/^layout\s*:/m.test(fm)) return; // 已有 layout,不覆盖
-    // 在 frontmatter 头部插入 layout
-    const newRaw = raw.replace(/^---\s*\n/, `---\nlayout: doc\n`);
-    fs.writeFileSync(fullPath, newRaw);
+    let fm = fmMatch[1];
+
+    // 注入 permalink(若已存在则不覆盖)
+    if (!/^permalink\s*:/m.test(fm)) {
+      fm = 'permalink: ' + permalink + '\n' + fm;
+    }
+
+    // 注入 layout(若已存在则不覆盖)
+    if (!/^layout\s*:/m.test(fm)) {
+      fm = 'layout: doc\n' + fm;
+    }
+
+    const newRaw = raw.replace(/^---\s*\n([\s\S]*?)\n---/, '---\n' + fm + '\n---');
+    if (newRaw !== raw) fs.writeFileSync(fullPath, newRaw);
   } else {
     // 没有 frontmatter,添加一个最小化的
-    const newRaw = `---\nlayout: doc\n---\n\n${raw}`;
+    const newRaw = `---\nlayout: doc\npermalink: ${permalink}\n---\n\n${raw}`;
     fs.writeFileSync(fullPath, newRaw);
   }
 }

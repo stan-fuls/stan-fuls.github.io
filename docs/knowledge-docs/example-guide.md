@@ -1,4 +1,5 @@
 ---
+permalink: /docs/knowledge-docs/example-guide/
 layout: doc
 title: "示例文档 · 文档中心使用指南"
 date: 2026-08-12

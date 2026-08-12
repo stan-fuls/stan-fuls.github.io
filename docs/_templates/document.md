@@ -1,4 +1,10 @@
 ---
+# ⚠️ 请勿手写 layout / permalink 这两个字段！
+# 文档 push 到 GitHub 后,CI (gen-docs-index.js) 会自动注入:
+#   layout: doc       → 让 Jekyll 把 .md 渲染成完整 HTML 页面
+#   permalink: /.../  → 让 URL 带尾斜杠,与文档中心跳转保持一致
+# 如果你在 Obsidian 里手写了其中任一字段,CI 会跳过注入。(一般不推荐写)
+
 title: "文档标题(必填)"
 date: {{date:YYYY-MM-DD}}
 description: "一句话描述文档内容,用于文档中心卡片展示"
