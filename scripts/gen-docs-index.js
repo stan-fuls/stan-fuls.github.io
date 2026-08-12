@@ -113,8 +113,9 @@ function pathToPermalink(relPath) {
   return null;
 }
 
-// 为 docs/knowledge-docs/*.md 注入 layout: doc + permalink,
-// 让 Jekyll 渲染为 /path/index.html (带尾斜杠)
+// 为 docs/knowledge-docs/*.md 注入 layout: doc + permalink + 最小 frontmatter,
+// 让 Jekyll 渲染为 /path/index.html (带尾斜杠),
+// 并防止无 frontmatter 的文件导致构建失败
 function ensureDocLayout(relPath, fullPath) {
   if (!relPath.startsWith('docs/knowledge-docs/')) return;
   const raw = fs.readFileSync(fullPath, 'utf8');
@@ -126,6 +127,8 @@ function ensureDocLayout(relPath, fullPath) {
   const permalink = '/docs/knowledge-docs/' + p;
 
   const fmMatch = raw.match(/^---\s*\n([\s\S]*?)\n---/);
+  let newRaw;
+
   if (fmMatch) {
     let fm = fmMatch[1];
 
@@ -139,12 +142,18 @@ function ensureDocLayout(relPath, fullPath) {
       fm = 'layout: doc\n' + fm;
     }
 
-    const newRaw = raw.replace(/^---\s*\n([\s\S]*?)\n---/, '---\n' + fm + '\n---');
-    if (newRaw !== raw) fs.writeFileSync(fullPath, newRaw);
+    newRaw = raw.replace(/^---\s*\n([\s\S]*?)\n---/, '---\n' + fm + '\n---');
   } else {
-    // 没有 frontmatter,添加一个最小化的
-    const newRaw = `---\nlayout: doc\npermalink: ${permalink}\n---\n\n${raw}`;
+    // 没有 frontmatter 或 frontmatter 不合法 - 添加最小化的
+    // title 用文件名(去掉日期前缀和扩展名)
+    const baseName = path.basename(relPath, '.md');
+    const title = baseName.replace(/^\d{4}-\d{2}-\d{2}-?/, '').replace(/_/g, ' ') || baseName;
+    newRaw = `---\npermalink: ${permalink}\nlayout: doc\ntitle: "${title}"\n---\n\n${raw}`;
+  }
+
+  if (newRaw !== raw) {
     fs.writeFileSync(fullPath, newRaw);
+    console.error(`  ↳ 注入 frontmatter: ${relPath}`);
   }
 }
 
