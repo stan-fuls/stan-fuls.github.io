@@ -55,7 +55,7 @@ jobs:
           bundler-cache: true
 
       - name: Build Jekyll site
-        run: bundle exec jekyll build --destination _site --trace 2>&1 | tee /tmp/jekyll-build.log
+        run: bundle exec jekyll build --destination _site --trace
 
       # Pages 部署
       - uses: actions/configure-pages@v4
