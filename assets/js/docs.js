@@ -232,7 +232,9 @@
       html += '<ul class="doc-item-list">';
       g.items.forEach(function (d, i) {
         var dateStr = d.date ? d.date.substring(0, 10) : '';
-        html += '<li class="doc-item" data-index="' + i + '" data-src="' + esc(JSON.stringify(d)) + '">';
+        // base64 编码后塞到 data-doc 属性,避免 JSON 中的双引号被 HTML 解析器截断
+        var srcAttr = btoa(unescape(encodeURIComponent(JSON.stringify(d))));
+        html += '<li class="doc-item" data-index="' + i + '" data-doc="' + srcAttr + '">';
         html +=   '<div class="doc-item-main">';
         html +=     '<time class="doc-item-date">' + esc(dateStr) + '</time>';
         html +=     '<span class="doc-item-title">' + esc(d.title) + '</span>';
@@ -281,10 +283,13 @@
   function onDocClick(e) {
     var item = e.target.closest('.doc-item');
     if (!item) return;
-    var src = item.getAttribute('data-src');
+    var src = item.getAttribute('data-doc');
     if (!src) return;
     var doc;
-    try { doc = JSON.parse(src); } catch (err) { return; }
+    try {
+      // base64 解码 → JSON.parse (避免 HTML 属性中的 " 被截断问题)
+      doc = JSON.parse(decodeURIComponent(escape(atob(src))));
+    } catch (err) { return; }
     openModal(doc);
   }
 
@@ -354,20 +359,23 @@
         contentDiv.style.display = 'block';
         if (loadingDiv) loadingDiv.style.display = 'none';
       })
-      .catch(function () {
-        // 私有仓库 raw 不可访问 → 显示摘要
+      .catch(function (err) {
+        // 拉取失败（私有仓库/网络问题）→ 显示摘要 + 引导
         if (loadingDiv) loadingDiv.style.display = 'none';
+        var reason = (err && err.message) ? err.message : '';
+        var tip = '⚠️ 文档正文无法直接预览（可能为私有仓库或网络问题），请在 GitHub 查看完整文件。';
         if (doc.desc) {
           contentDiv.innerHTML = '<div class="doc-modal-desc-only">' +
             '<p>📖 <strong>摘要</strong></p>' +
             '<p>' + esc(doc.desc) + '</p>' +
             '<p style="margin-top:16px;color:var(--color-text-light);font-size:0.88rem;">' +
-            '⚠️ 文档内容无法直接获取（私有仓库），点击下方按钮查看完整文件。</p>' +
+            esc(tip) + '</p>' +
+            (reason ? '<p style="color:#b91c1c;font-size:0.78rem;">错误详情: ' + esc(reason) + '</p>' : '') +
             '</div>';
         } else {
           contentDiv.innerHTML = '<div class="doc-modal-desc-only">' +
             '<p style="color:var(--color-text-light);font-size:0.88rem;">' +
-            '⚠️ 文档内容无法直接获取（私有仓库），点击下方按钮查看完整文件。</p>' +
+            esc(tip) + '</p>' +
             '</div>';
         }
         contentDiv.style.display = 'block';
