@@ -646,9 +646,9 @@
 
 /* ---- Giscus 评论区 ---- */
 .comments-wrapper {
-  max-width: var(--max-width);
-  margin: 0 auto;
-  padding: 0 20px;
+  max-width: var(--max-width);   /* 与正文 .post-article 一致 */
+  margin: 40px auto;             /* 与正文相同的水平布局 */
+  padding: 0 20px;               /* 与正文相同的侧内边距 */
 }
 #comments-section {
   margin: 32px 0 24px;
@@ -657,6 +657,14 @@
   font-size: 1.05rem;
   font-weight: 700;
   margin-bottom: 14px;
+}
+
+/* 关键: Giscus iframe 默认 max-width 760px, 强制撑满父容器与正文等宽 */
+.comments-wrapper .giscus,
+.comments-wrapper .giscus-frame,
+.comments-wrapper .giscus-frame iframe {
+  width: 100% !important;
+  max-width: 100% !important;
 }
 
 /* 评论加载失败时的回退提示 */
