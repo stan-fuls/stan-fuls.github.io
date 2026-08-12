@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write           # 允许 CI commit 自动注入的 frontmatter 修复
   pages: write
   id-token: write
 
