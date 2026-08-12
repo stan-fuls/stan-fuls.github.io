@@ -45,13 +45,13 @@ function parseFM(raw) {
       continue;
     }
     // key: value
-    const kv = line.match(/^([\w-]+)\s*:\s*(.+)/);
+    const kv = line.match(/^([\w-]+)\s*:\s*(.*)/);
     if (kv) {
       key = kv[1].toLowerCase();
       let val = kv[2].trim().replace(/^["']|["']$/g, '');
       // strip inline comment
       val = val.replace(/\s*#.*$/, '').trim();
-      // array-like
+      // array-like: tags: 或 tags: [] 或 tags: [a, b] 或 tags: a, b
       if (arrKeys.has(key) && !Array.isArray(meta[key])) {
         val = val.replace(/^\[|\]$/g, '').trim();
         meta[key] = val ? val.split(',').map(s => s.trim().replace(/^["']|["']$/g, '')) : [];
@@ -94,6 +94,41 @@ function extractDate(dateVal) {
   return '';
 }
 
+// 把 "docs/knowledge-docs/database/mysql-guide.md" 转成 "/docs/knowledge-docs/database/mysql-guide/"
+function pathToPermalink(relPath) {
+  let p = relPath.replace(/^_posts\//, '_posts/'); // _posts 由 Jekyll 处理
+  if (p.endsWith('.md')) p = p.slice(0, -3);
+  if (!p.endsWith('/')) p += '/';
+  return '/' + p;
+}
+
+// _posts 由 Jekyll 生成,文档需要走 docs 静态 URL
+function pathToDisplay(relPath) {
+  // 仅对 docs/knowledge-docs/ 下的文档生成 web URL
+  if (relPath.startsWith('docs/knowledge-docs/')) {
+    return pathToPermalink(relPath);
+  }
+  return null;
+}
+
+// 为 docs/knowledge-docs/*.md 注入 layout: doc,让 Jekyll 自动渲染为页面
+function ensureDocLayout(relPath, fullPath) {
+  if (!relPath.startsWith('docs/knowledge-docs/')) return;
+  const raw = fs.readFileSync(fullPath, 'utf8');
+  const fmMatch = raw.match(/^---\s*\n([\s\S]*?)\n---/);
+  if (fmMatch) {
+    const fm = fmMatch[1];
+    if (/^layout\s*:/m.test(fm)) return; // 已有 layout,不覆盖
+    // 在 frontmatter 头部插入 layout
+    const newRaw = raw.replace(/^---\s*\n/, `---\nlayout: doc\n`);
+    fs.writeFileSync(fullPath, newRaw);
+  } else {
+    // 没有 frontmatter,添加一个最小化的
+    const newRaw = `---\nlayout: doc\n---\n\n${raw}`;
+    fs.writeFileSync(fullPath, newRaw);
+  }
+}
+
 // ---- 主流程 ----
 
 function main() {
@@ -105,6 +140,9 @@ function main() {
 
     for (const { relPath, fullPath } of mdFiles) {
       try {
+        // 为 docs/knowledge-docs/*.md 自动注入 layout: doc
+        ensureDocLayout(relPath, fullPath);
+
         const raw = fs.readFileSync(fullPath, 'utf8');
         const meta = parseFM(raw);
 
@@ -118,6 +156,7 @@ function main() {
 
         const name = path.basename(relPath, '.md');
         const blobUrl = `https://github.com/stan-fuls/stan-fuls.github.io/blob/master/${relPath}`;
+        const webUrl  = pathToDisplay(relPath);
 
         allDocs.push({
           title:       meta.title || name,
@@ -127,6 +166,7 @@ function main() {
           category:    meta.category || '',
           tags:        Array.isArray(meta.tags) ? meta.tags : (meta.tags ? [meta.tags] : []),
           url:         blobUrl,
+          webUrl:      webUrl,
         });
       } catch (e) {
         console.error(`⚠️  skip ${relPath}: ${e.message}`);

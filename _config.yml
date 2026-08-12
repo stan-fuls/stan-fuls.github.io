@@ -114,6 +114,9 @@ exclude:
   - /tools
   - /screenshots
   - /docker
+  - /docs/_templates        # Obsidian 文档模板,只作下载用途不渲染
+  - preview-docs.html       # 本地预览页
+  - preview.html            # 本地预览页
 
 # ===========================================
 # 文档中心 (knowledge-docs 位于本仓库内)

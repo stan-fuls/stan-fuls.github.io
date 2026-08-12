@@ -121,10 +121,13 @@ layout: default
     var li = document.createElement('li');
     li.className = 'tag-post-item doc-post-item';
     var dateStr = d.date ? d.date.substring(0,10) : '';
-    var fileUrl = d.url || ('https://github.com/stan-fuls/stan-fuls.github.io/blob/master/'+d.path);
+    // 优先 webUrl (站内文档页面),其次 url (GitHub blob)
+    var href = d.webUrl || d.url || ('https://github.com/stan-fuls/stan-fuls.github.io/blob/master/'+d.path);
+    var isInternal = !!d.webUrl;
+    var targetAttr = isInternal ? '' : ' target="_blank" rel="noopener"';
     li.innerHTML =
       '<time class="post-date" datetime="'+esc(dateStr)+'">'+esc(dateStr)+'</time>'+
-      '<a href="'+esc(fileUrl)+'" target="_blank" rel="noopener" class="post-link doc-link">'+esc(d.title)+'</a>'+
+      '<a href="'+esc(href)+'"'+targetAttr+' class="post-link doc-link">'+esc(d.title)+'</a>'+
       '<span class="post-category doc-source">📄 文档</span>';
     return li;
   }
