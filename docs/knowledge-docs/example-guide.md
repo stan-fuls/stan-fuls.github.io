@@ -2,7 +2,7 @@
 permalink: /docs/knowledge-docs/example-guide/
 layout: doc
 title: "示例文档 · 文档中心使用指南"
-date: 2026-08-12
+date: "2026-08-12"
 description: "演示文档中心如何以站内页面的形式展示文档内容"
 category: 指南
 tags:

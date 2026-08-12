@@ -18,39 +18,62 @@ layout: default
   <section class="posts-section">
     <h2 class="section-title">最新文章</h2>
     <div class="post-list">
+      {% comment %}
+        合并博客(_posts)和文档(docs/knowledge-docs),按日期倒序。
+        为避免 type 错误,把 date 统一转成时间戳字符串。
+      {% endcomment %}
       {% assign doc_pages = site.pages | where_exp: "p", "p.path contains 'knowledge-docs'" %}
       {% assign combined = "" | split: "" %}
-      {% for p in site.posts %}{% assign combined = combined | push: p %}{% endfor %}
-      {% for p in doc_pages %}{% assign combined = combined | push: p %}{% endfor %}
-      {% assign sorted = combined | sort: "date" | reverse %}
-      {% for item in sorted limit:8 %}
-      <article class="post-card">
-        <h3 class="post-card-title">
-          <a href="{{ item.url | relative_url }}">{{ item.title }}</a>
-        </h3>
-        <div class="post-card-meta">
-          <span class="post-date">📅 {{ item.date | date: "%Y-%m-%d" }}</span>
-          {% if item.categories %}
-            <span class="post-categories">
-              {% for cat in item.categories %}
-              <span class="post-category">{{ cat }}</span>
-              {% endfor %}
-            </span>
-          {% elsif item.category %}
-            <span class="post-categories">
-              <span class="post-category">{{ item.category }}</span>
-            </span>
+      {% for p in site.posts %}
+        {% assign ts = p.date | date: "%s" %}
+        {% assign combined = combined | push: ts | append: "|" | append: p.path %}
+      {% endfor %}
+      {% for p in doc_pages %}
+        {% assign ts = p.date | date: "%s" %}
+        {% assign combined = combined | push: ts | append: "|" | append: p.path %}
+      {% endfor %}
+      {% assign sorted = combined | sort_natural | reverse %}
+      {% assign max = sorted.size %}
+      {% if max > 8 %}{% assign max = 8 %}{% endif %}
+      {% for i in (0..max) %}
+        {% if i < sorted.size %}
+          {% assign entry = sorted[i] | split: "|" %}
+          {% assign item_path = entry[1] %}
+          {% if item_path contains '_posts/' %}
+            {% assign item = site.posts | where: "path", item_path | first %}
+          {% else %}
+            {% assign item = site.pages | where: "path", item_path | first %}
           {% endif %}
-          {% if item.path contains 'knowledge-docs' %}
-            <span class="post-source">📄 文档</span>
+          {% if item %}
+          <article class="post-card">
+            <h3 class="post-card-title">
+              <a href="{{ item.url | relative_url }}">{{ item.title }}</a>
+            </h3>
+            <div class="post-card-meta">
+              <span class="post-date">📅 {{ item.date | date: "%Y-%m-%d" }}</span>
+              {% if item.categories %}
+                <span class="post-categories">
+                  {% for cat in item.categories %}
+                  <span class="post-category">{{ cat }}</span>
+                  {% endfor %}
+                </span>
+              {% elsif item.category %}
+                <span class="post-categories">
+                  <span class="post-category">{{ item.category }}</span>
+                </span>
+              {% endif %}
+              {% if item.path contains 'knowledge-docs' %}
+                <span class="post-source">📄 文档</span>
+              {% endif %}
+            </div>
+            <p class="post-card-excerpt">{{ item.excerpt | strip_html | truncate: 160 }}</p>
+            <a href="{{ item.url | relative_url }}" class="read-more">阅读更多 →</a>
+          </article>
           {% endif %}
-        </div>
-        <p class="post-card-excerpt">{{ item.excerpt | strip_html | truncate: 160 }}</p>
-        <a href="{{ item.url | relative_url }}" class="read-more">阅读更多 →</a>
-      </article>
+        {% endif %}
       {% endfor %}
 
-      {% if sorted.size == 0 %}
+      {% if combined.size == 0 %}
       <div class="post-empty">暂无文章，快去 _posts/ 或 docs/knowledge-docs/ 目录添加吧 ✨</div>
       {% endif %}
     </div>

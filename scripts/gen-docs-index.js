@@ -125,11 +125,20 @@ function ensureDocLayout(relPath, fullPath) {
       fm = 'layout: doc\n' + fm;
     }
 
+    // 确保 date 是带引号字符串 - 否则 Jekyll 会把 YYYY-MM-DD 解析成 Array
+    if (/^date\s*:\s*\d{4}-\d{2}-\d{2}\s*$/m.test(fm)) {
+      fm = fm.replace(/^date\s*:\s*(\d{4}-\d{2}-\d{2})\s*$/m, 'date: "$1"');
+    } else if (!/^date\s*:/m.test(fm)) {
+      const today = new Date().toISOString().substring(0, 10);
+      fm = fm + '\ndate: "' + today + '"';
+    }
+
     newRaw = raw.replace(/^---\s*\n([\s\S]*?)\n---/, '---\n' + fm + '\n---');
   } else {
     const baseName = path.basename(relPath, '.md');
     const title = baseName.replace(/^\d{4}-\d{2}-\d{2}-?/, '').replace(/_/g, ' ') || baseName;
-    newRaw = `---\npermalink: ${permalink}\nlayout: doc\ntitle: "${title}"\n---\n\n${raw}`;
+    const today = new Date().toISOString().substring(0, 10);
+    newRaw = `---\npermalink: ${permalink}\nlayout: doc\ntitle: "${title}"\ndate: "${today}"\n---\n\n${raw}`;
   }
 
   if (newRaw !== raw) {
