@@ -1,146 +1,83 @@
 ---
 layout: default
+title: 归档
 ---
 
-{% assign all_tags = "" | split: "" %}
-{% for post in site.posts %}
-  {% for tag in post.tags %}
-    {% assign all_tags = all_tags | push: tag %}
-  {% endfor %}
-{% endfor %}
+{%- comment -%}
+  归档：仅取 docs/knowledge-docs/ 中的文档，按 category 分组；
+  没有 category 的文档归入"未分类"组。
+  全部用 Liquid 渲染，去掉 JS 注入。
+{%- endcomment -%}
 
-{% assign unique_tags = all_tags | uniq | sort %}
+{%- assign doc_pages = site.pages | where_exp: "p", "p.path contains 'knowledge-docs'" -%}
+
+{%- assign lines    = "" | split: "" -%}
+{%- assign all_cats = "" | split: "" -%}
+{%- for p in doc_pages -%}
+  {%- assign cat      = p.category | default: "未分类" -%}
+  {%- assign date_str = "" -%}
+  {%- if p.date -%}{% assign date_str = p.date | date: "%Y-%m-%d" %}{%- endif -%}
+  {%- assign tag_str  = "" -%}
+  {%- if p.tags -%}{% assign tag_str = p.tags | join: "," %}{%- endif -%}
+  {%- assign line = cat | append: "||" | append: date_str | append: "||" | append: p.url | append: "||" | append: p.title | append: "||" | append: p.description | append: "||" | append: tag_str -%}
+  {%- assign lines    = lines    | push: line -%}
+  {%- assign all_cats = all_cats | push: cat  -%}
+{%- endfor -%}
+
+{%- assign categories = all_cats | uniq | sort -%}
+{%- assign total      = lines.size -%}
 
 <div class="archive-page">
   <header class="archive-header">
-    <h1 class="archive-title">{{ page.title | default: "文章归档" }}</h1>
-    <p class="archive-desc">共 <strong>{{ site.posts.size }}</strong> 篇文章，覆盖 <strong>{{ unique_tags.size }}</strong> 个标签</p>
+    <h1 class="archive-title">📂 归档</h1>
+    <p class="archive-desc">共 <strong>{{ total }}</strong> 篇文档，按分类归档展示</p>
   </header>
 
-  {% if unique_tags.size == 0 %}
-  <div class="archive-empty">
-    <p>📭 还没有文章，去<a href="{{ '/' | relative_url }}">首页</a>看看吧。</p>
-  </div>
-  {% else %}
+  {%- if total == 0 -%}
+    <p class="empty-tip">暂无文档，请到 <code>docs/knowledge-docs/</code> 添加 .md 文件。</p>
+  {%- else -%}
+    <div class="tag-nav">
+      <span class="tag-nav-label">分类：</span>
+      {%- for cat in categories -%}
+        <a class="tag-pill" href="#cat-{{ cat | slugify }}">{{ cat }}</a>
+      {%- endfor -%}
+    </div>
 
-  <!-- 标签筛选导航 -->
-  <nav class="tag-nav" aria-label="标签筛选">
-    <span class="tag-nav-label">筛选标签：</span>
-    <button class="tag-reset" id="tag-reset" type="button">全部</button>
-    {% for tag in unique_tags %}
-    <button class="tag-pill" type="button" data-tag="{{ tag | slugify }}" data-tag-name="{{ tag }}">
-      {{ tag }} ({{ site.posts | where_exp: "post", "post.tags contains tag" | size }})
-    </button>
-    {% endfor %}
-  </nav>
+    <div class="tag-groups">
+      {%- for cat in categories -%}
+        {%- assign cat_count = 0 -%}
+        {%- assign cat_items = "" | split: "" -%}
+        {%- for line in lines -%}
+          {%- assign line_parts = line | split: "||" -%}
+          {%- assign line_cat = line_parts[0] -%}
+          {%- if line_cat == cat -%}
+            {%- assign cat_count = cat_count | plus: 1 -%}
+            {%- assign cat_items = cat_items | push: line -%}
+          {%- endif -%}
+        {%- endfor -%}
+        {%- assign cat_items = cat_items | sort_natural | reverse -%}
 
-  <!-- 按标签分组 -->
-  <div class="tag-groups" id="tag-groups">
-    {% for tag in unique_tags %}
-    {% assign tag_posts = site.posts | where_exp: "post", "post.tags contains tag" | sort: "date" | reverse %}
-    <section class="tag-group" id="tag-{{ tag | slugify }}" data-tag="{{ tag | slugify }}">
-      <h2 class="tag-group-name">
-        <span class="tag-icon">🏷️</span>
-        {{ tag }}
-        <span class="tag-count">{{ tag_posts.size }} 篇</span>
-      </h2>
-      <ul class="tag-post-list">
-        {% for post in tag_posts %}
-        <li class="tag-post-item">
-          <time class="post-date" datetime="{{ post.date | date_to_xmlschema }}">{{ post.date | date: "%Y-%m-%d" }}</time>
-          <a href="{{ post.url | relative_url }}" class="post-link">{{ post.title }}</a>
-          {% if post.categories %}
-          <span class="post-category">{{ post.categories | join: ", " }}</span>
-          {% endif %}
-        </li>
-        {% endfor %}
-      </ul>
-    </section>
-    {% endfor %}
-  </div>
-  {% endif %}
-
-  <!-- 文档区域（由 JS 动态注入） -->
-  <section class="tag-group" id="tag-docs-section" style="display:none;">
-    <h2 class="tag-group-name">
-      <span class="tag-icon">📄</span>
-      文档
-      <span class="tag-count doc-count">0 篇</span>
-    </h2>
-    <ul class="tag-post-list" id="tag-docs-list"></ul>
-  </section>
+        <section class="tag-group" id="cat-{{ cat | slugify }}" data-category="{{ cat }}">
+          <h2 class="tag-group-name">
+            <span class="tag-icon">📁</span>{{ cat }}<span class="tag-count">{{ cat_count }} 篇</span>
+          </h2>
+          <ul class="tag-post-list">
+            {%- for line in cat_items -%}
+              {%- assign parts = line | split: "||" -%}
+              <li class="tag-post-item">
+                <span class="post-date">{{ parts[1] }}</span>
+                <a class="post-link" href="{{ parts[2] }}">{{ parts[3] }}</a>
+                {%- if parts[5] and parts[5] != "" -%}
+                  <span class="post-category-spacer">
+                    {%- assign tlist = parts[5] | split: "," -%}
+                    {%- for t in tlist -%}<span class="post-category">{{ t }}</span>{%- endfor -%}
+                  </span>
+                {%- endif -%}
+              </li>
+            {%- endfor -%}
+          </ul>
+        </section>
+      {%- endfor -%}
+    </div>
+  {%- endif -%}
 </div>
-
-<script src="{{ '/assets/js/archive.js' | relative_url }}"></script>
-
-<!-- 从 docs-index.json 注入文档条目到归档 -->
-<script>
-(function(){
-  var BASE = "{{ '/' | relative_url }}";
-
-  fetch(BASE + 'assets/data/docs-index.json')
-    .then(function(r){ if(!r.ok) throw new Error(); return r.json(); })
-    .then(function(docs){
-      if(!Array.isArray(docs)||docs.length===0) return;
-      var addedAny = false;
-      var noMatch = [];
-
-      // 全部文档都是 knowledge-docs 下的(脚本已排除 _posts)
-      docs.forEach(function(d){
-        var tags = d.tags||[];
-        var matched = false;
-        tags.forEach(function(tag){
-          var slug = tag.toLowerCase().replace(/\s+/g,'-').replace(/[^\w\u4e00-\u9fff\-]/g,'');
-          var group = document.querySelector('.tag-group[data-tag="'+slug+'"]');
-          if(!group) return;
-          var list = group.querySelector('.tag-post-list');
-          if(!list) return;
-          var li = makeItem(d);
-          list.appendChild(li);
-          matched = true;
-          addedAny = true;
-        });
-        if(!matched||tags.length===0){
-          noMatch.push(d);
-        }
-      });
-
-      // 未匹配到标签的文档 → 追加到"文档"分组
-      injectDocSection(noMatch);
-
-      // 更新每个组的计数
-      if(addedAny){
-        document.querySelectorAll('.tag-group .tag-count').forEach(function(span){
-          var ul = span.parentElement.parentElement.querySelector('.tag-post-list');
-          if(ul) span.textContent = ul.querySelectorAll('li').length + ' 篇';
-        });
-      }
-    })
-    .catch(function(){});
-
-  function makeItem(d){
-    var li = document.createElement('li');
-    li.className = 'tag-post-item doc-post-item';
-    var dateStr = d.date ? d.date.substring(0,10) : '';
-    var href = d.webUrl || d.url || ('https://github.com/stan-fuls/stan-fuls.github.io/blob/master/'+d.path);
-    li.innerHTML =
-      '<time class="post-date" datetime="'+esc(dateStr)+'">'+esc(dateStr)+'</time>'+
-      '<a href="'+esc(href)+'" class="post-link doc-link">'+esc(d.title)+'</a>'+
-      '<span class="post-category doc-source">📄 文档</span>';
-    return li;
-  }
-
-  function injectDocSection(docs){
-    if(!docs.length) return;
-    var sec = document.getElementById('tag-docs-section');
-    var list = document.getElementById('tag-docs-list');
-    if(!sec||!list) return;
-    docs.sort(function(a,b){ return (b.date||'').localeCompare(a.date||''); });
-    docs.forEach(function(d){ list.appendChild(makeItem(d)); });
-    sec.style.display = '';
-    sec.querySelector('.doc-count').textContent = list.querySelectorAll('li').length + ' 篇';
-  }
-
-  function esc(s){ var d=document.createElement('div'); d.appendChild(document.createTextNode(s||'')); return d.innerHTML; }
-})();
-</script>

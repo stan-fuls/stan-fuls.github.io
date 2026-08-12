@@ -2,80 +2,61 @@
 layout: default
 ---
 
-<div class="home-container">
-  <section class="hero-section">
-    <div class="hero-content">
-      <p class="hero-greeting">👋 你好，欢迎来到</p>
-      <h1 class="hero-title">Share of Stam</h1>
-      <p class="hero-subtitle">{{ site.description }}</p>
-      <div class="hero-links">
-        <a href="/docs/" class="hero-link hero-link-primary">浏览文档 →</a>
-        <a href="/archive/" class="hero-link">所有文章</a>
-      </div>
-    </div>
-  </section>
+{%- comment -%}
+  首页最新文章：仅取 docs/knowledge-docs/ 中的文档，按 date 倒序，取最新 5 篇
+{%- endcomment -%}
 
-  <section class="posts-section">
-    <h2 class="section-title">最新文章</h2>
-    <div class="post-list">
-      {% comment %}
-        合并博客(_posts)和文档(docs/knowledge-docs),按日期倒序。
-        为避免 type 错误,把 date 统一转成时间戳字符串。
-      {% endcomment %}
-      {% assign doc_pages = site.pages | where_exp: "p", "p.path contains 'knowledge-docs'" %}
-      {% assign combined = "" | split: "" %}
-      {% for p in site.posts %}
-        {% assign ts = p.date | date: "%s" %}
-        {% assign combined = combined | push: ts | append: "|" | append: p.path %}
-      {% endfor %}
-      {% for p in doc_pages %}
-        {% assign ts = p.date | date: "%s" %}
-        {% assign combined = combined | push: ts | append: "|" | append: p.path %}
-      {% endfor %}
-      {% assign sorted = combined | sort_natural | reverse %}
-      {% assign max = sorted.size %}
-      {% if max > 8 %}{% assign max = 8 %}{% endif %}
-      {% for i in (0..max) %}
-        {% if i < sorted.size %}
-          {% assign entry = sorted[i] | split: "|" %}
-          {% assign item_path = entry[1] %}
-          {% if item_path contains '_posts/' %}
-            {% assign item = site.posts | where: "path", item_path | first %}
-          {% else %}
-            {% assign item = site.pages | where: "path", item_path | first %}
-          {% endif %}
-          {% if item %}
-          <article class="post-card">
-            <h3 class="post-card-title">
-              <a href="{{ item.url | relative_url }}">{{ item.title }}</a>
+{%- assign doc_pages = site.pages | where_exp: "p", "p.path contains 'knowledge-docs'" -%}
+
+{%- assign items = "" | split: "" -%}
+{%- for p in doc_pages -%}
+  {%- if p.date -%}
+    {%- assign date_str = p.date | date: "%Y-%m-%d" -%}
+    {%- assign tag_str  = "" -%}
+    {%- if p.tags -%}{% assign tag_str = p.tags | join: "," %}{%- endif -%}
+    {%- assign key = date_str | append: "||" | append: p.url | append: "||" | append: p.title | append: "||" | append: date_str | append: "||" | append: p.category | append: "||" | append: p.description | append: "||" | append: tag_str -%}
+    {%- assign items = items | push: key -%}
+  {%- endif -%}
+{%- endfor -%}
+
+{%- assign sorted  = items | sort_natural | reverse -%}
+{%- assign total   = sorted.size -%}
+{%- if total > 5 -%}{% assign total = 5 %}{%- endif -%}
+
+<div class="docs-page">
+  <header class="docs-header">
+    <h1 class="docs-title">{{ site.title }}</h1>
+    <p class="docs-subtitle">{{ site.tagline }}</p>
+    <p class="docs-template-hint">
+      <a class="btn btn-primary" href="{{ '/docs/' | relative_url }}">浏览文档 →</a>
+      <a class="btn" href="{{ '/archive.html' | relative_url }}">所有文章</a>
+    </p>
+  </header>
+
+  <section>
+    <h2 class="docs-title" style="font-size: 1.3rem; border-bottom: 2px solid var(--color-primary); padding-bottom: 8px; margin-bottom: 20px;">📰 最新文章</h2>
+
+    <div class="tag-groups">
+      {%- if total == 0 -%}
+        <p class="empty-tip">暂无文档，请到 <code>docs/knowledge-docs/</code> 添加 .md 文件。</p>
+      {%- else -%}
+        {%- for entry in sorted limit:total -%}
+          {%- assign parts = entry | split: "||" -%}
+          <article class="tag-group doc-post-list-item">
+            <h3 class="tag-group-name" style="font-size: 1rem;">
+              <a class="post-link" href="{{ parts[1] }}">{{ parts[2] }}</a>
+              {%- if parts[4] and parts[4] != "" -%}
+                <span class="post-category">{{ parts[4] }}</span>
+              {%- endif -%}
             </h3>
-            <div class="post-card-meta">
-              <span class="post-date">📅 {{ item.date | date: "%Y-%m-%d" }}</span>
-              {% if item.categories %}
-                <span class="post-categories">
-                  {% for cat in item.categories %}
-                  <span class="post-category">{{ cat }}</span>
-                  {% endfor %}
-                </span>
-              {% elsif item.category %}
-                <span class="post-categories">
-                  <span class="post-category">{{ item.category }}</span>
-                </span>
-              {% endif %}
-              {% if item.path contains 'knowledge-docs' %}
-                <span class="post-source">📄 文档</span>
-              {% endif %}
-            </div>
-            <p class="post-card-excerpt">{{ item.excerpt | strip_html | truncate: 160 }}</p>
-            <a href="{{ item.url | relative_url }}" class="read-more">阅读更多 →</a>
+            <span class="post-date">📅 {{ parts[3] }}</span>
+            {%- if parts[5] and parts[5] != "" -%}
+              <p class="post-card-excerpt">{{ parts[5] | strip_html | truncate: 140 }}</p>
+            {%- endif -%}
+            <a class="read-more" href="{{ parts[1] }}">阅读全文 →</a>
           </article>
-          {% endif %}
-        {% endif %}
-      {% endfor %}
-
-      {% if combined.size == 0 %}
-      <div class="post-empty">暂无文章，快去 _posts/ 或 docs/knowledge-docs/ 目录添加吧 ✨</div>
-      {% endif %}
+        {%- endfor -%}
+      {%- endif -%}
     </div>
   </section>
 </div>

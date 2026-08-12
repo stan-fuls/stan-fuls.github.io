@@ -773,3 +773,83 @@
 }
 .post-card-meta { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; }
 .post-card-meta > * { display: inline-flex; align-items: center; }
+
+/* ============================================
+ * Home + Archive v2 (docs-only) extras
+ * ============================================ */
+
+/* 空状态提示 */
+.empty-tip {
+  text-align: center;
+  padding: 40px 20px;
+  color: var(--color-text-light);
+  font-size: 0.95rem;
+  background: var(--color-bg-alt);
+  border: 1px dashed var(--color-border);
+  border-radius: var(--radius);
+}
+.empty-tip code {
+  background: var(--color-code-bg);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-family: var(--font-mono);
+  font-size: 0.9em;
+  color: var(--color-primary);
+}
+
+/* 首页 / 归档 共享的 CTA */
+.docs-template-hint .btn { margin: 0 6px; }
+.docs-template-hint .btn-primary { margin-right: 6px; }
+
+/* 首页最新文章卡片 */
+.doc-post-list-item {
+  background: var(--color-bg-card);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  padding: 18px 22px;
+  margin-bottom: 14px;
+  transition: border-color 0.2s, transform 0.2s;
+}
+.doc-post-list-item:hover {
+  border-color: var(--color-primary);
+  transform: translateY(-1px);
+}
+.doc-post-list-item .tag-group-name {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+  font-size: 1.05rem;
+}
+.doc-post-list-item .tag-group-name .post-link {
+  flex: 1;
+  min-width: 0;
+}
+.doc-post-list-item .post-date {
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: 0.82rem;
+  color: var(--color-text-light);
+  margin-bottom: 6px;
+}
+.doc-post-list-item .post-card-excerpt {
+  color: var(--color-text-light);
+  font-size: 0.9rem;
+  line-height: 1.55;
+  margin: 6px 0 10px;
+}
+.doc-post-list-item .read-more {
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+/* tag-pill 内嵌在归档索引 */
+.tag-nav .tag-pill { background: white; }
+
+/* 归档列表中标签紧跟标题 */
+.post-category-spacer {
+  display: inline-flex;
+  gap: 4px;
+  flex-wrap: wrap;
+  margin-left: auto;
+}
