@@ -105,7 +105,7 @@
     var filtered = filterDocs(allDocs);
 
     if (filtered.length === 0) {
-      $list.innerHTML = '<p class="docs-empty">📭 暂无匹配的文档</p>';
+      $list.innerHTML = '<p class="docs-empty"><svg class="meta-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 17a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2z"/><polyline points="22,7 12,14 2,7"/></svg> 暂无匹配的文档</p>';
       return;
     }
 

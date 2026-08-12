@@ -29,7 +29,7 @@
   </div>
 
   {% include scripts/common.html %}
-  {% if page.layout == 'post' or page.layout == 'article' %}
+  {% if page.layout == 'post' or page.layout == 'article' or page.layout == 'doc' %}
   <script src="{{ '/assets/js/interactions.js' | relative_url }}" defer></script>
   {% endif %}
 
