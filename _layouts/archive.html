@@ -39,7 +39,7 @@ title: 归档
     <div class="tag-nav">
       <span class="tag-nav-label">分类：</span>
       {%- for cat in categories -%}
-        <a class="tag-pill" href="#cat-{{ cat | slugify }}">{{ cat }}</a>
+        <a class="tag-pill" href="#cat-{{ cat | slugify }}" data-tag="{{ cat | slugify }}">{{ cat }}</a>
       {%- endfor -%}
     </div>
 
