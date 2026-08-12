@@ -85,8 +85,8 @@ layout: default
       var addedAny = false;
       var noMatch = [];
 
-      // 仅展示 docs/knowledge-docs 下的文档(_posts 已在顶部标签分组渲染)
-      docs.filter(function(d){ return d.type === 'doc'; }).forEach(function(d){
+      // 全部文档都是 knowledge-docs 下的(脚本已排除 _posts)
+      docs.forEach(function(d){
         var tags = d.tags||[];
         var matched = false;
         tags.forEach(function(tag){
@@ -122,13 +122,10 @@ layout: default
     var li = document.createElement('li');
     li.className = 'tag-post-item doc-post-item';
     var dateStr = d.date ? d.date.substring(0,10) : '';
-    // 优先 webUrl (站内文档页面),其次 url (GitHub blob)
     var href = d.webUrl || d.url || ('https://github.com/stan-fuls/stan-fuls.github.io/blob/master/'+d.path);
-    var isInternal = !!d.webUrl;
-    var targetAttr = isInternal ? '' : ' target="_blank" rel="noopener"';
     li.innerHTML =
       '<time class="post-date" datetime="'+esc(dateStr)+'">'+esc(dateStr)+'</time>'+
-      '<a href="'+esc(href)+'"'+targetAttr+' class="post-link doc-link">'+esc(d.title)+'</a>'+
+      '<a href="'+esc(href)+'" class="post-link doc-link">'+esc(d.title)+'</a>'+
       '<span class="post-category doc-source">📄 文档</span>';
     return li;
   }

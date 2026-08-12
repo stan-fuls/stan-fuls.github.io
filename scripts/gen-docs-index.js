@@ -16,8 +16,7 @@ const ROOT = path.join(__dirname, '..');
 const OUT  = path.join(ROOT, 'assets', 'data', 'docs-index.json');
 
 const SCAN_DIRS = [
-  'docs/knowledge-docs',
-  '_posts',
+  'docs/knowledge-docs',  // 仅扫描知识库文档目录
 ];
 
 // ---- frontmatter 解析 (YAML 子集) ----
@@ -94,30 +93,17 @@ function extractDate(dateVal) {
   return '';
 }
 
-// 把路径转换为站内 URL (Jekyll permalink)
-// _posts/2026-08-10-welcome.md      → /2026/08/10/welcome/
-// docs/knowledge-docs/xxx.md         → /docs/knowledge-docs/xxx/
+// docs/knowledge-docs/xxx.md → /docs/knowledge-docs/xxx/
 function pathToPermalink(relPath) {
-  // _posts 由 Jekyll 处理,Jekyll 默认 permalink: /:year/:month/:day/:title/
-  const postMatch = relPath.match(/^_posts\/(\d{4})-(\d{2})-(\d{2})-(.+)\.md$/);
-  if (postMatch) {
-    return '/' + postMatch[1] + '/' + postMatch[2] + '/' + postMatch[3] + '/' + postMatch[4] + '/';
-  }
-  // docs/knowledge-docs 走注入的 permalink
-  if (relPath.startsWith('docs/knowledge-docs/')) {
-    let p = relPath.replace(/^docs\/knowledge-docs\//, '');
-    p = p.replace(/\.md$/i, '');
-    if (!p.endsWith('/')) p += '/';
-    return '/docs/knowledge-docs/' + p;
-  }
-  return null;
+  let p = relPath.replace(/^docs\/knowledge-docs\//, '');
+  p = p.replace(/\.md$/i, '');
+  if (!p.endsWith('/')) p += '/';
+  return '/docs/knowledge-docs/' + p;
 }
 
-// 为 docs/knowledge-docs/*.md 注入 layout: doc + permalink + 最小 frontmatter,
-// 让 Jekyll 渲染为 /path/index.html (带尾斜杠),
-// 并防止无 frontmatter 的文件导致构建失败
+// 为 docs/knowledge-docs/*.md 注入 layout: doc + permalink,
+// 让 Jekyll 渲染为 /path/index.html (带尾斜杠)
 function ensureDocLayout(relPath, fullPath) {
-  if (!relPath.startsWith('docs/knowledge-docs/')) return;
   const raw = fs.readFileSync(fullPath, 'utf8');
 
   // 计算 permalink: /docs/knowledge-docs/xxx/
@@ -132,20 +118,15 @@ function ensureDocLayout(relPath, fullPath) {
   if (fmMatch) {
     let fm = fmMatch[1];
 
-    // 注入 permalink(若已存在则不覆盖)
     if (!/^permalink\s*:/m.test(fm)) {
       fm = 'permalink: ' + permalink + '\n' + fm;
     }
-
-    // 注入 layout(若已存在则不覆盖)
     if (!/^layout\s*:/m.test(fm)) {
       fm = 'layout: doc\n' + fm;
     }
 
     newRaw = raw.replace(/^---\s*\n([\s\S]*?)\n---/, '---\n' + fm + '\n---');
   } else {
-    // 没有 frontmatter 或 frontmatter 不合法 - 添加最小化的
-    // title 用文件名(去掉日期前缀和扩展名)
     const baseName = path.basename(relPath, '.md');
     const title = baseName.replace(/^\d{4}-\d{2}-\d{2}-?/, '').replace(/_/g, ' ') || baseName;
     newRaw = `---\npermalink: ${permalink}\nlayout: doc\ntitle: "${title}"\n---\n\n${raw}`;
@@ -168,25 +149,15 @@ function main() {
 
     for (const { relPath, fullPath } of mdFiles) {
       try {
-        // 为 docs/knowledge-docs/*.md 自动注入 layout: doc
         ensureDocLayout(relPath, fullPath);
 
         const raw = fs.readFileSync(fullPath, 'utf8');
         const meta = parseFM(raw);
 
-        // _posts 文件名格式: YYYY-MM-DD-slug.md
-        let date = extractDate(meta.date);
-        if (!date && scanDirName === '_posts') {
-          const name = path.basename(relPath);
-          const postDateMatch = name.match(/^(\d{4}-\d{2}-\d{2})/);
-          if (postDateMatch) date = postDateMatch[1];
-        }
-
+        const date = extractDate(meta.date);
         const name = path.basename(relPath, '.md');
         const blobUrl = `https://github.com/stan-fuls/stan-fuls.github.io/blob/master/${relPath}`;
         const webUrl  = pathToPermalink(relPath);
-        // 判断是博客文章还是文档(_posts 是博客,docs/knowledge-docs 是文档)
-        const type = relPath.startsWith('_posts/') ? 'post' : 'doc';
 
         allDocs.push({
           title:       meta.title || name,
@@ -197,7 +168,6 @@ function main() {
           tags:        Array.isArray(meta.tags) ? meta.tags : (meta.tags ? [meta.tags] : []),
           url:         blobUrl,
           webUrl:      webUrl,
-          type:        type,
         });
       } catch (e) {
         console.error(`⚠️  skip ${relPath}: ${e.message}`);

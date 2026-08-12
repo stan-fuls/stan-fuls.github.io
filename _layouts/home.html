@@ -18,12 +18,12 @@ layout: default
   <section class="posts-section">
     <h2 class="section-title">最新文章</h2>
     <div class="post-list">
-      {% comment %}合并博客 (_posts) 与文档 (docs/knowledge-docs) 按日期倒序展示{% endcomment %}
       {% assign doc_pages = site.pages | where_exp: "p", "p.path contains 'knowledge-docs'" %}
       {% assign combined = "" | split: "" %}
       {% for p in site.posts %}{% assign combined = combined | push: p %}{% endfor %}
       {% for p in doc_pages %}{% assign combined = combined | push: p %}{% endfor %}
-      {% for item in combined limit:8 %}
+      {% assign sorted = combined | sort: "date" | reverse %}
+      {% for item in sorted limit:8 %}
       <article class="post-card">
         <h3 class="post-card-title">
           <a href="{{ item.url | relative_url }}">{{ item.title }}</a>
@@ -50,7 +50,7 @@ layout: default
       </article>
       {% endfor %}
 
-      {% if combined.size == 0 %}
+      {% if sorted.size == 0 %}
       <div class="post-empty">暂无文章，快去 _posts/ 或 docs/knowledge-docs/ 目录添加吧 ✨</div>
       {% endif %}
     </div>

@@ -68,7 +68,6 @@
 
   function normalizeEntry(raw, idx) {
     if (!raw || typeof raw !== 'object') return null;
-    // 优先 webUrl（指向站内页面），其次 url（GitHub blob）
     var target = raw.webUrl || raw.url || '';
     return {
       title:    raw.title || (raw.path || 'doc-' + idx).replace(/\.md$/i, '').split('/').pop(),
@@ -78,7 +77,6 @@
       category: raw.category || '',
       tags:     normTags(raw.tags),
       href:     target,
-      isInternal: !!raw.webUrl,
     };
   }
 
@@ -119,10 +117,9 @@
       html += '<ul class="doc-item-list">';
       g.items.forEach(function (d) {
         var dateStr = d.date ? d.date.substring(0, 10) : '';
-        var hrefAttr = d.href ? (' href="' + esc(d.href) + '"') : ' href="#"';
-        var targetAttr = d.isInternal ? '' : ' target="_blank" rel="noopener"';
+        var hrefAttr = d.href ? (' href="' + esc(d.href) + '"') : '';
         html += '<li class="doc-item">';
-        html +=   '<a class="doc-item-link"' + hrefAttr + targetAttr + '>';
+        html +=   '<a class="doc-item-link"' + hrefAttr + '>';
         html +=     '<div class="doc-item-main">';
         html +=       '<time class="doc-item-date">' + esc(dateStr) + '</time>';
         html +=       '<span class="doc-item-title">' + esc(d.title) + '</span>';
