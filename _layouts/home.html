@@ -20,24 +20,25 @@ layout: default
     <div class="post-list">
       {% comment %}合并博客 (_posts) 与文档 (docs/knowledge-docs) 按日期倒序展示{% endcomment %}
       {% assign doc_pages = site.pages | where_exp: "p", "p.path contains 'knowledge-docs'" %}
-      {% assign all_items = site.posts | concat: doc_pages | sort: "date" | reverse %}
-      {% for item in all_items limit:8 %}
+      {% assign combined = "" | split: "" %}
+      {% for p in site.posts %}{% assign combined = combined | push: p %}{% endfor %}
+      {% for p in doc_pages %}{% assign combined = combined | push: p %}{% endfor %}
+      {% for item in combined limit:8 %}
       <article class="post-card">
         <h3 class="post-card-title">
           <a href="{{ item.url | relative_url }}">{{ item.title }}</a>
         </h3>
         <div class="post-card-meta">
           <span class="post-date">📅 {{ item.date | date: "%Y-%m-%d" }}</span>
-          {% assign item_cats = item.categories | default: item.category %}
-          {% if item_cats %}
+          {% if item.categories %}
             <span class="post-categories">
-              {% if item.categories %}
-                {% for cat in item.categories %}
-                <span class="post-category">{{ cat }}</span>
-                {% endfor %}
-              {% else %}
-                <span class="post-category">{{ item.category }}</span>
-              {% endif %}
+              {% for cat in item.categories %}
+              <span class="post-category">{{ cat }}</span>
+              {% endfor %}
+            </span>
+          {% elsif item.category %}
+            <span class="post-categories">
+              <span class="post-category">{{ item.category }}</span>
             </span>
           {% endif %}
           {% if item.path contains 'knowledge-docs' %}
@@ -49,7 +50,7 @@ layout: default
       </article>
       {% endfor %}
 
-      {% if site.posts.size == 0 and doc_pages.size == 0 %}
+      {% if combined.size == 0 %}
       <div class="post-empty">暂无文章，快去 _posts/ 或 docs/knowledge-docs/ 目录添加吧 ✨</div>
       {% endif %}
     </div>
