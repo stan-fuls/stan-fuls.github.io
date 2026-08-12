@@ -32,6 +32,22 @@ jobs:
       - name: Generate docs index from local knowledge-docs
         run: node scripts/gen-docs-index.js
 
+      # 提交脚本对 frontmatter 的修复,确保下次构建时文件已包含 frontmatter
+      - name: Commit auto-injected frontmatter
+        run: |
+          git config user.email "[email protected]"
+          git config user.name "docs-index-bot"
+          if [ -n "$(git status --porcelain -- docs/knowledge-docs/)" ]; then
+            echo "📝 检测到 docs/knowledge-docs/ 下有自动注入的 frontmatter,提交..."
+            git add docs/knowledge-docs/
+            git commit -m "ci: 自动为无 frontmatter 的文档注入最小配置" || true
+            git push origin HEAD:master
+          else
+            echo "✅ 无需提交,所有文档已有 frontmatter"
+          fi
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       # Jekyll 构建
       - uses: ruby/setup-ruby@v1
         with:
