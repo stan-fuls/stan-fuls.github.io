@@ -759,3 +759,17 @@
   .doc-item-date { min-width: auto; margin-bottom: 2px; }
   .doc-item-desc, .doc-item-tags { padding-left: 0; }
 }
+
+/* ---------- 首页 post-card 文档徽章 ---------- */
+.post-source {
+  display: inline-block;
+  font-size: 0.7rem;
+  background: rgba(16,185,129,0.10);
+  color: #047857;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-weight: 500;
+  margin-left: 6px;
+}
+.post-card-meta { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; }
+.post-card-meta > * { display: inline-flex; align-items: center; }

@@ -94,19 +94,21 @@ function extractDate(dateVal) {
   return '';
 }
 
-// 把 "docs/knowledge-docs/database/mysql-guide.md" 转成 "/docs/knowledge-docs/database/mysql-guide/"
+// 把路径转换为站内 URL (Jekyll permalink)
+// _posts/2026-08-10-welcome.md      → /2026/08/10/welcome/
+// docs/knowledge-docs/xxx.md         → /docs/knowledge-docs/xxx/
 function pathToPermalink(relPath) {
-  let p = relPath.replace(/^_posts\//, '_posts/'); // _posts 由 Jekyll 处理
-  if (p.endsWith('.md')) p = p.slice(0, -3);
-  if (!p.endsWith('/')) p += '/';
-  return '/' + p;
-}
-
-// _posts 由 Jekyll 生成,文档需要走 docs 静态 URL
-function pathToDisplay(relPath) {
-  // 仅对 docs/knowledge-docs/ 下的文档生成 web URL
+  // _posts 由 Jekyll 处理,Jekyll 默认 permalink: /:year/:month/:day/:title/
+  const postMatch = relPath.match(/^_posts\/(\d{4})-(\d{2})-(\d{2})-(.+)\.md$/);
+  if (postMatch) {
+    return '/' + postMatch[1] + '/' + postMatch[2] + '/' + postMatch[3] + '/' + postMatch[4] + '/';
+  }
+  // docs/knowledge-docs 走注入的 permalink
   if (relPath.startsWith('docs/knowledge-docs/')) {
-    return pathToPermalink(relPath);
+    let p = relPath.replace(/^docs\/knowledge-docs\//, '');
+    p = p.replace(/\.md$/i, '');
+    if (!p.endsWith('/')) p += '/';
+    return '/docs/knowledge-docs/' + p;
   }
   return null;
 }
@@ -173,7 +175,9 @@ function main() {
 
         const name = path.basename(relPath, '.md');
         const blobUrl = `https://github.com/stan-fuls/stan-fuls.github.io/blob/master/${relPath}`;
-        const webUrl  = pathToDisplay(relPath);
+        const webUrl  = pathToPermalink(relPath);
+        // 判断是博客文章还是文档(_posts 是博客,docs/knowledge-docs 是文档)
+        const type = relPath.startsWith('_posts/') ? 'post' : 'doc';
 
         allDocs.push({
           title:       meta.title || name,
@@ -184,6 +188,7 @@ function main() {
           tags:        Array.isArray(meta.tags) ? meta.tags : (meta.tags ? [meta.tags] : []),
           url:         blobUrl,
           webUrl:      webUrl,
+          type:        type,
         });
       } catch (e) {
         console.error(`⚠️  skip ${relPath}: ${e.message}`);

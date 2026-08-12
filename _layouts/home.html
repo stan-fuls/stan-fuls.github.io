@@ -18,28 +18,39 @@ layout: default
   <section class="posts-section">
     <h2 class="section-title">最新文章</h2>
     <div class="post-list">
-      {% for post in site.posts limit:8 %}
+      {% comment %}合并博客 (_posts) 与文档 (docs/knowledge-docs) 按日期倒序展示{% endcomment %}
+      {% assign doc_pages = site.pages | where_exp: "p", "p.path contains 'knowledge-docs'" %}
+      {% assign all_items = site.posts | concat: doc_pages | sort: "date" | reverse %}
+      {% for item in all_items limit:8 %}
       <article class="post-card">
         <h3 class="post-card-title">
-          <a href="{{ post.url | relative_url }}">{{ post.title }}</a>
+          <a href="{{ item.url | relative_url }}">{{ item.title }}</a>
         </h3>
         <div class="post-card-meta">
-          <span class="post-date">📅 {{ post.date | date: "%Y-%m-%d" }}</span>
-          {% if post.categories.size > 0 %}
-          <span class="post-categories">
-            {% for cat in post.categories %}
-            <span class="post-category">{{ cat }}</span>
-            {% endfor %}
-          </span>
+          <span class="post-date">📅 {{ item.date | date: "%Y-%m-%d" }}</span>
+          {% assign item_cats = item.categories | default: item.category %}
+          {% if item_cats %}
+            <span class="post-categories">
+              {% if item.categories %}
+                {% for cat in item.categories %}
+                <span class="post-category">{{ cat }}</span>
+                {% endfor %}
+              {% else %}
+                <span class="post-category">{{ item.category }}</span>
+              {% endif %}
+            </span>
+          {% endif %}
+          {% if item.path contains 'knowledge-docs' %}
+            <span class="post-source">📄 文档</span>
           {% endif %}
         </div>
-        <p class="post-card-excerpt">{{ post.excerpt | strip_html | truncate: 160 }}</p>
-        <a href="{{ post.url | relative_url }}" class="read-more">阅读更多 →</a>
+        <p class="post-card-excerpt">{{ item.excerpt | strip_html | truncate: 160 }}</p>
+        <a href="{{ item.url | relative_url }}" class="read-more">阅读更多 →</a>
       </article>
       {% endfor %}
 
-      {% if site.posts.size == 0 %}
-      <div class="post-empty">暂无文章，快去 _posts/ 目录添加第一篇吧 ✨</div>
+      {% if site.posts.size == 0 and doc_pages.size == 0 %}
+      <div class="post-empty">暂无文章，快去 _posts/ 或 docs/knowledge-docs/ 目录添加吧 ✨</div>
       {% endif %}
     </div>
   </section>

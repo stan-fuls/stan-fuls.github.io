@@ -85,7 +85,8 @@ layout: default
       var addedAny = false;
       var noMatch = [];
 
-      docs.forEach(function(d){
+      // 仅展示 docs/knowledge-docs 下的文档(_posts 已在顶部标签分组渲染)
+      docs.filter(function(d){ return d.type === 'doc'; }).forEach(function(d){
         var tags = d.tags||[];
         var matched = false;
         tags.forEach(function(tag){
