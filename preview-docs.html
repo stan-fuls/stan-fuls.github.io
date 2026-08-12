@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>文档中心 · 本地预览</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="/assets/css/custom.css">
+<style>
+  body { background: #f5f6fa; }
+  .preview-banner {
+    background: #fef3c7; border: 1px solid #fbbf24; color: #78350f;
+    padding: 10px 18px; font-size: 0.88rem; border-radius: 6px;
+    margin: 12px auto; max-width: 900px;
+  }
+  .preview-banner strong { color: #92400e; }
+</style>
+</head>
+<body>
+
+<div class="preview-banner">
+  <strong>⏱ 本地预览页：</strong>
+  打开此页验证 <code>docs.js</code> / <code>docs-index.json</code> / <code>custom.css</code> 在本地渲染是否正确。
+  与 GitHub Pages 上的卡片旧版对比，差异一目了然。
+</div>
+
+<div class="docs-page">
+  <header class="docs-header">
+    <h1 class="docs-title">📚 文档中心</h1>
+    <p class="docs-subtitle">技术文档阅览，数据来源于独立知识仓库 <code>stan-fuls/obsidian-knowledge-docs</code></p>
+    <p class="docs-template-hint">
+      📥 <a href="https://raw.githubusercontent.com/stan-fuls/stan-fuls.github.io/master/docs/_templates/document.md" target="_blank" rel="noopener">下载 Obsidian 文档模板</a>
+      &nbsp;·&nbsp;
+      <a href="https://github.com/stan-fuls/obsidian-knowledge-docs" target="_blank" rel="noopener">前往文档仓库</a>
+    </p>
+  </header>
+
+  <div class="docs-toolbar">
+    <input type="text" id="docs-search-input" class="docs-search-input" placeholder="🔍 搜索文档..." autocomplete="off">
+  </div>
+
+  <div id="docs-loading" class="docs-loading">
+    <div class="loading-spinner"></div>
+    <p>正在加载文档...</p>
+  </div>
+
+  <div id="docs-error" class="docs-error" style="display:none;"></div>
+  <div id="docs-list" style="display:none;"></div>
+</div>
+
+<script>
+window.DOCS_REPO_CONFIG = {
+  owner:    'stan-fuls',
+  repo:     'obsidian-knowledge-docs',
+  branch:   'main',
+  token:    '',
+  siteBase: ''
+};
+</script>
+<script src="/assets/js/docs.js"></script>
+
+</body>
+</html>

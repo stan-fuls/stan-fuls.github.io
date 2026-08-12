@@ -48,6 +48,8 @@ function parseFM(raw) {
     if (kv) {
       key = kv[1].toLowerCase();
       let val = kv[2].trim().replace(/^["']|["']$/g, '');
+      // strip YAML inline comment (# ...)
+      val = val.replace(/\s*#.*$/, '').trim();
       // normalize array-like strings: "tag1, tag2" or "[tag1, tag2]"
       if (arrKeys.has(key) && !Array.isArray(meta[key])) {
         val = val.replace(/^\[|\]$/g, '').trim();
