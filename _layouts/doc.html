@@ -8,11 +8,11 @@ layout: default
     <div class="post-meta">
       {% if page.date %}
       <time datetime="{{ page.date | date_to_xmlschema }}" itemprop="datePublished">
-        📅 {{ page.date | date: "%Y年%m月%d日" }}
+        {{ page.date | date: "%Y年%m月%d日" }}
       </time>
       {% endif %}
       {% if page.category %}
-      <span class="post-meta-category">📂 {{ page.category }}</span>
+      <span class="post-meta-category">{{ page.category }}</span>
       {% endif %}
     </div>
     {% if page.tags.size > 0 %}

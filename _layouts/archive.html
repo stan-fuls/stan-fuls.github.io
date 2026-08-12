@@ -29,7 +29,7 @@ title: 归档
 
 <div class="archive-page">
   <header class="archive-header">
-    <h1 class="archive-title">📂 归档</h1>
+    <h1 class="archive-title">归档</h1>
     <p class="archive-desc">共 <strong>{{ total }}</strong> 篇文档，按分类归档展示</p>
   </header>
 
@@ -59,7 +59,7 @@ title: 归档
 
         <section class="tag-group" id="cat-{{ cat | slugify }}" data-category="{{ cat }}">
           <h2 class="tag-group-name">
-            <span class="tag-icon">📁</span>{{ cat }}<span class="tag-count">{{ cat_count }} 篇</span>
+            {{ cat }}<span class="tag-count">{{ cat_count }} 篇</span>
           </h2>
           <ul class="tag-post-list">
             {%- for line in cat_items -%}
