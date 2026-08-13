@@ -1,4 +1,6 @@
 ---
+layout: doc
+permalink: /docs/knowledge-docs/templates/documents/
 title: 如果你不知道怎么创建文档库中的文档，请参考此模版
 dateTime: =dateformat(date(now), 'yyyy-MM-dd HH:mm')
 weekday: =dateformat(date(today), 'EEEE')
@@ -7,6 +9,7 @@ category: 测试
 tags:
   - 模版
 author: Stam
+date: "2026-08-13"
 ---
 
 # {{title}}
