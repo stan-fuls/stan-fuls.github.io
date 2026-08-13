@@ -28,7 +28,11 @@ layout: default
     {% endif %}
   </header>
 
-  {% if page.toc %}
+  {% comment %}
+    目录默认自动生成: 只要正文含 H2/H3 标题即显示, 无需每篇写 toc: true。
+    如需某篇文档关闭目录, 在 frontmatter 写 toc: false。
+  {% endcomment %}
+  {% if page.toc != false and content contains '<h2' %}
   <nav class="post-toc">
     <h4>目录</h4>
     {% include toc.html html=content sanitize=true %}

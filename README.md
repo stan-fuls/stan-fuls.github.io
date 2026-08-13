@@ -158,7 +158,7 @@ git push origin master
 ## 5. 博客文章发布流程
 
 1. 在 `_posts/` 新建 `YYYY-MM-DD-标题.md`
-2. Frontmatter 必填 `layout: post`、`title`、`date`，可选 `tags` / `category` / `toc: true`
+2. Frontmatter 必填 `layout: post`、`title`、`date`，可选 `tags` / `category` / `toc: false`（博客目录默认开启，`toc: false` 可关闭）
 3. Push `master` 分支，CI 自动构建发布
 
 > 博客文章的 date 是 Jekyll 文章日期（决定 permalink 路径），与文档的 `date` 含义不同。
@@ -259,7 +259,7 @@ date: "2026-08-13"                               # ✅ push 前改成这个
 检查 `categories` 字段（旧文档是 `category` 单值，两者都会被识别）；两个都没有的文档归入「未分类」组。想归属多个分组就用 `categories:` 多行数组。
 
 **Q：文档详情页没有目录？**
-在 frontmatter 开启 `toc: true`。
+目录**默认自动生成**（正文含 `##` 标题即显示），无需写 `toc`。只有个别文档不想要目录时，才在 frontmatter 写 `toc: false` 关闭。
 
 **Q：本地构建报 `cannot load such file -- csv`？**
 Ruby 4.0 需要 Gemfile 加 `gem 'csv'` / `gem 'bigdecimal'`，再 `bundle install`。
