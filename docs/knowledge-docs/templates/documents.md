@@ -1,7 +1,5 @@
 ---
-layout: doc
-permalink: /docs/knowledge-docs/templates/documents/
-title: 文档标题(必填)
+title: 如果你不知道怎么创建文档库中的文档，请参考此模版
 dateTime: =dateformat(date(now), 'yyyy-MM-dd HH:mm')
 weekday: =dateformat(date(today), 'EEEE')
 description: 这是一个文档模版，请参考吃模版进行内容编写
@@ -9,32 +7,15 @@ category: 测试
 tags:
   - 模版
 author: Stam
-date: "2026-08-13"
 ---
 
 # {{title}}
 
-> [!NOTE] <!--easygit-callout:original=info,collapse=--> 文档信息（Obsidian 内由 dataview 自动生成，无需手改）
-> - 📅 创建日期：`=dateformat(date(this.date), 'yyyy-MM-dd')`
-> - 🕐 创建时间：`=dateformat(date(this.dateTime), 'yyyy-MM-dd HH:mm')`
-> - 📂 分类：`=this.category` ｜ 🏷️ 标签：`=this.tags`
-> - 🚦 状态：`=this.status`
->
-> 提示：若上面显示空白，请确认已安装并启用 **Dataview** 插件；`date` 字段改成真实日期后，Calendar 插件会在日历上定位本文档。
 
-> [!NOTE] <!--easygit-callout:original=abstract,collapse=--> 发布流程
-> 1. 在 Obsidian 中通过 Templater 插件基于本模板创建新笔记
-> 2. 完成写作，把 `date` 改为真实日期，确认 `category` / `tags`
-> 3. 保存到本仓库的 `docs/knowledge-docs/<主题>/` 目录
-> 4. Push 到 GitHub → CI 自动生成索引 → 文档中心展示 ✅
-> - **已有标签** → 文档直接归入该标签分组
-> - **新标签** → 自动创建一个新的标签分组
-> - 一个文档可以有多个标签，会同时出现在多个分组中
-> - 没有填 tags 的文档会归入「未分类」
 
 ## 概述
 
-在这里用 2-3 句话说明本文档要解决的问题或分享的内容。
+在这里用 2-3 句话说明本文档要解决的问题或分享的内容。[[123]]
 
 ## 核心内容
 
