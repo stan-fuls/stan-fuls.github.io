@@ -1,19 +1,18 @@
 ---
-layout: doc
-permalink: /docs/knowledge-docs/documents/
-title: 如果你不知道怎么创建文档库中的文档，请参考此模版
-description: 这是一个文档模版，请参考吃模版进行内容编写这是一个文档模版，请参考吃模版进行内容编写这是一个文档模版，请参考吃模版进行内容编写这是一个文档模版，请参考吃模版进行内容编写
+permalink: /<tp.file.folder>/<% tp.file.title %>/
+title: <% tp.file.title %>
+description: <% tp.frontmatter.description %>
 category: 测试
 tags:
   - 模版
 author: Stam
-date: "2026-08-13"
+date: <% tp.date.now("YYYY-MM-DD HH:mm:ss") %>
 ---
-# `=this.title`
+<% tp.file.title %>
 
 ## 概述
 
-`=this.description`
+这是一个文档模版，请参考吃模版进行内容编写这是一个文档模版，请参考吃模版进行内容编写这是一个文档模版，请参考吃模版进行内容编写这是一个文档模版，请参考吃模版进行内容编写
 
 ## 核心内容
 
