@@ -1,4 +1,6 @@
 ---
+layout: doc
+permalink: /docs/knowledge-docs/templates/documents/
 # ⚠️ 请勿手写 layout / permalink 这两个字段！
 # 文档 push 到 GitHub 后,CI (gen-docs-index.js) 会自动注入:
 #   layout: doc       → 让 Jekyll 把 .md 渲染成完整 HTML 页面
