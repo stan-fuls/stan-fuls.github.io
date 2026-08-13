@@ -857,10 +857,25 @@
 /* 注意: 此规则曾以 background:white 覆盖了 .tag-pill:hover 的背景,
    导致悬停时白字白底(文字遮蔽)。已移除, 保留 hover 蓝色背景。 */
 
-/* 归档列表中标签紧跟标题 */
-.post-category-spacer {
+/* 归档列表中标签徽章: 与分类(蓝色)区分, 中性灰 + # 前缀, 可点击跳转文档中心搜索 */
+.tag-post-item .post-tags {
   display: inline-flex;
-  gap: 4px;
+  gap: 6px;
   flex-wrap: wrap;
   margin-left: auto;
+}
+.tag-post-item .post-tag {
+  font-size: 0.72rem;
+  background: var(--color-bg-alt);
+  color: var(--color-text-light);
+  padding: 2px 9px;
+  border-radius: 12px;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: all 0.15s;
+}
+.tag-post-item .post-tag:hover {
+  color: var(--color-primary);
+  background: rgba(37, 99, 235, 0.08);
+  border-color: var(--color-primary);
 }

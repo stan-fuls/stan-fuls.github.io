@@ -150,7 +150,7 @@ git push origin master
 推送后约 1–2 分钟，CI 完成构建：
 
 - 文档中心 [`/docs/`](https://stan-fuls.github.io/docs/)：新文档出现在列表（按日期倒序），显示多分类徽标
-- 归档页 [`/archive/`](https://stan-fuls.github.io/archive/)：按 `categories` 归入对应分组（**多分类 = 出现在多个分组**），按 `tags` 显示标签
+- 归档页 [`/archive/`](https://stan-fuls.github.io/archive/)：按 `categories` 归入对应分组（**多分类 = 出现在多个分组**），`tags` 显示为可点击徽章（点击跳转文档中心自动搜索该标签）
 - 文档详情页：点击卡片跳转到站内 `/docs/knowledge-docs/.../` 页面（含目录、点赞、评论、面包屑）
 
 ---
@@ -219,7 +219,7 @@ date: "2026-08-13"                               # ✅ push 前改成这个
 
 - 用 `categories:` 数组（模板默认），**一篇文档可归属多个分类组**；旧文档的 `category: 单值` 依然兼容
 - 优先使用已有分类（技术/生活/工作/学习/项目/随笔）；新分类会自动创建新分组
-- 注意与 `tags` 的区别：`categories` 决定归档分组与文档中心徽标，`tags` 只是文章旁的标签（展示 + 搜索）
+- 注意与 `tags` 的区别：`categories` 决定归档分组与文档中心徽标；`tags` 在文档中心与详情页展示、支持搜索，归档页显示为 `#标签` 徽章（点击跳转 `/docs/?q=标签` 直达搜索结果）
 
 ### ⚠️ 7.5 本地 Ruby 版本与 Gemfile 补丁
 

@@ -31,7 +31,15 @@
     $error   = document.getElementById('docs-error');
     $search  = document.getElementById('docs-search-input');
 
-    if ($search) $search.addEventListener('input', render);
+    if ($search) {
+      $search.addEventListener('input', render);
+      // 支持 /docs/?q=标签 从归档页标签徽章直达搜索结果
+      var m = (window.location.search || '').match(/[?&]q=([^&]+)/);
+      if (m) {
+        try { $search.value = decodeURIComponent(m[1].replace(/\+/g, ' ')); }
+        catch (e) { $search.value = m[1]; }
+      }
+    }
 
     var cached = getCache();
     if (cached && cached.length > 0) {
