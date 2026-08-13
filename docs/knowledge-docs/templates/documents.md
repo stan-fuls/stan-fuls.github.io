@@ -1,18 +1,12 @@
 ---
-layout: doc
-permalink: /docs/knowledge-docs/templates/documents/
 title: 文档标题(必填)
 dateTime: =dateformat(date(now), 'yyyy-MM-dd HH:mm')
 weekday: =dateformat(date(today), 'EEEE')
-month: =dateformat(date(today), 'yyyy-MM')
 description: 一句话描述文档内容,用于文档中心卡片展示(必填)
 category: 技术
 tags:
-  - 标签A
-  - 标签B
-status: 撰写中
+  - 模版
 author: Stam
-date: "2026-08-13"
 ---
 
 # {{title}}
