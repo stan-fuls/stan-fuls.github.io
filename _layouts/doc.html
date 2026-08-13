@@ -33,8 +33,7 @@ layout: default
     如需某篇文档关闭目录, 在 frontmatter 写 toc: false。
   {% endcomment %}
   {% if page.toc != false and content contains '<h2' %}
-  <nav class="post-toc">
-    <h4>目录</h4>
+  <nav class="post-toc" aria-label="目录">
     {% include toc.html html=content sanitize=true %}
   </nav>
   {% endif %}

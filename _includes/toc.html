@@ -1,2 +1,6 @@
-{% capture toc_content %}{% include toc_generator.html html=include.html sanitize=include.sanitize %}{% endcapture %}
+{% capture toc_content %}
+<ul class="post-toc-list">
+{% include toc_generator.html html=include.html sanitize=include.sanitize %}
+</ul>
+{% endcapture %}
 {{ toc_content }}
