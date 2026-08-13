@@ -31,10 +31,9 @@ console.log(path.join('docs', 'knowledge-docs', 'example.md'));
 ```
 
 ## 列表示例
-
 - 支持多级标题
 - 支持行内代码 `like this`
-- 支持有序 / 无序列表
+- 支持有序 / ~~无序列表
 - 支持代码块与表格
 
 ## 引用
