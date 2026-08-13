@@ -38,8 +38,9 @@ title: 归档
   {%- else -%}
     <div class="tag-nav">
       <span class="tag-nav-label">分类：</span>
+      <button type="button" id="tag-reset" class="tag-reset is-hidden">全部</button>
       {%- for cat in categories -%}
-        <a class="tag-pill" href="#cat-{{ cat | slugify }}" data-tag="{{ cat | slugify }}">{{ cat }}</a>
+        <a class="tag-pill" href="#cat-{{ cat }}" data-tag="{{ cat }}">{{ cat }}</a>
       {%- endfor -%}
     </div>
 
@@ -57,7 +58,7 @@ title: 归档
         {%- endfor -%}
         {%- assign cat_items = cat_items | sort_natural | reverse -%}
 
-        <section class="tag-group" id="cat-{{ cat | slugify }}" data-category="{{ cat }}">
+        <section class="tag-group" id="cat-{{ cat }}" data-tag="{{ cat }}">
           <h2 class="tag-group-name">
             {{ cat }}<span class="tag-count">{{ cat_count }} 篇</span>
           </h2>

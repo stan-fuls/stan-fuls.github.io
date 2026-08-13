@@ -853,7 +853,8 @@
 }
 
 /* tag-pill 内嵌在归档索引 */
-.tag-nav .tag-pill { background: white; }
+/* 注意: 此规则曾以 background:white 覆盖了 .tag-pill:hover 的背景,
+   导致悬停时白字白底(文字遮蔽)。已移除, 保留 hover 蓝色背景。 */
 
 /* 归档列表中标签紧跟标题 */
 .post-category-spacer {

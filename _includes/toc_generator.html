@@ -4,7 +4,16 @@
   {% if level >= 1 and level <= 3 %}
     {% assign title_part = header_str | split: '</h' | first %}
     {% assign title_text = title_part | split: '>' | last | strip_html | strip %}
-    {% assign id_text = title_text | slugify: 'ascii' %}
+    {% comment %}
+      优先直接使用 Kramdown(GFM) 已生成的标题 id, 保证与锚点完全一致;
+      仅在标题无 id 时才回退用 slugify 生成。
+    {% endcomment %}
+    {% assign id_parts = title_part | split: 'id="' %}
+    {% if id_parts.size > 1 %}
+      {% assign id_text = id_parts | last | split: '"' | first %}
+    {% else %}
+      {% assign id_text = title_text | slugify: 'raw' %}
+    {% endif %}
     {% if title_text != '' %}
       <li class="toc-{{ level }}">
         <a href="#{{ id_text }}">{{ title_text }}</a>

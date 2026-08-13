@@ -56,8 +56,8 @@
       history.replaceState(null, '', '#tag=' + encodeURIComponent(slug));
     }
 
-    // 滚动到对应分组
-    var target = document.getElementById('tag-' + slug);
+    // 滚动到对应分组 (分组 id 为 "cat-" + 分类名)
+    var target = document.getElementById('cat-' + slug);
     if (target) {
       var rect = target.getBoundingClientRect();
       if (rect.top < 0 || rect.top > window.innerHeight * 0.5) {
