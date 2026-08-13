@@ -899,7 +899,7 @@
  * 文档目录 (TOC) - 简约风格, 层级清晰
  * ============================================ */
 .post-toc {
-  margin: 0 0 32px;
+  margin: 32px 0;
   padding: 10px 0;
 }
 .post-toc-list {
