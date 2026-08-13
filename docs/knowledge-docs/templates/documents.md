@@ -1,4 +1,6 @@
 ---
+layout: doc
+permalink: /docs/knowledge-docs/templates/documents/
 title: 文档标题(必填)
 dateTime: =dateformat(date(now), 'yyyy-MM-dd HH:mm')
 weekday: =dateformat(date(today), 'EEEE')
@@ -7,6 +9,7 @@ category: 技术
 tags:
   - 模版
 author: Stam
+date: "2026-08-13"
 ---
 
 # {{title}}
