@@ -1,6 +1,8 @@
 ---
+layout: doc
+permalink: /docs/knowledge-docs/2026-08-09-github-pages-deploy/
 title: "GitHub Pages + Jekyll 部署指南"
-date: 2026-08-09
+date: "2026-08-09"
 categories: 技术
 tags:
   - GitHub Pages
