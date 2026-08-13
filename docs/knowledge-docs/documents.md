@@ -1,6 +1,6 @@
 ---
 layout: doc
-permalink: /docs/knowledge-docs/templates/documents/
+permalink: /docs/knowledge-docs/documents/
 title: 如果你不知道怎么创建文档库中的文档，请参考此模版
 dateTime: =dateformat(date(now), 'yyyy-MM-dd HH:mm')
 weekday: =dateformat(date(today), 'EEEE')
