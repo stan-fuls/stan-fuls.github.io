@@ -896,81 +896,42 @@
 }
 
 /* ============================================
- * 文档目录 (TOC) 美化 - 匹配站点蓝色卡片主题
+ * 文档目录 (TOC) - 简约风格, 层级清晰
  * ============================================ */
 .post-toc {
-  position: relative;
-  background: var(--color-bg-alt);
-  border: 1px solid var(--color-border);
-  border-left: 3px solid var(--color-primary);
-  border-radius: var(--radius);
-  padding: 16px 18px 12px 14px;
+  padding: 4px 0 20px;
   margin-bottom: 32px;
+  border-bottom: 1px solid var(--color-border);
 }
 .post-toc h4 {
-  display: flex;
-  align-items: center;
-  gap: 8px;
   margin-bottom: 10px;
-  font-size: 0.8rem;
-  font-weight: 700;
-  letter-spacing: 0.1em;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--color-text-light);
 }
-.post-toc h4::before {
-  content: "";
-  width: 5px;
-  height: 5px;
-  border-radius: 50%;
-  background: var(--color-primary);
-}
+.post-toc ul { list-style: none; }
 .post-toc li { margin: 0; }
 .post-toc li a {
-  position: relative;
   display: block;
-  padding: 5px 10px 5px 12px;
-  border-radius: 6px;
-  font-size: 0.88rem;
-  line-height: 1.6;
+  padding: 3px 0;
+  font-size: 0.9rem;
+  line-height: 1.7;
   color: var(--color-text-light);
-  transition: color 0.15s ease, background 0.15s ease, box-shadow 0.15s ease;
+  transition: color 0.15s ease;
 }
-.post-toc .toc-1 a,
-.post-toc .toc-2 a {
-  font-weight: 500;
+.post-toc .toc-1 a {
+  font-weight: 700;
   color: var(--color-text);
 }
-.post-toc .toc-1 a::before,
-.post-toc .toc-2 a::before {
-  content: "";
-  display: inline-block;
-  width: 5px;
-  height: 5px;
-  margin-right: 8px;
-  border-radius: 50%;
-  background: var(--color-primary);
-  vertical-align: 1px;
+.post-toc .toc-2 a {
+  font-weight: 600;
+  color: var(--color-text);
 }
-.post-toc .toc-3 a {
-  padding-left: 30px;
-  font-size: 0.85rem;
-}
-.post-toc .toc-3 a::before {
-  content: "";
-  display: inline-block;
-  width: 7px;
-  height: 1px;
-  margin-right: 8px;
-  background: var(--color-text-light);
-  opacity: 0.45;
-  vertical-align: 3px;
-}
-.post-toc li a:hover {
-  color: var(--color-primary);
-  background: var(--color-bg);
-  box-shadow: var(--shadow-sm);
-}
+.post-toc .toc-3 a { padding-left: 20px; font-size: 0.87rem; }
+.post-toc .toc-4 a { padding-left: 40px; font-size: 0.85rem; }
+.post-toc li a:hover { color: var(--color-primary); }
 
 /* 目录锚点跳转时不被吸顶 header 遮挡 */
 .post-content h1[id], .post-content h2[id], .post-content h3[id],
