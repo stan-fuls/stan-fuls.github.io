@@ -9,9 +9,11 @@
   <meta name="author" content="{{ site.author.name | default: 'Stam' }}">
   <link rel="canonical" href="{{ page.url | replace:'index.html','' | absolute_url }}">
 
-  <!-- Stylesheets: use baseurl-prefixed paths for reliability on GitHub Pages -->
-  <link rel="stylesheet" href="{{ '/assets/css/main.css' | relative_url }}">
-  <link rel="stylesheet" href="{{ '/assets/css/custom.css' | relative_url }}">
+  {%- assign cb = site.time | date: '%s' -%}
+  <!-- Stylesheets: use baseurl-prefixed paths for reliability on GitHub Pages;
+       ?v=<build ts> 防止浏览器/CDN 缓存导致用户看不到样式/脚本的修复版 -->
+  <link rel="stylesheet" href="{{ '/assets/css/main.css' | relative_url }}?v={{ cb }}">
+  <link rel="stylesheet" href="{{ '/assets/css/custom.css' | relative_url }}?v={{ cb }}">
 
   {% include head/favicon.html %}
 
@@ -30,10 +32,10 @@
 
   {% include scripts/common.html %}
   {% if page.layout == 'post' or page.layout == 'article' or page.layout == 'doc' %}
-  <script src="{{ '/assets/js/interactions.js' | relative_url }}" defer></script>
+  <script src="{{ '/assets/js/interactions.js' | relative_url }}?v={{ cb }}" defer></script>
   {% endif %}
   {% if page.layout == 'archive' %}
-  <script src="{{ '/assets/js/archive.js' | relative_url }}" defer></script>
+  <script src="{{ '/assets/js/archive.js' | relative_url }}?v={{ cb }}" defer></script>
   {% endif %}
 
   </body>
