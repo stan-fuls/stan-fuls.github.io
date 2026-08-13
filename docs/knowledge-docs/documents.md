@@ -1,4 +1,5 @@
 ---
+layout: doc
 permalink: /<tp.file.folder>/<% tp.file.title %>/
 title: <% tp.file.title %>
 description: <% tp.frontmatter.description %>
