@@ -11,8 +11,12 @@ layout: default
         {{ page.date | date: "%Y年%m月%d日" }}
       </time>
       {% endif %}
-      {% if page.category %}
-      <span class="post-meta-category">{{ page.category }}</span>
+      {% assign cat_list = page.categories %}
+      {% if cat_list == nil or cat_list.size == 0 %}
+        {% if page.category %}{% assign cat_list = "" | split: "" | push: page.category %}{% endif %}
+      {% endif %}
+      {% if cat_list and cat_list.size > 0 %}
+        {% for c in cat_list %}<span class="post-meta-category">{{ c }}</span>{% endfor %}
       {% endif %}
     </div>
     {% if page.tags.size > 0 %}

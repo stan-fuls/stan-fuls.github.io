@@ -74,10 +74,20 @@
       path:     raw.path || '',
       date:     raw.date || '',
       desc:     raw.description || raw.desc || '',
-      category: raw.category || '',
+      categories: normCats(raw),
       tags:     normTags(raw.tags),
       href:     target,
     };
+  }
+
+  // 分类:优先多值 categories 数组;兼容旧文档的 category 单值
+  function normCats(raw) {
+    var cats = raw.categories;
+    if (Array.isArray(cats)) return cats.map(function (c) { return String(c).trim(); }).filter(Boolean);
+    if (typeof cats === 'string' && cats.trim()) return [cats.trim()];
+    var single = raw.category;
+    if (typeof single === 'string' && single.trim()) return [single.trim()];
+    return [];
   }
 
   function normTags(tags) {
@@ -94,7 +104,8 @@
     return docs.filter(function (d) {
       return d.title.toLowerCase().indexOf(q) > -1 ||
              d.desc.toLowerCase().indexOf(q)  > -1 ||
-             d.tags.some(function (t) { return t.toLowerCase().indexOf(q) > -1; });
+             d.tags.some(function (t) { return t.toLowerCase().indexOf(q) > -1; }) ||
+             d.categories.some(function (c) { return c.toLowerCase().indexOf(q) > -1; });
     });
   }
 
@@ -123,7 +134,9 @@
         html +=     '<div class="doc-item-main">';
         html +=       '<time class="doc-item-date">' + esc(dateStr) + '</time>';
         html +=       '<span class="doc-item-title">' + esc(d.title) + '</span>';
-        if (d.category) html += '<span class="doc-item-category">' + esc(d.category) + '</span>';
+        d.categories.forEach(function (c) {
+          html += '<span class="doc-item-category">' + esc(c) + '</span>';
+        });
         html +=     '</div>';
         if (d.desc) html += '<p class="doc-item-desc">' + esc(d.desc) + '</p>';
         if (d.tags.length > 0) {

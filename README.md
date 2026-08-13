@@ -116,12 +116,15 @@ https://raw.githubusercontent.com/stan-fuls/stan-fuls.github.io/master/docs/_tem
 | 字段 | 必填 | 说明 |
 |------|------|------|
 | `title` | ✅ | 文档标题（卡片与详情页展示） |
-| `date` | ✅ | 文档日期 `YYYY-MM-DD`（文档中心分组排序 + 日历定位） |
 | `description` | ✅ | 一句话描述（文档中心卡片副标题） |
-| `category` | ✅ | 分类：`技术 / 生活 / 工作 / 学习 / 项目 / 随笔` |
-| `tags` | ❌ | 数组形式：`- 标签A` 逐行；决定归档分组 |
+| `categories` | ✅ | **多分类数组**：`- 技术` 逐行写。归档页按此分组，一篇文档可同时出现在多个分类组 |
+| `date` | ✅ | 文档日期 `YYYY-MM-DD`（文档中心分组排序 + 日历定位）。**push 前必须是真实日期**，不能是 dataview 表达式 |
+| `tags` | ❌ | 数组形式：`- 标签A` 逐行。文档中心/详情页展示、支持搜索（不参与归档分组） |
 | `status` | ❌ | `草稿 / 撰写中 / 已完成 / 已归档` |
-| `author` | ❌ | 与 `_config.yml` 的 `author.name` 一致 |
+
+> 兼容说明：旧文档的 `category: 单值` 仍有效，会被自动当作 `categories: [单值]` 处理，无需迁移。
+
+> 已移除字段：`time` / `weekday` / `month` / `author` 之前从未被消费，已从模板删除。
 
 ### 第 4 步：文件命名与存放
 
@@ -146,8 +149,8 @@ git push origin master
 
 推送后约 1–2 分钟，CI 完成构建：
 
-- 文档中心 [`/docs/`](https://stan-fuls.github.io/docs/)：新文档出现在列表（按日期倒序）
-- 归档页 [`/archive/`](https://stan-fuls.github.io/archive/)：按 `category` 归入对应分组，按 `tags` 显示标签
+- 文档中心 [`/docs/`](https://stan-fuls.github.io/docs/)：新文档出现在列表（按日期倒序），显示多分类徽标
+- 归档页 [`/archive/`](https://stan-fuls.github.io/archive/)：按 `categories` 归入对应分组（**多分类 = 出现在多个分组**），按 `tags` 显示标签
 - 文档详情页：点击卡片跳转到站内 `/docs/knowledge-docs/.../` 页面（含目录、点赞、评论、面包屑）
 
 ---
@@ -212,9 +215,11 @@ date: "2026-08-13"                               # ✅ push 前改成这个
 
 `gen-docs-index.js` 只扫描该目录。其他位置的 `.md` 不会进入文档中心与归档。
 
-### ⚠️ 7.4 `category` 优先使用已有分类
+### ⚠️ 7.4 `categories` 多分类 + 优先使用已有分类
 
-归档页按 `category` 分组。使用已有分类（技术/生活/工作/学习/项目/随笔）会让分组更整洁；新分类会自动创建新分组，但注意与 `tags` 的区别（`category` 决定归档分组，`tags` 显示为文章旁的标签）。
+- 用 `categories:` 数组（模板默认），**一篇文档可归属多个分类组**；旧文档的 `category: 单值` 依然兼容
+- 优先使用已有分类（技术/生活/工作/学习/项目/随笔）；新分类会自动创建新分组
+- 注意与 `tags` 的区别：`categories` 决定归档分组与文档中心徽标，`tags` 只是文章旁的标签（展示 + 搜索）
 
 ### ⚠️ 7.5 本地 Ruby 版本与 Gemfile 补丁
 
@@ -251,7 +256,7 @@ date: "2026-08-13"                               # ✅ push 前改成这个
 检查：① 文档是否在 `docs/knowledge-docs/` 下；② frontmatter 的 `date` 是否为真实日期；③ Actions 构建是否成功（仓库 Actions 页）。
 
 **Q：归档页文档分组不对？**
-检查 `category` 字段值；没有 `category` 的文档归入「未分类」组。
+检查 `categories` 字段（旧文档是 `category` 单值，两者都会被识别）；两个都没有的文档归入「未分类」组。想归属多个分组就用 `categories:` 多行数组。
 
 **Q：文档详情页没有目录？**
 在 frontmatter 开启 `toc: true`。

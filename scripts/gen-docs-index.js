@@ -168,12 +168,18 @@ function main() {
         const blobUrl = `https://github.com/stan-fuls/stan-fuls.github.io/blob/master/${relPath}`;
         const webUrl  = pathToPermalink(relPath);
 
+        // categories 优先取多值数组;兼容旧文档的 category 单值
+        const cats = Array.isArray(meta.categories) && meta.categories.length > 0
+          ? meta.categories
+          : (meta.category ? [meta.category] : []);
+
         allDocs.push({
           title:       meta.title || name,
           path:        relPath,
           date:        date,
           description: meta.description || meta.desc || '',
-          category:    meta.category || '',
+          categories:  cats,                       // 多分类数组,空数组表示未分类
+          category:    meta.category || '',        // 兼容旧字段,前端优先用 categories
           tags:        Array.isArray(meta.tags) ? meta.tags : (meta.tags ? [meta.tags] : []),
           url:         blobUrl,
           webUrl:      webUrl,

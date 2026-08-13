@@ -15,9 +15,9 @@ layout: default
     {%- assign date_str = p.date | date: "%Y-%m-%d" -%}
     {%- assign cats     = "" -%}
     {%- if p.category and p.category != "" -%}
-      {%- assign cats = cats | append: p.category -%}
+      {%- assign cats = p.category -%}
     {%- elsif p.categories and p.categories.size > 0 -%}
-      {%- assign cats = cats | append: p.categories | join: "," -%}
+      {%- assign cats = p.categories | join: "," -%}
     {%- endif -%}
     {%- assign key = date_str | append: "||" | append: p.url | append: "||" | append: p.title | append: "||" | append: date_str | append: "||" | append: cats | append: "||" | append: p.description -%}
     {%- assign items = items | push: key -%}

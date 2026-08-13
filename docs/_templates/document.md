@@ -1,160 +1,106 @@
 ---
-# ============================================================
-# ⚠️ 请勿写 layout / permalink 这两个字段！(真实案例: 2026-08-13
-#    documents.md 因为有 permalink,CI 跳过注入,导致访问 404)
-# 文档 push 到 GitHub 后,CI (gen-docs-index.js) 会自动注入:
-#   layout: doc            → 让 Jekyll 把 .md 渲染成完整 HTML 页面
-#   permalink: /.../       → 依文件路径自动生成,与文档中心跳转一致
-# ⛔ 特别警告: 不要从其它已发布文档复制 frontmatter,
-#    它们的 permalink 是带文件名的固定路径,粘到你的文档会产生 404。
-# ⛔ 同时把正文的 {{title}} / [[wikilink]] 占位符以及示例代码块改掉。
-# ============================================================
+# ════════════════════════════════════════════════════════════════
+# 📝 文档模板 (docs/_templates/document.md)
+#
+# 使用本模板:只需 3 步即可开始写正文(约 1 分钟)
+#   1. title        → 填文档标题
+#   2. categories   → 填 1~N 个分类(归档/文档中心按此分组)
+#   3. description  → 填一句话简介(文档中心卡片显示)
+#   之后直接开始写正文即可;tags / status 可写可不写。
+#
+# push 前唯一必改:
+#   date 由 dataview 表达式改成真实日期(如 "2026-08-13")。
+#   dataview 表达式 CI 无法解析,Calendar 也无法在日历上定位。
+#
+# ⛔ 千万不要写 layout / permalink —— CI 自动注入,写了会 404!
+#    案例: 2026-08-13 documents.md 因手写 permalink 访问 404。
+# ════════════════════════════════════════════════════════════════
 
-title: "文档标题(必填)"
+# ── 必填(开始写正文前) ──
+title: ""
+description: ""
+categories:          # 分类:可多个,归档与文档中心按此分组
+  - 分类A            # ← 改成你的分类(如: 技术 / 指南 / 生活)
+  # - 分类B          # 需要多分类时取消注释再写一行
 
-# ============================================================
-# 📅 日期 / 时间 —— 由 Obsidian dataview 插件自动生成,无需手填
-# ------------------------------------------------------------
-# 取值说明 (dataview 语法):
-#   date      → "=dateformat(date(today), 'yyyy-MM-dd')"       今天日期
-#   dateTime  → "=dateformat(date(now), 'yyyy-MM-dd HH:mm')"   此刻(精确到分钟)
-#   time      → "=dateformat(date(now), 'HH:mm')"              当前时分
-#   weekday   → "=dateformat(date(today), 'EEEE')"             今天星期几
-#   month     → "=dateformat(date(today), 'yyyy-MM')"          当前月份
-# ------------------------------------------------------------
-# 📌 与插件的配合:
-#   1. Calendar 日历插件读取 frontmatter 的 date 字段(格式 YYYY-MM-DD),
-#      把本文档显示在对应日期上 → 日历中可直接跳转打开
-#   2. dataview 表达式在 Obsidian 中实时求值显示,不会写入文件
-# ⚠️ push 到 GitHub 前,请把 date 改成真实日期(CI 用正则解析,
-#    dataview 表达式无法解析会导致文档中心日期为空/排序靠后):
-#      修改前: date: "=dateformat(date(today), 'yyyy-MM-dd')"
-#      修改后: date: "2026-08-13"
-# ============================================================
-date: "=dateformat(date(today), 'yyyy-MM-dd')"
-dateTime: "=dateformat(date(now), 'yyyy-MM-dd HH:mm')"
-time: "=dateformat(date(now), 'HH:mm')"
-weekday: "=dateformat(date(today), 'EEEE')"
-month: "=dateformat(date(today), 'yyyy-MM')"
+# ── 可选(按需填写) ──
+tags:                # 标签:文档中心与详情页展示,支持搜索
+  - 标签1
+status: 草稿         # 文档状态: 草稿 / 完成 / 已发布 / 待更新
 
-description: "一句话描述文档内容,用于文档中心卡片展示(必填)"
-# 👆 建议 ≤ 50 字,文档中心卡片、归档列表、搜索都会用到
-
-category: 技术
-# 可选分类: 技术 / 生活 / 工作 / 学习 / 项目 / 随笔
-# 归档页按此字段分组,请使用已有分类;新分类会自动创建新分组
-
-tags:
-  - 标签A
-  - 标签B
-# ✅ 每个文档支持多个标签,文档中心会按标签自动归档
-#    新标签会自动创建归档分组,已有标签直接归入已有分组
-#    不想被归档就把 tags 整段(含 tags:)删掉
-#    标签会显示在文档详情页与归档列表,便于检索
-
-status: 撰写中
-# 可选: 草稿 / 撰写中 / 已完成 / 已归档
-
-author: Stam
-# 作者,与 _config.yml 中 author.name 保持一致
-
-# 💡 可选字段(按需添加,不需要就删掉):
-#   toc: true                 # 详情页右侧显示目录(h1-h3)
-#   sticky: true              # 文档置顶
-#   updated: "=dateformat(date(now), 'yyyy-MM-dd')"   # 最后更新时间(dataview 自动)
-#   cover: /assets/images/xx.png   # 封面图
-#   slug: my-doc              # 自定义 URL 标识(一般不用)
+# ── 插件自动生成,创建文档后无需改动 ──
+date: "=dateformat(date(today), 'yyyy-MM-dd')"          # Calendar 插件据此在日历定位(创建时是今天)
+dateTime: "=dateformat(date(now), 'yyyy-MM-dd HH:mm')"  # Dataview 显示精确创建时间
 ---
 
-# {{title}}
+<!-- 页面标题由 frontmatter 的 title 自动生成, 正文无需再写 # 大标题 -->
 
-> [!info] 文档信息（Obsidian 内由 dataview 自动生成，无需手改）
-> - 📅 创建日期：`=dateformat(date(this.date), 'yyyy-MM-dd')`
-> - 🕐 创建时间：`=dateformat(date(this.dateTime), 'yyyy-MM-dd HH:mm')`
-> - 📂 分类：`=this.category` ｜ 🏷️ 标签：`=this.tags`
-> - 🚦 状态：`=this.status`
->
-> 提示：若上面显示空白，请确认已安装并启用 **Dataview** 插件；`date` 字段改成真实日期后，Calendar 插件会在日历上定位本文档。
+<!-- 信息栏:Obsidian 阅读模式下自动渲染(Dataview 插件) -->
+> [!info] 文档信息
+> - 📅 创建日期：`=dateformat(this.date, 'yyyy-MM-dd')`
+> - 🕐 创建时间：`=dateformat(this.dateTime, 'HH:mm')`
+> - 🗂️ 分类：`=this.categories`
+> - 🏷️ 标签：`=this.tags`
+> - 📌 状态：`=this.status`
 
-> [!abstract] 发布流程
-> 1. 在 Obsidian 中通过 Templater 插件基于本模板创建新笔记
-> 2. 完成写作，把 `date` 改为真实日期，确认 `category` / `tags`
-> 3. 保存到本仓库的 `docs/knowledge-docs/<主题>/` 目录
-> 4. Push 到 GitHub → CI 自动生成索引 → 文档中心展示 ✅
-> - **已有标签** → 文档直接归入该标签分组
-> - **新标签** → 自动创建一个新的标签分组
-> - 一个文档可以有多个标签，会同时出现在多个分组中
-> - 没有填 tags 的文档会归入「未分类」
+## 简介
 
-## 概述
+<!-- 用 1-2 句话概述本文内容, 便于文档中心检索 -->
 
-在这里用 2-3 句话说明本文档要解决的问题或分享的内容。
+## 正文
 
-## 核心内容
+<!-- 在此开始写作, 按需使用下方小节 -->
 
-### 一级标题：主题
+### 背景
 
-正文段落，支持 Markdown 标准语法与 Obsidian 特有语法：
+### 方法 / 步骤
 
-- **粗体**、*斜体*、`行内代码`
-- [[Obsidian 模板|双向链接]] 到其他笔记
-- 任务列表
-  - [x] 已完成事项
-  - [ ] 待办事项
+### 结论
 
-### 代码示例
+## 代码示例
 
-```go
-package main
-
-import "fmt"
-
-func main() {
-    fmt.Println("Hello, Share of Stam!")
-}
+```js
+// 示例代码块, 按需替换语言
+console.log('Hello Knowledge Docs');
 ```
 
-### 表格
+## 表格示例
 
-| 列 1 | 列 2 | 列 3 |
-|------|------|------|
-| A    | B    | C    |
-| 1    | 2    | 3    |
+| 项目 | 说明 | 备注 |
+| ---- | ---- | ---- |
+|      |      |      |
 
-### 数学公式 (可选)
+## 公式示例
 
 $$
 E = mc^2
 $$
 
-行内公式：$\sum_{i=1}^{n} i = \frac{n(n+1)}{2}$
-
-### 流程图 (可选)
+## 流程图示例 (Mermaid)
 
 ```mermaid
-flowchart LR
-    A[Obsidian 编辑] --> B[Git 推送]
-    B --> C[文档中心加载]
-    C --> D[按标签自动归档]
+graph TD
+  A[开始] --> B{是否发布}
+  B -->|是| C[推送到 GitHub]
+  B -->|否| D[保存草稿]
+  C --> E[CI 构建 → 文档中心]
 ```
 
-## 关键点总结
+## 总结
 
-1. 核心要点 1
-2. 核心要点 2
-3. 核心要点 3
+- 要点 1
+- 要点 2
 
-## 参考
+## 参考资料
 
-- [Obsidian 官方文档](https://help.obsidian.md/)
-- [Jekyll Frontmatter](https://jekyllrb.com/docs/front-matter/)
+- [链接标题](url)
 
 ---
 
-> **发布前检查清单**
-> - [ ] `title` / `description` 已填写
-> - [ ] `date` 已改为真实日期（push 前必须）
-> - [ ] `category` 为已有分类
-> - [ ] `tags` 已确认（可留空删除）
-> - [ ] 已保存到 `docs/knowledge-docs/<主题>/`
-> - [ ] 已执行 `git add` → `git commit` → `git push origin master`
+<!-- ════════ 发布前检查清单(push 前过一遍) ════════
+[ ] 1. date 已改为真实日期字符串(去掉 dataview 表达式)
+[ ] 2. 已删除正文残留的 [[wikilink]] 占位与示例代码块
+[ ] 3. categories 是真实分类,tags 已清理(或留空)
+[ ] 4. frontmatter 中没有手写 layout / permalink(写了会 404)
+[ ] 5. 文件位于 docs/knowledge-docs/ 下,推送后访问 URL 与文件名一致
+════════ -->

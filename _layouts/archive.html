@@ -11,21 +11,39 @@ title: 归档
 
 {%- assign doc_pages = site.pages | where_exp: "p", "p.path contains 'knowledge-docs'" -%}
 
+{%- comment -%}
+  多分类支持:
+  - 新版文档用 frontmatter 的 categories: [a, b] → p.categories 为数组,一篇文档可出现在多个分组
+  - 旧版文档用 category: 单值  → p.categories 为空,fallback 到 p.category
+  - 都没有 → "未分类"
+{%- endcomment -%}
+
 {%- assign lines    = "" | split: "" -%}
 {%- assign all_cats = "" | split: "" -%}
 {%- for p in doc_pages -%}
-  {%- assign cat      = p.category | default: "未分类" -%}
+  {%- assign cats = p.categories -%}
+  {%- if cats == nil or cats.size == 0 -%}
+    {%- if p.category -%}
+      {%- assign cats = "" | split: "" | push: p.category -%}
+    {%- else -%}
+      {%- assign cats = "" | split: "" | push: "未分类" -%}
+    {%- endif -%}
+  {%- endif -%}
+
   {%- assign date_str = "" -%}
   {%- if p.date -%}{% assign date_str = p.date | date: "%Y-%m-%d" %}{%- endif -%}
   {%- assign tag_str  = "" -%}
   {%- if p.tags -%}{% assign tag_str = p.tags | join: "," %}{%- endif -%}
-  {%- assign line = cat | append: "||" | append: date_str | append: "||" | append: p.url | append: "||" | append: p.title | append: "||" | append: p.description | append: "||" | append: tag_str -%}
-  {%- assign lines    = lines    | push: line -%}
-  {%- assign all_cats = all_cats | push: cat  -%}
+
+  {%- for cat in cats -%}
+    {%- assign line = cat | append: "||" | append: date_str | append: "||" | append: p.url | append: "||" | append: p.title | append: "||" | append: p.description | append: "||" | append: tag_str -%}
+    {%- assign lines    = lines    | push: line -%}
+    {%- assign all_cats = all_cats | push: cat  -%}
+  {%- endfor -%}
 {%- endfor -%}
 
 {%- assign categories = all_cats | uniq | sort -%}
-{%- assign total      = lines.size -%}
+{%- assign total      = doc_pages.size -%}
 
 <div class="archive-page">
   <header class="archive-header">
