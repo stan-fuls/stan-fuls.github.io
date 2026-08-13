@@ -12,13 +12,15 @@ author: Stam
 date: "2026-08-13"
 ---
 
-# {{title}}
+# {{title}}tests-title
 
 
 
 ## 概述
 
 在这里用 2-3 句话说明本文档要解决的问题或分享的内容。
+
+
 ## 核心内容[testniemnbuhzidao ](/docs/knowledge-docs/上传docs文件)
 ### 一级标题：主题
 
@@ -81,7 +83,7 @@ flowchart LR
 
 1. 核心要点 1
 2. 核心要点 2
-3. 核心要点 3
+3. 核心要点 3[^1]
 
 ## 参考
 
@@ -101,3 +103,5 @@ flowchart LR
 [^1]: eded 
 
 [^2]: 1233
+
+[^3]: 
