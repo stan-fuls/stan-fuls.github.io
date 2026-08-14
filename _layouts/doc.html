@@ -42,6 +42,9 @@ layout: default
     {{ content }}
   </div>
 
+  {% comment %} 上一章 / 下一章 章节导航 (顺序见 _data/docs_nav.yml) {% endcomment %}
+  {% include doc_prev_next.html %}
+
   <!-- 互动栏: 点赞 / 评论 / 分享 -->
   <div class="post-interactions">
     <button id="btn-like" class="interaction-btn" aria-pressed="false" title="点赞这篇文章">

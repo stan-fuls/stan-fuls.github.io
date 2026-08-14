@@ -1,0 +1,44 @@
+{%- comment -%}
+  文档「上一章 / 下一章」章节导航
+  章节顺序由 _data/docs_nav.yml 定义 (按阅读顺序排列)
+  每项为 { title: 章节标题, url: 文档地址 }
+{%- endcomment -%}
+{%- if site.data.docs_nav -%}
+  {%- comment %} 规范化地址: 去掉结尾斜杠后比较 {% endcomment -%}
+  {%- assign cur = page.url | remove_last: '/' -%}
+  {%- assign idx = -1 -%}
+  {%- for item in site.data.docs_nav -%}
+    {%- assign item_url = item.url | remove_last: '/' -%}
+    {%- if item_url == cur -%}{%- assign idx = forloop.index0 -%}{%- endif -%}
+  {%- endfor -%}
+  {%- if idx >= 0 -%}
+  <nav class="doc-prevnext" aria-label="章节导航">
+    {%- if idx > 0 -%}
+      {%- assign prev = site.data.docs_nav[ idx | minus: 1 ] -%}
+      <a class="doc-prevnext-link prev" href="{{ prev.url | relative_url }}">
+        <span class="doc-prevnext-dir">← 上一章</span>
+        <span class="doc-prevnext-title">{{ prev.title }}</span>
+      </a>
+    {%- else -%}
+      <span class="doc-prevnext-link prev disabled" aria-disabled="true">
+        <span class="doc-prevnext-dir">← 上一章</span>
+        <span class="doc-prevnext-title">已是第一章</span>
+      </span>
+    {%- endif -%}
+
+    {%- assign next_idx = idx | plus: 1 -%}
+    {%- if next_idx < site.data.docs_nav.size -%}
+      {%- assign next = site.data.docs_nav[ next_idx ] -%}
+      <a class="doc-prevnext-link next" href="{{ next.url | relative_url }}">
+        <span class="doc-prevnext-dir">下一章 →</span>
+        <span class="doc-prevnext-title">{{ next.title }}</span>
+      </a>
+    {%- else -%}
+      <span class="doc-prevnext-link next disabled" aria-disabled="true">
+        <span class="doc-prevnext-dir">下一章 →</span>
+        <span class="doc-prevnext-title">已是最后一章</span>
+      </span>
+    {%- endif -%}
+  </nav>
+  {%- endif -%}
+{%- endif -%}
