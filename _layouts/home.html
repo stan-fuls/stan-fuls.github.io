@@ -12,14 +12,15 @@ layout: default
 {%- assign items = "" | split: "" -%}
 {%- for p in doc_pages -%}
   {%- if p.date -%}
-    {%- assign date_str = p.date | date: "%Y-%m-%d" -%}
-    {%- assign cats     = "" -%}
+    {%- assign date_str     = p.date | date: "%Y-%m-%d" -%}
+    {%- assign datetime_str = p.date | date: "%Y-%m-%d %H:%M:%S" -%}
+    {%- assign cats         = "" -%}
     {%- if p.category and p.category != "" -%}
       {%- assign cats = p.category -%}
     {%- elsif p.categories and p.categories.size > 0 -%}
       {%- assign cats = p.categories | join: "," -%}
     {%- endif -%}
-    {%- assign key = date_str | append: "||" | append: p.url | append: "||" | append: p.title | append: "||" | append: date_str | append: "||" | append: cats | append: "||" | append: p.description -%}
+    {%- assign key = datetime_str | append: "||" | append: p.url | append: "||" | append: p.title | append: "||" | append: date_str | append: "||" | append: cats | append: "||" | append: p.description -%}
     {%- assign items = items | push: key -%}
   {%- endif -%}
 {%- endfor -%}
