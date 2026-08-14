@@ -39,11 +39,17 @@ layout: doc
 
 在 `_layouts/doc.html` 的正文 `{{ content }}` 之后，引入一个可复用片段：
 
-```liquid
+````liquid
+{% raw %}
 {% include doc_prev_next.html %}
-```
+{% endraw %}
+````
 
-该片段会读取 `docs_nav.yml`，根据当前 `page.url` 定位章节，自动输出上一章 / 下一章；位于首尾时则显示禁用态。
+该片段在 `_layouts/doc.html` 的正文之后被引入,只做读取,不做排序/查找:
+- 数据来源 `_data/docs_prev_next.yml`(由 `scripts/gen-docs-index.js` 按 `date` 升序预先生成)
+- 上一篇 = 时间更早,下一篇 = 时间更晚
+- 字段:`prev_url / prev_title / next_url / next_title`,首尾文章对应字段为空字符串
+- 位于首尾时,UI 自动渲染为禁用态(显示「没有更早的文章」/「没有更新的文章」)
 
 ### 统一视觉风格
 
