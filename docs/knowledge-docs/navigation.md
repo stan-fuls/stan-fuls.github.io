@@ -37,7 +37,7 @@ layout: doc
 
 ### 渲染导航的片段
 
-在 `_layouts/doc.html` 的正文 `{{ content }}` 之后，引入一个可复用片段：
+在 `_layouts/doc.html` 的正文区域(`<div class="post-content">` 块)之后,引入一个可复用片段:
 
 ````liquid
 {% raw %}
