@@ -1,15 +1,69 @@
 [
   {
-    "title": "示例文档 · 文档中心使用指南",
-    "path": "docs/knowledge-docs/example-guide.md",
-    "date": "2026-08-12",
-    "description": "演示文档中心如何以站内页面的形式展示文档内容",
-    "category": "指南",
+    "title": "入门：为什么选择 Jekyll",
+    "path": "docs/knowledge-docs/intro.md",
+    "date": "2026-08-14",
+    "fullDate": "2026-08-14 20:00:00",
+    "description": "从需求出发，了解用 Jekyll + GitHub Pages 构建个人/团队知识库的优势与适用场景。",
+    "categories": [
+      "文档站教程"
+    ],
+    "category": "文档站教程",
     "tags": [
       "示例",
-      "入门"
+      "Jekyll"
     ],
-    "url": "https://github.com/stan-fuls/stan-fuls.github.io/blob/master/docs/knowledge-docs/example-guide.md",
-    "webUrl": "/docs/knowledge-docs/example-guide/"
+    "url": "https://github.com/stan-fuls/stan-fuls.github.io/blob/master/docs/knowledge-docs/intro.md",
+    "webUrl": "/docs/knowledge-docs/intro/"
+  },
+  {
+    "title": "章节导航与自定义样式",
+    "path": "docs/knowledge-docs/navigation.md",
+    "date": "2026-08-14",
+    "fullDate": "2026-08-14 21:00:00",
+    "description": "为文档页添加\"上一章 / 下一章\"导航，并统一视觉风格。",
+    "categories": [
+      "文档站教程"
+    ],
+    "category": "文档站教程",
+    "tags": [
+      "示例",
+      "Jekyll"
+    ],
+    "url": "https://github.com/stan-fuls/stan-fuls.github.io/blob/master/docs/knowledge-docs/navigation.md",
+    "webUrl": "/docs/knowledge-docs/navigation/"
+  },
+  {
+    "title": "项目结构与 Front Matter",
+    "path": "docs/knowledge-docs/structure.md",
+    "date": "2026-08-14",
+    "fullDate": "2026-08-14 20:30:00",
+    "description": "拆解文档站的关键目录与每篇文档头部的 Front Matter 字段含义。",
+    "categories": [
+      "文档站教程"
+    ],
+    "category": "文档站教程",
+    "tags": [
+      "示例",
+      "Jekyll"
+    ],
+    "url": "https://github.com/stan-fuls/stan-fuls.github.io/blob/master/docs/knowledge-docs/structure.md",
+    "webUrl": "/docs/knowledge-docs/structure/"
+  },
+  {
+    "title": "test",
+    "path": "docs/knowledge-docs/test.md",
+    "date": "2026-08-14",
+    "fullDate": "2026-08-14 14:35:03",
+    "description": "请在此填写文档描述",
+    "categories": [
+      "请填写归档标签"
+    ],
+    "category": "请填写归档标签",
+    "tags": [
+      "模版"
+    ],
+    "url": "https://github.com/stan-fuls/stan-fuls.github.io/blob/master/docs/knowledge-docs/test.md",
+    "webUrl": "/docs/knowledge-docs/test/"
   }
 ]

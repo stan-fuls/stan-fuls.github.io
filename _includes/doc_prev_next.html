@@ -1,60 +1,34 @@
 {%- comment -%}
-  文档「上一篇 / 下一篇」导航 (按 date 时间排序)
-  上一篇 = 时间更早(更旧), 下一篇 = 时间更晚(更新)
-  排序键直接编码 "时间|url|标题", 标题与链接从键中提取, 不再做二次查找,
-  避免 Jekyll 中 where+first 取错页面对象导致上一篇显示成当前页的问题。
+  文档「上一篇 / 下一篇」导航
+  数据来自 _data/docs_prev_next.yml,由 scripts/gen-docs-index.js 按 date 自动生成。
+  上一篇 = 时间更早(更旧), 下一篇 = 时间更晚(更新)。
+  Jekyll 只负责读取,不参与排序/查找,避免 Liquid 索引错位问题。
 {%- endcomment -%}
-{%- assign docs = site.pages | where_exp: "p", "p.path contains 'docs/knowledge-docs/'" | where: "layout", "doc" -%}
-{%- if docs.size > 1 -%}
-  {%- comment %} 构造可排序的键: 时间(YYYYMMDDHHMMSS) + "|" + url + "|" + 标题 {% endcomment -%}
-  {%- assign keys = "" | split: "" -%}
-  {%- for p in docs -%}
-    {%- assign d = p.date | default: "0000-00-00 00:00:00" -%}
-    {%- assign ds = d | date: "%Y%m%d%H%M%S" -%}
-    {%- assign k = ds | append: "|" | append: p.url | append: "|" | append: p.title -%}
-    {%- assign keys = keys | push: k -%}
-  {%- endfor -%}
-  {%- assign keys = keys | sort -%}
-
-  {%- comment %} 定位当前文章 {% endcomment -%}
-  {%- assign cur = page.url | remove_last: '/' -%}
-  {%- assign idx = -1 -%}
-  {%- for k in keys -%}
-    {%- assign parts = k | split: "|" -%}
-    {%- assign u = parts[1] | remove_last: '/' -%}
-    {%- if u == cur -%}{%- assign idx = forloop.index0 -%}{%- endif -%}
-  {%- endfor -%}
-
-  {%- if idx >= 0 -%}
-  <nav class="doc-prevnext" aria-label="文章导航">
-    {%- if idx > 0 -%}
-      {%- assign pk = keys[ idx | minus: 1 ] -%}
-      {%- assign pparts = pk | split: "|" -%}
-      <a class="doc-prevnext-link prev" href="{{ pparts[1] | relative_url }}">
-        <span class="doc-prevnext-dir">← 上一篇</span>
-        <span class="doc-prevnext-title">{{ pparts[2] }}</span>
-      </a>
-    {%- else -%}
-      <span class="doc-prevnext-link prev disabled" aria-disabled="true">
-        <span class="doc-prevnext-dir">← 上一篇</span>
-        <span class="doc-prevnext-title">没有更早的文章</span>
-      </span>
-    {%- endif -%}
-
-    {%- assign next_idx = idx | plus: 1 -%}
-    {%- if next_idx < keys.size -%}
-      {%- assign nk = keys[ next_idx ] -%}
-      {%- assign nparts = nk | split: "|" -%}
-      <a class="doc-prevnext-link next" href="{{ nparts[1] | relative_url }}">
-        <span class="doc-prevnext-dir">下一篇 →</span>
-        <span class="doc-prevnext-title">{{ nparts[2] }}</span>
-      </a>
-    {%- else -%}
-      <span class="doc-prevnext-link next disabled" aria-disabled="true">
-        <span class="doc-prevnext-dir">下一篇 →</span>
-        <span class="doc-prevnext-title">没有更新的文章</span>
-      </span>
-    {%- endif -%}
-  </nav>
+{%- assign info = site.data.docs_prev_next[page.url] -%}
+{%- if info -%}
+<nav class="doc-prevnext" aria-label="文章导航">
+  {%- if info.prev_url and info.prev_url != "" -%}
+    <a class="doc-prevnext-link prev" href="{{ info.prev_url | relative_url }}">
+      <span class="doc-prevnext-dir">← 上一篇</span>
+      <span class="doc-prevnext-title">{{ info.prev_title }}</span>
+    </a>
+  {%- else -%}
+    <span class="doc-prevnext-link prev disabled" aria-disabled="true">
+      <span class="doc-prevnext-dir">← 上一篇</span>
+      <span class="doc-prevnext-title">没有更早的文章</span>
+    </span>
   {%- endif -%}
+
+  {%- if info.next_url and info.next_url != "" -%}
+    <a class="doc-prevnext-link next" href="{{ info.next_url | relative_url }}">
+      <span class="doc-prevnext-dir">下一篇 →</span>
+      <span class="doc-prevnext-title">{{ info.next_title }}</span>
+    </a>
+  {%- else -%}
+    <span class="doc-prevnext-link next disabled" aria-disabled="true">
+      <span class="doc-prevnext-dir">下一篇 →</span>
+      <span class="doc-prevnext-title">没有更新的文章</span>
+    </span>
+  {%- endif -%}
+</nav>
 {%- endif -%}

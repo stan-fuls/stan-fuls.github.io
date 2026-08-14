@@ -1,0 +1,23 @@
+# 文档「上一篇 / 下一篇」导航映射
+# 由 scripts/gen-docs-index.js 自动生成,请勿手动修改
+# 上一篇 = 时间更早(更旧), 下一篇 = 时间更晚(更新)
+"/docs/knowledge-docs/test/":
+  prev_url: ""
+  prev_title: ""
+  next_url: "/docs/knowledge-docs/intro/"
+  next_title: "入门：为什么选择 Jekyll"
+"/docs/knowledge-docs/intro/":
+  prev_url: "/docs/knowledge-docs/test/"
+  prev_title: "test"
+  next_url: "/docs/knowledge-docs/structure/"
+  next_title: "项目结构与 Front Matter"
+"/docs/knowledge-docs/structure/":
+  prev_url: "/docs/knowledge-docs/intro/"
+  prev_title: "入门：为什么选择 Jekyll"
+  next_url: "/docs/knowledge-docs/navigation/"
+  next_title: "章节导航与自定义样式"
+"/docs/knowledge-docs/navigation/":
+  prev_url: "/docs/knowledge-docs/structure/"
+  prev_title: "项目结构与 Front Matter"
+  next_url: ""
+  next_title: ""

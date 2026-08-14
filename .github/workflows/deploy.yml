@@ -37,13 +37,13 @@ jobs:
         run: |
           git config user.email "[email protected]"
           git config user.name "docs-index-bot"
-          if [ -n "$(git status --porcelain -- docs/knowledge-docs/)" ]; then
-            echo "📝 检测到 docs/knowledge-docs/ 下有自动注入的 frontmatter,提交..."
-            git add docs/knowledge-docs/
-            git commit -m "ci: 自动为无 frontmatter 的文档注入最小配置" || true
+          if [ -n "$(git status --porcelain -- docs/knowledge-docs/ _data/docs_prev_next.yml)" ]; then
+            echo "📝 检测到 docs/knowledge-docs/ 或 _data/docs_prev_next.yml 有变更,提交..."
+            git add docs/knowledge-docs/ _data/docs_prev_next.yml
+            git commit -m "ci: 自动注入 frontmatter 并更新上一篇/下一篇导航" || true
             git push origin HEAD:master
           else
-            echo "✅ 无需提交,所有文档已有 frontmatter"
+            echo "✅ 无需提交"
           fi
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

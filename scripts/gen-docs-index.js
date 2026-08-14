@@ -13,7 +13,8 @@ const fs   = require('fs');
 const path = require('path');
 
 const ROOT = path.join(__dirname, '..');
-const OUT  = path.join(ROOT, 'assets', 'data', 'docs-index.json');
+const OUT          = path.join(ROOT, 'assets', 'data', 'docs-index.json');
+const PREV_NEXT_OUT = path.join(ROOT, '_data', 'docs_prev_next.yml');
 
 const SCAN_DIRS = [
   'docs/knowledge-docs',  // 仅扫描知识库文档目录
@@ -71,7 +72,7 @@ function scanDir(dir) {
 
   const entries = fs.readdirSync(fullDir, { withFileTypes: true });
   for (const entry of entries) {
-    const relPath = path.join(dir, entry.name);
+    const relPath = path.join(dir, entry.name).replace(/\\/g, '/');
     const fullPath = path.join(fullDir, entry.name);
     if (entry.isDirectory()) {
       results.push(...scanDir(relPath));
@@ -95,16 +96,53 @@ function extractDate(dateVal) {
 
 // docs/knowledge-docs/xxx.md → /docs/knowledge-docs/xxx/
 function pathToPermalink(relPath) {
-  let p = relPath.replace(/^docs\/knowledge-docs\//, '');
+  let p = relPath.replace(/\\/g, '/').replace(/^docs\/knowledge-docs\//, '');
   p = p.replace(/\.md$/i, '');
   if (!p.endsWith('/')) p += '/';
   return '/docs/knowledge-docs/' + p;
+}
+
+function yamlQuote(str) {
+  if (str === '' || str == null) return '""';
+  // JSON.stringify 生成合法 YAML 双引号字符串(含转义)
+  return JSON.stringify(String(str));
+}
+
+function generatePrevNextYaml(allDocs) {
+  // 按完整 date 升序排列: 上一篇=更早, 下一篇=更晚
+  const sorted = [...allDocs].sort((a, b) => {
+    const ta = a.fullDate ? new Date(a.fullDate).getTime() : 0;
+    const tb = b.fullDate ? new Date(b.fullDate).getTime() : 0;
+    return ta - tb;
+  });
+
+  let yml = '# 文档「上一篇 / 下一篇」导航映射\n';
+  yml += '# 由 scripts/gen-docs-index.js 自动生成,请勿手动修改\n';
+  yml += '# 上一篇 = 时间更早(更旧), 下一篇 = 时间更晚(更新)\n';
+
+  for (let i = 0; i < sorted.length; i++) {
+    const cur = sorted[i];
+    const prev = sorted[i - 1];
+    const next = sorted[i + 1];
+    yml += `${yamlQuote(cur.webUrl)}:\n`;
+    yml += `  prev_url: ${yamlQuote(prev ? prev.webUrl : '')}\n`;
+    yml += `  prev_title: ${yamlQuote(prev ? prev.title : '')}\n`;
+    yml += `  next_url: ${yamlQuote(next ? next.webUrl : '')}\n`;
+    yml += `  next_title: ${yamlQuote(next ? next.title : '')}\n`;
+  }
+
+  fs.mkdirSync(path.dirname(PREV_NEXT_OUT), { recursive: true });
+  fs.writeFileSync(PREV_NEXT_OUT, yml);
+  console.error(`✅ wrote prev/next nav → _data/docs_prev_next.yml`);
 }
 
 // 为 docs/knowledge-docs/*.md 注入 layout: doc + permalink,
 // 让 Jekyll 渲染为 /path/index.html (带尾斜杠)
 function ensureDocLayout(relPath, fullPath) {
   const raw = fs.readFileSync(fullPath, 'utf8');
+
+  // 统一为正斜杠,避免 Windows 本地运行时路径分隔符问题
+  relPath = relPath.replace(/\\/g, '/');
 
   // 计算 permalink: /docs/knowledge-docs/xxx/
   let p = relPath.replace(/^docs\/knowledge-docs\//, '');
@@ -177,6 +215,7 @@ function main() {
           title:       meta.title || name,
           path:        relPath,
           date:        date,
+          fullDate:    meta.date || '',             // 保留完整时间,用于上一篇/下一篇排序
           description: meta.description || meta.desc || '',
           categories:  cats,                       // 多分类数组,空数组表示未分类
           category:    meta.category || '',        // 兼容旧字段,前端优先用 categories
@@ -196,6 +235,9 @@ function main() {
   fs.mkdirSync(path.dirname(OUT), { recursive: true });
   fs.writeFileSync(OUT, JSON.stringify(allDocs, null, 2) + '\n');
   console.error(`✅ wrote ${allDocs.length} doc(s) → assets/data/docs-index.json`);
+
+  // 生成「上一篇 / 下一篇」导航数据 (按完整 date 升序)
+  generatePrevNextYaml(allDocs);
 }
 
 main();
