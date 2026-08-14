@@ -18,5 +18,5 @@ layout: doc
 
 ### 一级标题：主题
 
+## 小结
 
-<< [[<% tp.date.yesterday("YYYY-MM-DD") %>]] | [[<% tp.date.tomorrow("YYYY-MM-DD") %>]] >>
