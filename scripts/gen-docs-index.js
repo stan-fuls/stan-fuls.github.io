@@ -229,8 +229,13 @@ function main() {
     }
   }
 
-  // 按日期倒序
-  allDocs.sort((a, b) => (b.date || '').localeCompare(a.date || ''));
+  // 按「日期 + 时间」倒序 (最新在最上);时间完全相同时按路径保证稳定
+  allDocs.sort((a, b) => {
+    const ta = a.fullDate || a.date || '';
+    const tb = b.fullDate || b.date || '';
+    if (ta !== tb) return tb.localeCompare(ta);
+    return (a.path || '').localeCompare(b.path || '');
+  });
 
   fs.mkdirSync(path.dirname(OUT), { recursive: true });
   fs.writeFileSync(OUT, JSON.stringify(allDocs, null, 2) + '\n');

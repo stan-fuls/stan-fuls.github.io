@@ -1,22 +1,5 @@
 [
   {
-    "title": "入门：为什么选择 Jekyll",
-    "path": "docs/knowledge-docs/intro.md",
-    "date": "2026-08-14",
-    "fullDate": "2026-08-14 20:00:00",
-    "description": "从需求出发，了解用 Jekyll + GitHub Pages 构建个人/团队知识库的优势与适用场景。",
-    "categories": [
-      "文档站教程"
-    ],
-    "category": "文档站教程",
-    "tags": [
-      "示例",
-      "Jekyll"
-    ],
-    "url": "https://github.com/stan-fuls/stan-fuls.github.io/blob/master/docs/knowledge-docs/intro.md",
-    "webUrl": "/docs/knowledge-docs/intro/"
-  },
-  {
     "title": "章节导航与自定义样式",
     "path": "docs/knowledge-docs/navigation.md",
     "date": "2026-08-14",
@@ -49,6 +32,23 @@
     ],
     "url": "https://github.com/stan-fuls/stan-fuls.github.io/blob/master/docs/knowledge-docs/structure.md",
     "webUrl": "/docs/knowledge-docs/structure/"
+  },
+  {
+    "title": "入门：为什么选择 Jekyll",
+    "path": "docs/knowledge-docs/intro.md",
+    "date": "2026-08-14",
+    "fullDate": "2026-08-14 20:00:00",
+    "description": "从需求出发，了解用 Jekyll + GitHub Pages 构建个人/团队知识库的优势与适用场景。",
+    "categories": [
+      "文档站教程"
+    ],
+    "category": "文档站教程",
+    "tags": [
+      "示例",
+      "Jekyll"
+    ],
+    "url": "https://github.com/stan-fuls/stan-fuls.github.io/blob/master/docs/knowledge-docs/intro.md",
+    "webUrl": "/docs/knowledge-docs/intro/"
   },
   {
     "title": "test",
