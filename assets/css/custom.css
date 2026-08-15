@@ -13,6 +13,39 @@
 .docs-title { font-size: 1.8rem; font-weight: 800; margin-bottom: 8px; }
 .docs-subtitle { font-size: 0.95rem; color: var(--color-text-light); }
 .docs-subtitle code { background: var(--color-code-bg); padding: 2px 6px; border-radius: 4px; font-size: 0.88em; }
+.docs-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 16px;
+  margin-top: 18px;
+}
+.docs-action-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-width: 200px;
+  padding: 10px 18px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+  color: #fff;
+  font-size: 0.95rem;
+  font-weight: 500;
+  text-decoration: none;
+  box-shadow: 0 4px 14px rgba(79, 70, 229, 0.25);
+  transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease;
+}
+.docs-action-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 22px rgba(79, 70, 229, 0.35);
+  filter: brightness(1.07);
+}
+.docs-action-btn svg {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+}
 .docs-template-hint {
   margin-top: 10px;
   font-size: 0.85rem;
