@@ -1,5 +1,5 @@
 ---
-permalink: /knowledge-docs/Kubernetes基础教程/
+permalink: /docs/knowledge-docs/Kubernetes基础教程/
 title: Kubernetes基础教程
 description: 系统学习 Kubernetes 容器编排平台，涵盖架构原理、核心资源对象与实战部署全流程
 category: 技术教程

@@ -1,5 +1,5 @@
 ---
-permalink: /knowledge-docs/Docker-Compose实战教程/
+permalink: /docs/knowledge-docs/Docker-Compose实战教程/
 title: Docker Compose实战教程
 description: 学习使用 Docker Compose 进行多容器编排，掌握服务定义、依赖管理、环境配置与生产部署实践
 category: 技术教程
