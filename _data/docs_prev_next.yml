@@ -4,5 +4,30 @@
 "/docs/knowledge-docs/test/":
   prev_url: ""
   prev_title: ""
+  next_url: "/docs/knowledge-docs/信息安全/"
+  next_title: "信息安全"
+"/docs/knowledge-docs/信息安全/":
+  prev_url: "/docs/knowledge-docs/test/"
+  prev_title: "test"
+  next_url: "/docs/knowledge-docs/职业教育/"
+  next_title: "职业教育"
+"/docs/knowledge-docs/职业教育/":
+  prev_url: "/docs/knowledge-docs/信息安全/"
+  prev_title: "信息安全"
+  next_url: "/docs/knowledge-docs/Docker-Compose实战教程/"
+  next_title: "Docker Compose实战教程"
+"/docs/knowledge-docs/Docker-Compose实战教程/":
+  prev_url: "/docs/knowledge-docs/职业教育/"
+  prev_title: "职业教育"
+  next_url: "/docs/knowledge-docs/Docker入门教程/"
+  next_title: "Docker入门教程"
+"/docs/knowledge-docs/Docker入门教程/":
+  prev_url: "/docs/knowledge-docs/Docker-Compose实战教程/"
+  prev_title: "Docker Compose实战教程"
+  next_url: "/docs/knowledge-docs/Kubernetes基础教程/"
+  next_title: "Kubernetes基础教程"
+"/docs/knowledge-docs/Kubernetes基础教程/":
+  prev_url: "/docs/knowledge-docs/Docker入门教程/"
+  prev_title: "Docker入门教程"
   next_url: ""
   next_title: ""
