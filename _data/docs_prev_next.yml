@@ -14,5 +14,10 @@
 "/docs/knowledge-docs/Kubernetes基础教程/":
   prev_url: "/docs/knowledge-docs/Docker入门教程/"
   prev_title: "Docker入门教程"
+  next_url: "/docs/knowledge-docs/阿莫线越野穿越路书/"
+  next_title: "阿莫线越野穿越路书"
+"/docs/knowledge-docs/阿莫线越野穿越路书/":
+  prev_url: "/docs/knowledge-docs/Kubernetes基础教程/"
+  prev_title: "Kubernetes基础教程"
   next_url: ""
   next_title: ""
