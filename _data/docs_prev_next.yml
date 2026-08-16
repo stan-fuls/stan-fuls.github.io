@@ -1,24 +1,9 @@
 # 文档「上一篇 / 下一篇」导航映射
 # 由 scripts/gen-docs-index.js 自动生成,请勿手动修改
 # 上一篇 = 时间更早(更旧), 下一篇 = 时间更晚(更新)
-"/docs/knowledge-docs/test/":
+"/docs/knowledge-docs/Docker-Compose实战教程/":
   prev_url: ""
   prev_title: ""
-  next_url: "/docs/knowledge-docs/信息安全/"
-  next_title: "信息安全"
-"/docs/knowledge-docs/信息安全/":
-  prev_url: "/docs/knowledge-docs/test/"
-  prev_title: "test"
-  next_url: "/docs/knowledge-docs/职业教育/"
-  next_title: "职业教育"
-"/docs/knowledge-docs/职业教育/":
-  prev_url: "/docs/knowledge-docs/信息安全/"
-  prev_title: "信息安全"
-  next_url: "/docs/knowledge-docs/Docker-Compose实战教程/"
-  next_title: "Docker Compose实战教程"
-"/docs/knowledge-docs/Docker-Compose实战教程/":
-  prev_url: "/docs/knowledge-docs/职业教育/"
-  prev_title: "职业教育"
   next_url: "/docs/knowledge-docs/Docker入门教程/"
   next_title: "Docker入门教程"
 "/docs/knowledge-docs/Docker入门教程/":
