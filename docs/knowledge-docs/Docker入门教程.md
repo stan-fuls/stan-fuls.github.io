@@ -2,7 +2,7 @@
 permalink: /docs/knowledge-docs/Docker入门教程/
 title: Docker入门教程
 description: 从零开始学习 Docker 容器技术，涵盖核心概念、安装配置、镜像管理与容器操作全流程
-category: 技术教程
+category: 云计算
 tags:
   - Docker
   - 容器
