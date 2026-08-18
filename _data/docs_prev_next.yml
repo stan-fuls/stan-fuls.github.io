@@ -14,16 +14,11 @@
 "/docs/knowledge-docs/Kubernetes基础教程/":
   prev_url: "/docs/knowledge-docs/Docker入门教程/"
   prev_title: "Docker入门教程"
-  next_url: "/docs/knowledge-docs/阿莫线越野穿越路书/"
-  next_title: "阿莫线越野穿越路书"
-"/docs/knowledge-docs/阿莫线越野穿越路书/":
-  prev_url: "/docs/knowledge-docs/Kubernetes基础教程/"
-  prev_title: "Kubernetes基础教程"
   next_url: "/docs/knowledge-docs/四川越野穿越与露营路书/"
   next_title: "四川越野穿越与露营路书"
 "/docs/knowledge-docs/四川越野穿越与露营路书/":
-  prev_url: "/docs/knowledge-docs/阿莫线越野穿越路书/"
-  prev_title: "阿莫线越野穿越路书"
+  prev_url: "/docs/knowledge-docs/Kubernetes基础教程/"
+  prev_title: "Kubernetes基础教程"
   next_url: "/docs/knowledge-docs/越野穿越路线/丹道环线路书/"
   next_title: "丹道环线路书"
 "/docs/knowledge-docs/越野穿越路线/丹道环线路书/":
@@ -134,5 +129,10 @@
 "/docs/knowledge-docs/露营地/鱼子西/":
   prev_url: "/docs/knowledge-docs/露营地/玉科草原/"
   prev_title: "玉科草原营地"
+  next_url: "/docs/knowledge-docs/越野穿越路线/阿莫线路书/"
+  next_title: "阿莫线路书"
+"/docs/knowledge-docs/越野穿越路线/阿莫线路书/":
+  prev_url: "/docs/knowledge-docs/露营地/鱼子西/"
+  prev_title: "鱼子西营地"
   next_url: ""
   next_title: ""
