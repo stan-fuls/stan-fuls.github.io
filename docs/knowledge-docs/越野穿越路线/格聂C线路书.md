@@ -16,7 +16,7 @@ layout: doc
 
 # 格聂 C 线 · 越野穿越路书
 
-![格聂C线炮弹坑路段](assets/images/格聂C线.png)
+![格聂C线炮弹坑路段](/docs/knowledge-docs/assets/images/格聂C线.png)
 
 > 被称为"川西拆车场"的硬核穿越线。驱车碾过炮弹坑、碎石路、浅冰面，四驱越野车才能从容应对。当抵达格聂之眼外围观景台，感受极致的孤独与自由。
 
