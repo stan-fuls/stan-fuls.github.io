@@ -19,5 +19,120 @@
 "/docs/knowledge-docs/阿莫线越野穿越路书/":
   prev_url: "/docs/knowledge-docs/Kubernetes基础教程/"
   prev_title: "Kubernetes基础教程"
+  next_url: "/docs/knowledge-docs/四川越野穿越与露营路书/"
+  next_title: "四川越野穿越与露营路书"
+"/docs/knowledge-docs/四川越野穿越与露营路书/":
+  prev_url: "/docs/knowledge-docs/阿莫线越野穿越路书/"
+  prev_title: "阿莫线越野穿越路书"
+  next_url: "/docs/knowledge-docs/越野穿越路线/丹道环线路书/"
+  next_title: "丹道环线路书"
+"/docs/knowledge-docs/越野穿越路线/丹道环线路书/":
+  prev_url: "/docs/knowledge-docs/四川越野穿越与露营路书/"
+  prev_title: "四川越野穿越与露营路书"
+  next_url: "/docs/knowledge-docs/越野穿越路线/党岭玉科穿越路书/"
+  next_title: "党岭玉科穿越路书"
+"/docs/knowledge-docs/越野穿越路线/党岭玉科穿越路书/":
+  prev_url: "/docs/knowledge-docs/越野穿越路线/丹道环线路书/"
+  prev_title: "丹道环线路书"
+  next_url: "/docs/knowledge-docs/越野穿越路线/宝康线路书/"
+  next_title: "宝康线路书"
+"/docs/knowledge-docs/越野穿越路线/宝康线路书/":
+  prev_url: "/docs/knowledge-docs/越野穿越路线/党岭玉科穿越路书/"
+  prev_title: "党岭玉科穿越路书"
+  next_url: "/docs/knowledge-docs/越野穿越路线/措普沟环线路书/"
+  next_title: "措普沟环线路书"
+"/docs/knowledge-docs/越野穿越路线/措普沟环线路书/":
+  prev_url: "/docs/knowledge-docs/越野穿越路线/宝康线路书/"
+  prev_title: "宝康线路书"
+  next_url: "/docs/knowledge-docs/越野穿越路线/格聂C线路书/"
+  next_title: "格聂C线路书"
+"/docs/knowledge-docs/越野穿越路线/格聂C线路书/":
+  prev_url: "/docs/knowledge-docs/越野穿越路线/措普沟环线路书/"
+  prev_title: "措普沟环线路书"
+  next_url: "/docs/knowledge-docs/越野穿越路线/格聂南线路书/"
+  next_title: "格聂南线路书"
+"/docs/knowledge-docs/越野穿越路线/格聂南线路书/":
+  prev_url: "/docs/knowledge-docs/越野穿越路线/格聂C线路书/"
+  prev_title: "格聂C线路书"
+  next_url: "/docs/knowledge-docs/越野穿越路线/泸亚线路书/"
+  next_title: "泸亚线路书"
+"/docs/knowledge-docs/越野穿越路线/泸亚线路书/":
+  prev_url: "/docs/knowledge-docs/越野穿越路线/格聂南线路书/"
+  prev_title: "格聂南线路书"
+  next_url: "/docs/knowledge-docs/越野穿越路线/理小线路书/"
+  next_title: "理小线路书"
+"/docs/knowledge-docs/越野穿越路线/理小线路书/":
+  prev_url: "/docs/knowledge-docs/越野穿越路线/泸亚线路书/"
+  prev_title: "泸亚线路书"
+  next_url: "/docs/knowledge-docs/越野穿越路线/甲根坝秘境线路书/"
+  next_title: "甲根坝秘境线路书"
+"/docs/knowledge-docs/越野穿越路线/甲根坝秘境线路书/":
+  prev_url: "/docs/knowledge-docs/越野穿越路线/理小线路书/"
+  prev_title: "理小线路书"
+  next_url: "/docs/knowledge-docs/越野穿越路线/石九线路书/"
+  next_title: "石九线路书"
+"/docs/knowledge-docs/越野穿越路线/石九线路书/":
+  prev_url: "/docs/knowledge-docs/越野穿越路线/甲根坝秘境线路书/"
+  prev_title: "甲根坝秘境线路书"
+  next_url: "/docs/knowledge-docs/越野穿越路线/结斯沟穿越路书/"
+  next_title: "结斯沟穿越路书"
+"/docs/knowledge-docs/越野穿越路线/结斯沟穿越路书/":
+  prev_url: "/docs/knowledge-docs/越野穿越路线/石九线路书/"
+  prev_title: "石九线路书"
+  next_url: "/docs/knowledge-docs/越野穿越路线/黑石城路书/"
+  next_title: "黑石城路书"
+"/docs/knowledge-docs/越野穿越路线/黑石城路书/":
+  prev_url: "/docs/knowledge-docs/越野穿越路线/结斯沟穿越路书/"
+  prev_title: "结斯沟穿越路书"
+  next_url: "/docs/knowledge-docs/露营地/上木居玉龙西村/"
+  next_title: "上木居与玉龙西村营地"
+"/docs/knowledge-docs/露营地/上木居玉龙西村/":
+  prev_url: "/docs/knowledge-docs/越野穿越路线/黑石城路书/"
+  prev_title: "黑石城路书"
+  next_url: "/docs/knowledge-docs/露营地/冷嘎措/"
+  next_title: "冷嘎措营地"
+"/docs/knowledge-docs/露营地/冷嘎措/":
+  prev_url: "/docs/knowledge-docs/露营地/上木居玉龙西村/"
+  prev_title: "上木居与玉龙西村营地"
+  next_url: "/docs/knowledge-docs/露营地/姑弄村/"
+  next_title: "姑弄村营地"
+"/docs/knowledge-docs/露营地/姑弄村/":
+  prev_url: "/docs/knowledge-docs/露营地/冷嘎措/"
+  prev_title: "冷嘎措营地"
+  next_url: "/docs/knowledge-docs/露营地/子梅垭口/"
+  next_title: "子梅垭口营地"
+"/docs/knowledge-docs/露营地/子梅垭口/":
+  prev_url: "/docs/knowledge-docs/露营地/姑弄村/"
+  prev_title: "姑弄村营地"
+  next_url: "/docs/knowledge-docs/露营地/孟屯河谷/"
+  next_title: "孟屯河谷营地"
+"/docs/knowledge-docs/露营地/孟屯河谷/":
+  prev_url: "/docs/knowledge-docs/露营地/子梅垭口/"
+  prev_title: "子梅垭口营地"
+  next_url: "/docs/knowledge-docs/露营地/措普沟营地/"
+  next_title: "措普沟营地"
+"/docs/knowledge-docs/露营地/措普沟营地/":
+  prev_url: "/docs/knowledge-docs/露营地/孟屯河谷/"
+  prev_title: "孟屯河谷营地"
+  next_url: "/docs/knowledge-docs/露营地/格聂夯达营地/"
+  next_title: "格聂夯达营地"
+"/docs/knowledge-docs/露营地/格聂夯达营地/":
+  prev_url: "/docs/knowledge-docs/露营地/措普沟营地/"
+  prev_title: "措普沟营地"
+  next_url: "/docs/knowledge-docs/露营地/牛背山/"
+  next_title: "牛背山营地"
+"/docs/knowledge-docs/露营地/牛背山/":
+  prev_url: "/docs/knowledge-docs/露营地/格聂夯达营地/"
+  prev_title: "格聂夯达营地"
+  next_url: "/docs/knowledge-docs/露营地/玉科草原/"
+  next_title: "玉科草原营地"
+"/docs/knowledge-docs/露营地/玉科草原/":
+  prev_url: "/docs/knowledge-docs/露营地/牛背山/"
+  prev_title: "牛背山营地"
+  next_url: "/docs/knowledge-docs/露营地/鱼子西/"
+  next_title: "鱼子西营地"
+"/docs/knowledge-docs/露营地/鱼子西/":
+  prev_url: "/docs/knowledge-docs/露营地/玉科草原/"
+  prev_title: "玉科草原营地"
   next_url: ""
   next_title: ""
